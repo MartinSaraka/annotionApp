@@ -2,12 +2,88 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Electron</title>
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <title>HIAT</title>
+
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
+      content="default-src *;
+   img-src * 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' *;
+   style-src  'self' 'unsafe-inline' *"
     />
+
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 100;
+        src: url('/src/assets/fonts/Inter/static/Inter-Thin.ttf')
+          format('truetype');
+      }
+
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 200;
+        src: url('/src/assets/fonts/Inter/static/Inter-ExtraLight.ttf')
+          format('truetype');
+      }
+
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 300;
+        src: url('/src/assets/fonts/Inter/static/Inter-Light.ttf')
+          format('truetype');
+      }
+
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        src: url('/src/assets/fonts/Inter/static/Inter-Regular.ttf')
+          format('truetype');
+      }
+
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 500;
+        src: url('/src/assets/fonts/Inter/static/Inter-Medium.ttf')
+          format('truetype');
+      }
+
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 600;
+        src: url('/src/assets/fonts/Inter/static/Inter-SemiBold.ttf')
+          format('truetype');
+      }
+
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 700;
+        src: url('/src/assets/fonts/Inter/static/Inter-Bold.ttf')
+          format('truetype');
+      }
+
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 800;
+        src: url('/src/assets/fonts/Inter/static/Inter-ExtraBold.ttf')
+          format('truetype');
+      }
+
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 900;
+        src: url('/src/assets/fonts/Inter/static/Inter-Black.ttf')
+          format('truetype');
+      }
+    </style>
   </head>
 
   <body>

@@ -1,24 +1,42 @@
 import { app, shell, BrowserWindow } from 'electron'
-import { join } from 'path'
+import { autoUpdater } from 'electron-updater'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { join } from 'path'
+
 import icon from '../../resources/icon.png?asset'
 
-function createWindow(): void {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
+import { IN_MILLISECONDS, MINUTE } from '@common/constants/time'
+import { ELECTRON_BROWSER_WINDOW_DEFAULT_OPTIONS } from '@common/constants/window'
+
+const server = process.env.MAIN_VITE_HAZEL_SERVER_URL || 'localhost:3001'
+const url = join(server, '/update/', process.platform, app.getVersion())
+autoUpdater.setFeedURL({ provider: 'generic', url })
+
+let mainWindow: BrowserWindow | null = null
+
+const createWindow = (): void => {
+  mainWindow = new BrowserWindow({
+    ...ELECTRON_BROWSER_WINDOW_DEFAULT_OPTIONS,
+
     ...(process.platform === 'linux' ? { icon } : {}),
+
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
 
+  const updaterInterval = setInterval(() => {
+    autoUpdater.checkForUpdates()
+  }, 15 * MINUTE * IN_MILLISECONDS)
+
+  mainWindow.on('closed', () => {
+    mainWindow = null
+    clearInterval(updaterInterval)
+  })
+
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
+    mainWindow?.show()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -35,21 +53,19 @@ function createWindow(): void {
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
-  electronApp.setAppUserModelId('com.electron')
+  electronApp.setAppUserModelId('sk.hiat.app')
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
   createWindow()
+
+  autoUpdater.checkForUpdates()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -67,5 +83,44 @@ app.on('window-all-closed', () => {
   }
 })
 
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
+autoUpdater.on('error', (eventDetails) => {
+  mainWindow?.webContents.send('electron-auto-updater', {
+    eventName: 'error',
+    eventDetails
+  })
+})
+
+autoUpdater.on('checking-for-update', () => {
+  mainWindow?.webContents.send('electron-auto-updater', {
+    eventName: 'checking-for-update',
+    eventDetails: null
+  })
+})
+
+autoUpdater.on('update-available', () => {
+  mainWindow?.webContents.send('electron-auto-updater', {
+    eventName: 'update-available',
+    eventDetails: null
+  })
+})
+
+autoUpdater.on('update-not-available', () => {
+  mainWindow?.webContents.send('electron-auto-updater', {
+    eventName: 'update-not-available',
+    eventDetails: null
+  })
+})
+
+autoUpdater.on('download-progress', (eventDetails) => {
+  mainWindow?.webContents.send('electron-auto-updater', {
+    eventName: 'download-progress',
+    eventDetails
+  })
+})
+
+autoUpdater.on('update-downloaded', () => {
+  mainWindow?.webContents.send('electron-auto-updater', {
+    eventName: 'update-downloaded',
+    eventDetails: null
+  })
+})

@@ -1,10 +1,21 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './assets/index.css'
-import App from './App'
+import { ApolloProvider } from '@apollo/client'
+import { createRoot } from 'react-dom/client'
+import { HashRouter } from 'react-router-dom'
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+import App from './App'
+import client from './apollo'
+
+import { Toasts } from '@renderer/components'
+
+const container = document.getElementById('root') as HTMLElement
+const root = createRoot(container!)
+
+root.render(
+  <ApolloProvider client={client}>
+    <HashRouter>
+      <App />
+
+      <Toasts />
+    </HashRouter>
+  </ApolloProvider>
 )

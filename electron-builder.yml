@@ -1,4 +1,4 @@
-appId: com.electron.app
+appId: sk.hiat.app
 productName: hiat
 directories:
   buildResources: build
