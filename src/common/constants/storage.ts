@@ -3,7 +3,7 @@ import { APP_NAME } from './global'
 export enum EStorageName {
   IMAGES = 'images',
   LAYOUT = 'layout',
-  RIGHTBAR = 'rightbar'
+  SETTINGS = 'settings'
 }
 
 export const IMAGES_STORAGE_NAME =
@@ -12,5 +12,5 @@ export const IMAGES_STORAGE_NAME =
 export const LAYOUT_STORAGE_NAME =
   `${APP_NAME}/${EStorageName.LAYOUT}-storage` as const
 
-export const RIGHTBAR_STORAGE_NAME =
-  `${APP_NAME}/${EStorageName.RIGHTBAR}-storage` as const
+export const SETTINGS_STORAGE_NAME =
+  `${APP_NAME}/${EStorageName.SETTINGS}-storage` as const

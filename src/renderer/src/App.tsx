@@ -1,8 +1,8 @@
-import { Navigate, useRoutes } from 'react-router-dom'
-
 import { globalStyles } from '@renderer/styles'
 
-import routes from '@renderer/config/routes'
+import { Editor } from './layouts'
+import { Dashboard, Empty, Image } from './pages'
+import { useImageStore } from './store'
 
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
@@ -10,13 +10,22 @@ import '@recogito/annotorious-openseadragon/dist/annotorious.min.css'
 
 globalStyles()
 
-const App = (): JSX.Element =>
-  useRoutes([
-    ...routes,
-    {
-      path: '*', // "No Match" route
-      element: <Navigate to="/" />
-    }
-  ]) as React.ReactElement
+const App = () => {
+  const activePage = useImageStore((state) => state.selected)
+
+  if (activePage === 'dashboard') {
+    return <Dashboard />
+  }
+
+  if (activePage === 'empty') {
+    return <Empty />
+  }
+
+  return (
+    <Editor>
+      <Image />
+    </Editor>
+  )
+}
 
 export default App

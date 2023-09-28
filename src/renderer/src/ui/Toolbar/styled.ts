@@ -1,44 +1,39 @@
 import * as Toolbar from '@radix-ui/react-toolbar'
 
 import { styled } from '@renderer/styles'
+import { motion } from 'framer-motion'
 
 export const ToolbarRoot = styled(Toolbar.Root, {
   display: 'flex',
-  flexWrap: 'wrap',
 
-  alignContent: 'flex-start',
+  alignItems: 'center',
   justifyContent: 'center',
 
-  borderRadius: '$6',
-
-  padding: '$2',
-  gap: '$1',
+  gap: '$2',
 
   '&[data-orientation="vertical"]': {
-    //flexDirection: 'column'
+    flexDirection: 'column'
   },
 
   '&[data-orientation="horizontal"]': {
-    //flexDirection: 'row'
+    flexDirection: 'row'
   }
 })
 
 export const ToolbarGroup = styled(Toolbar.ToggleGroup, {
   display: 'flex',
-  flexWrap: 'wrap',
 
-  alignContent: 'flex-start',
+  alignItems: 'center',
   justifyContent: 'center',
 
-  flex: 1,
-  gap: '$1',
+  gap: '$2',
 
   '&[data-orientation="vertical"]': {
-    // flexDirection: 'column'
+    flexDirection: 'column'
   },
 
   '&[data-orientation="horizontal"]': {
-    // flexDirection: 'row'
+    flexDirection: 'row'
   }
 })
 
@@ -50,24 +45,19 @@ export const ToolbarToggle = styled(Toolbar.ToggleItem, {
   alignItems: 'center',
   justifyContent: 'center',
 
-  borderRadius: '$2',
+  borderRadius: '$5',
   padding: '$2',
 
-  width: '100%',
-  height: '100%',
-  aspectRatio: 1,
-
-  maxWidth: 32,
-  maxHeight: 32,
-
   svg: {
-    width: '100%',
-    height: '100%',
-    aspectRatio: 1,
     zIndex: '$up'
   },
 
-  color: '$purple11'
+  color: '$light',
+
+  '&:disabled': {
+    color: '$dark4',
+    cursor: 'not-allowed'
+  }
 })
 
 export const ToolbarButton = styled(Toolbar.Button, {
@@ -78,41 +68,39 @@ export const ToolbarButton = styled(Toolbar.Button, {
   alignItems: 'center',
   justifyContent: 'center',
 
-  borderRadius: '$2',
+  borderRadius: 'calc($2 + 2px)',
   padding: '$2',
 
-  width: '100%',
-  height: '100%',
-  aspectRatio: 1,
-
-  maxWidth: 32,
-  maxHeight: 32,
-
-  svg: {
-    width: '100%',
-    height: '100%',
-    aspectRatio: 1
-  },
-
-  color: '$purple11',
+  color: '$light',
 
   '&:hover': {
-    backgroundColor: '$purple3'
+    color: '#0074FF'
   }
 })
 
 export const ToolbarSeparator = styled(Toolbar.Separator, {
-  backgroundColor: '$gray5',
+  backgroundColor: '$dark3',
+  borderRadius: '$pill',
 
   '&[data-orientation="vertical"]': {
     width: 1,
-    height: '100%',
-    marginInline: '$2'
+    height: 18,
+    marginInline: '$1'
   },
 
   '&[data-orientation="horizontal"]': {
     height: 1,
-    width: '100%',
-    marginBlock: '$2'
+    width: 18,
+    marginBlock: '$1'
   }
+})
+
+export const ActiveItem = styled(motion.div, {
+  position: 'absolute',
+  inset: 0,
+
+  backgroundColor: '#3E63DD',
+  borderRadius: '$5',
+
+  zIndex: '$base'
 })

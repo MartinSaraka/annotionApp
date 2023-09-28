@@ -49,3 +49,26 @@ export const elseUndefined = <TCondition, TValue>(
   condition: TCondition,
   value: TValue
 ): TValue | undefined => (condition ? value : undefined)
+
+export const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text)
+}
+
+export const arrayToObject = <
+  TType extends PropertyKey,
+  TArray extends Array<TType>,
+  TKey extends PropertyKey
+>(
+  arr: TArray,
+  keys: Readonly<TKey[]>
+) => {
+  const obj = {} as Record<TKey, TType>
+
+  for (let i = 0, j = 0; i < arr.length; i++) {
+    if (!arr[i]) continue
+    if (!keys[j]) break
+    obj[keys[j++]] = arr[i]
+  }
+
+  return obj
+}

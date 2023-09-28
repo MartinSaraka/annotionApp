@@ -26,15 +26,26 @@ export const {
     palette: {
       white: '#FFFFFF',
       black: '#000000',
+
       gray200: '#F9F8FC',
       gray400: '#CCCDD0',
       gray800: '#25252D',
-      gray900: '#1F1E20'
+      gray900: '#1F1E20',
+
+      dark1: '#101021',
+      dark2: '#212134',
+      dark3: '#2D2D42',
+      dark4: '#6A6A8C'
     },
 
     colors: {
       light: '$palette$white',
       dark: '$palette$black',
+
+      dark1: '$palette$dark1',
+      dark2: '$palette$dark2',
+      dark3: '$palette$dark3',
+      dark4: '$palette$dark4',
 
       gray200: '$palette$gray200',
       gray400: '$palette$gray400',
@@ -81,17 +92,20 @@ export const {
 
     fontSizes: {
       1: '4px',
-      2: '8px',
-      3: '12px',
-      4: '16px',
-      5: '20px',
-      6: '24px',
-      7: '28px',
-      8: '32px',
-      9: '36px',
-      10: '40px',
-      11: '44px',
-      12: '48px'
+      2: '6px',
+      3: '8px',
+      4: '10px',
+      5: '12px',
+      6: '14px',
+      7: '22px',
+      8: '24px',
+      9: '26px',
+      10: '28px',
+      11: '32px',
+      12: '34px',
+      13: '36px',
+      14: '40px',
+      15: '48px'
     },
 
     lineHeights: {
@@ -100,7 +114,7 @@ export const {
       2: '12px',
       3: '16px',
       4: '20px',
-      5: '24px',
+      5: '18px',
       6: '28px',
       7: '32px',
       8: '36px',
@@ -130,10 +144,25 @@ export const {
       pill: '99999px'
     },
 
+    borderWidths: {
+      1: '1px',
+      2: '2px',
+      3: '3px',
+      4: '4px',
+      5: '5px'
+    },
+
+    borderStyles: {
+      solid: 'solid',
+      dashed: 'dashed',
+      dotted: 'dotted'
+    },
+
     zIndices: {
       down: -100,
       base: 0,
       up: 100,
+      upper: 200,
       header: 1000,
       popover: 1500,
       modal: 2000,

@@ -1,61 +1,82 @@
 import { styled } from '@renderer/styles'
+import { motion } from 'framer-motion'
 
-export const Close = styled('div', {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+import Button from '../Button'
 
-  borderRadius: '$2',
-  cursor: 'pointer',
-
-  padding: 2,
+export const Close = styled(Button, {
   opacity: 0,
-
-  transition: 'opacity 0.2s ease',
 
   '&:hover': {
     opacity: 1,
+    color: '$light',
     _bgAlpha: ['$light', '80']
   }
 })
 
-export const Root = styled('button', {
+export const Root = styled('div', {
   position: 'relative',
   flexShrink: 0,
+  cursor: 'pointer',
 
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
 
-  borderRadius: '$2',
-
-  paddingBlock: '$1',
+  paddingBlock: '$2',
   paddingInline: '$3',
-  paddingBottom: '$2',
 
-  gap: '$1',
-  lineHeight: 1,
+  gap: '$2',
+  color: '$light',
 
-  [`&:hover > ${Close}[data-active="false"]`]: {
-    opacity: 0.8
+  [`&:hover ${Close}`]: {
+    opacity: 1
   }
 })
 
-export const Badge = styled('span', {
+export const Content = styled('div', {
   display: 'flex',
+  flexDirection: 'row',
+
   alignItems: 'center',
   justifyContent: 'center',
 
-  backgroundColor: '$purple9',
-  borderRadius: '$2',
+  gap: '$2',
+  zIndex: '$upper'
+})
 
-  paddingInline: 'calc($1 + 2px)',
-  paddingBlock: '$1',
-  marginRight: '$1',
+export const Active = styled(motion.div, {
+  position: 'absolute',
+  inset: 0,
+  bottom: 0,
 
-  fontSize: '$2',
-  lineHeight: '$none',
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  color: '$purple3'
+  backgroundColor: '$dark1',
+  zIndex: '$up',
+
+  borderTopLeftRadius: '$6',
+  borderTopRightRadius: '$6',
+
+  borderColor: '$dark3',
+  borderStyle: 'solid',
+  borderWidth: '$1',
+  borderBottomWidth: 0,
+
+  '&:before, &:after': {
+    content: '',
+    position: 'absolute',
+
+    bottom: 0,
+    _size: 10,
+
+    backgroundImage:
+      'radial-gradient(circle at 0 0, transparent 9px, $dark3 9px, $dark3 10px, $dark1 10px)'
+  },
+
+  '&:before': {
+    right: '100%'
+  },
+
+  '&:after': {
+    left: '100%',
+    transform: 'scaleX(-1)'
+  }
 })

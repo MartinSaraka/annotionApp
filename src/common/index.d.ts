@@ -1,4 +1,10 @@
 import OpenSeadragon from 'openseadragon'
+import OpenSeadragonImagingHelper from '@openseadragon-imaging/openseadragon-imaginghelper'
+
+import * as Annotorious from '@recogito/annotorious-openseadragon'
+
+import { flattenTree } from 'react-accessible-treeview'
+import { IFlatMetadata } from 'react-accessible-treeview/dist/TreeView/utils'
 
 declare module 'openseadragon' {
   interface Viewer {
@@ -12,6 +18,10 @@ declare module 'openseadragon' {
      * @see /renderer/lib/openseadragon-smart-scroll-zoom.js
      */
     smartScrollZoom: (...args: unknown[]) => void
+
+    gestureSettingsMouse: {
+      clickToZoom: boolean
+    }
   }
 }
 
@@ -20,10 +30,20 @@ declare global {
   type TPath = string
 
   // OpenSeadragon
-
   type TOSDViewer = OpenSeadragon.Viewer
   type TOSDOptions = OpenSeadragon.Options
   type TOSDTileSourceOptions = OpenSeadragon.TileSourceOptions
+
+  // OpenSeadragon Helper
+  type TOSDHelper = typeof OpenSeadragonImagingHelper
+
+  // Annotorious
+  type TAnno = typeof Annotorious
+
+  // React Accessible TreeView
+  type TRATNodes<TMetadata extends IFlatMetadata> = Parameters<
+    typeof flattenTree<TMetadata>
+  >[0]
 
   // Common
 

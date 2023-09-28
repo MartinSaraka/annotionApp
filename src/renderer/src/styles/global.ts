@@ -11,20 +11,24 @@ export const globalStyles = globalCss({
     boxSizing: 'border-box',
     '-webkit-tap-highlight-color': 'transparent',
     '-webkit-font-smoothing': 'antialiased',
-    '-moz-osx-font-smoothing': 'grayscale'
+    '-moz-osx-font-smoothing': 'grayscale',
+    outline: 'none'
   },
 
   body: {
-    fontFamily: '$sans',
-    backgroundColor: '$gray800',
-    color: '$gray400',
+    position: 'relative',
 
-    fontSize: '$3',
-    lineHeight: '$3',
+    fontFamily: '$sans',
+    backgroundColor: '$dark2',
+    color: '$light',
+
+    fontSize: '$5',
+    lineHeight: '$5',
     fontWeight: 400,
 
-    maxWidth: '100vw',
-    overflowX: 'hidden'
+    width: '100vw',
+    height: '100vh',
+    overflow: 'hidden'
   },
 
   'input, button, textarea, select': {
@@ -46,7 +50,15 @@ export const globalStyles = globalCss({
     color: 'inherit',
     fontFamily: 'inherit',
     fontSize: 'inherit',
-    cursor: 'pointer'
+    cursor: 'pointer',
+
+    outline: 'none',
+
+    '&:focus:not(:disabled), &:active:not(:disabled), &:active:focus:not(:disabled)':
+      {
+        outline: '1px solid #0074FF',
+        outlineOffset: 2
+      }
   },
 
   a: {
@@ -54,7 +66,7 @@ export const globalStyles = globalCss({
     textDecoration: 'none'
   },
 
-  input: {
+  'input, textarea': {
     background: 'transparent',
     border: 'none',
     fontFamily: 'inherit',

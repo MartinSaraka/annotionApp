@@ -47,7 +47,7 @@ export type TAnnotationRenderedVia = {
 export type TAnnotationSelector =
   | TAnnotationFragmentSelector
   | TAnnotationSVGSelector
-  | TAnnotationSVGSelector[]
+//| TAnnotationSVGSelector[]
 
 export type TAnnotationFragmentSelector = {
   type: 'FragmentSelector'

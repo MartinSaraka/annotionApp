@@ -15,7 +15,7 @@ import {
   getModifiedCellGap
 } from '@common/utils/layout'
 
-import { OPEN_SEA_DRAGON_ID } from '@common/constants/viewer'
+import { OPEN_SEADRAGON_ID } from '@common/constants/viewer'
 import {
   GRID_LAYOUT_DEFAULT_OPTIONS,
   GRID_LAYOUT_DRAGGABLE_HANDLE_CLASS
@@ -43,7 +43,7 @@ const GridOverlay = ({ children, ...rest }: TGridOverlayProps) => {
   return (
     <SizeMe noPlaceholder>
       {({ size }) => {
-        const viewer = document.getElementById(OPEN_SEA_DRAGON_ID)
+        const viewer = document.getElementById(OPEN_SEADRAGON_ID)
         const parentSize = viewer?.getBoundingClientRect()
 
         const width = size.width || parentSize?.width

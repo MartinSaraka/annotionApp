@@ -2,20 +2,26 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { parse } from 'path'
 import { omit } from 'lodash'
-import { v4 as uuid } from 'uuid'
 
-import { ImageService } from '@renderer/services'
+import { AnnotationService, ImageService } from '@renderer/services'
 
 import { TImageInfo } from '@common/types/image'
 import { TAnnotation } from '@common/types/annotation'
 import { TTool } from '@common/types/tool'
 
-import { ETool, EToolsType, TOOLS } from '@common/constants/tools'
+import { ETool, TOOLS } from '@common/constants/tools'
 import { IMAGES_STORAGE_NAME } from '@common/constants/storage'
+import {
+  DEFAULT_ACTIVE_TOOL,
+  DEFAULT_ANNOTATION_TOOL
+} from '@common/constants/tools'
 
 export type TOpenedImageState = {
   image: TImageInfo
-  activeTool: TTool | null
+  data: Partial<TImageInfo>
+  activeTool: TTool
+  annotationTool: TTool
+  selectedAnnotation: TID | null
   annotations: Record<TID, TAnnotation>
 }
 
@@ -27,7 +33,8 @@ export type TImageState = {
   select: (path: TPath | string) => void
   close: (path: TPath | string) => void
 
-  getData: (path: TPath | string) => TImageInfo | undefined
+  setData: (data: Partial<TImageInfo>) => TImageInfo | undefined
+  getData: (path?: TPath | string) => TImageInfo | undefined
 
   // Tools
 
@@ -35,14 +42,15 @@ export type TImageState = {
    * Get active tool of selected image
    * @returns active tool
    */
-  activeTool: () => TTool | null
+  activeTool: () => TTool
+  annotationTool: () => TTool
   /**
    * Toggle active tool of selected image
-   * @param type - type of the tool
    * @param tool - tool to toggle
    * @returns updated active tool
    */
-  toggleActiveTool: (type: EToolsType, tool: ETool) => TTool | null
+  toggleActiveTool: (tool: ETool) => TTool
+  toggleAnnotationTool: (tool: ETool) => TTool
 
   // Tabs
   tabs: (TPath | string)[]
@@ -60,6 +68,17 @@ export type TImageState = {
   addEmptyTab: () => TPath | string
 
   // Annotations
+
+  selectAnnotation: (id: TID) => TAnnotation | null
+
+  deselectAnnotations: () => void
+
+  getSelectedAnnotation: () => TAnnotation | null
+
+  getSelectedAnnotationParameters: () => {
+    name?: string
+    description?: string
+  }
 
   /**
    * Add annotation to the selected image
@@ -85,7 +104,7 @@ const useImageStore = create<TImageState>()(
     (set, get) => ({
       selected: null,
       opened: {},
-      tabs: [],
+      tabs: ['dashboard'],
 
       open: async (path, replace = true) => {
         if (path in get().opened) {
@@ -100,17 +119,10 @@ const useImageStore = create<TImageState>()(
         const parsedPath = parse(metadata.path)
 
         const info: TImageInfo = {
-          path: metadata.path,
           directory: parsedPath.dir,
           filename: parsedPath.name,
           extension: parsedPath.ext,
-          format: metadata.format,
-          width: metadata.width,
-          height: metadata.height,
-          levels: metadata.levels,
-          tileWidth: metadata.tileWidth,
-          tileHeight: metadata.tileHeight,
-          pixelsPerMeter: metadata.pixelsPerMeter
+          ...metadata
         }
 
         const selected = get().selected
@@ -127,15 +139,16 @@ const useImageStore = create<TImageState>()(
           set({ tabs: [...tabs, info.path] })
         }
 
-        console.log('info', tabs)
-
         set({
           selected: info.path,
           opened: {
             ...get().opened,
             [info.path]: {
               image: info,
-              activeTool: null,
+              data: {},
+              activeTool: DEFAULT_ACTIVE_TOOL,
+              annotationTool: DEFAULT_ANNOTATION_TOOL,
+              selectedAnnotation: null,
               annotations: {}
             }
           }
@@ -174,7 +187,13 @@ const useImageStore = create<TImageState>()(
 
       select: (path) => {
         const opened = get().opened
+        const selected = get().selected
         const tabs = get().tabs
+
+        if (selected === 'empty') {
+          const restTabs = tabs.filter((tab) => tab !== 'empty')
+          set({ tabs: restTabs })
+        }
 
         if (path in opened) {
           set({ selected: path })
@@ -189,11 +208,48 @@ const useImageStore = create<TImageState>()(
         return undefined
       },
 
+      setData: (data) => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected || !(selected in opened)) {
+          return undefined
+        }
+
+        const info = opened[selected]
+
+        set({
+          opened: {
+            ...opened,
+            [selected]: {
+              ...info,
+              data
+            }
+          }
+        })
+
+        return {
+          ...opened[selected].image,
+          ...opened[selected].data
+        }
+      },
+
       getData: (path) => {
         const opened = get().opened
+        const current = get().selected
 
-        if (path in opened) {
-          return opened[path].image
+        if (!path && current) {
+          return {
+            ...opened[current]?.image,
+            ...opened[current]?.data
+          }
+        }
+
+        if (path && path in opened) {
+          return {
+            ...opened[path].image,
+            ...opened[path].data
+          }
         }
 
         return undefined
@@ -205,22 +261,35 @@ const useImageStore = create<TImageState>()(
         const opened = get().opened
         const selected = get().selected
 
-        if (!selected) return null
+        if (!selected) return DEFAULT_ACTIVE_TOOL
 
         if (selected in opened) {
           return opened[selected].activeTool
         }
 
-        return null
+        return DEFAULT_ACTIVE_TOOL
       },
 
-      toggleActiveTool: (type, tool) => {
+      annotationTool: () => {
         const opened = get().opened
         const selected = get().selected
 
-        if (!selected) return null
+        if (!selected) return DEFAULT_ANNOTATION_TOOL
 
-        const activeTool = TOOLS?.[type]?.[tool]
+        if (selected in opened) {
+          return opened[selected].annotationTool
+        }
+
+        return DEFAULT_ANNOTATION_TOOL
+      },
+
+      toggleActiveTool: (tool) => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected) return DEFAULT_ACTIVE_TOOL
+
+        const activeTool = TOOLS?.[tool] || DEFAULT_ACTIVE_TOOL
 
         const info = opened[selected]
 
@@ -237,6 +306,30 @@ const useImageStore = create<TImageState>()(
         return opened[selected].activeTool
       },
 
+      toggleAnnotationTool: (tool) => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected) return DEFAULT_ANNOTATION_TOOL
+
+        const annotationTool = TOOLS?.[tool] || DEFAULT_ANNOTATION_TOOL
+
+        const info = opened[selected]
+
+        set({
+          opened: {
+            ...opened,
+            [selected]: {
+              ...info,
+              activeTool: annotationTool,
+              annotationTool
+            }
+          }
+        })
+
+        return opened[selected].annotationTool
+      },
+
       // Tabs
 
       setTabs: (tabs) => {
@@ -248,17 +341,97 @@ const useImageStore = create<TImageState>()(
       addEmptyTab: () => {
         const tabs = get().tabs
 
-        const newID = uuid()
+        if (tabs.includes('empty')) {
+          return 'empty'
+        }
 
         set({
-          selected: newID,
-          tabs: [...tabs, newID]
+          selected: 'empty',
+          tabs: [...tabs, 'empty']
         })
 
-        return newID
+        return 'empty'
       },
 
       // Annotations
+
+      selectAnnotation: (id) => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected || !(selected in opened)) {
+          return null
+        }
+
+        const info = opened[selected]
+
+        if (!(id in info.annotations)) {
+          return null
+        }
+
+        set({
+          opened: {
+            ...opened,
+            [selected]: {
+              ...info,
+              selectedAnnotation: id
+            }
+          }
+        })
+
+        return info.annotations[id]
+      },
+
+      deselectAnnotations: () => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected || !(selected in opened)) {
+          return
+        }
+
+        const info = opened[selected]
+
+        set({
+          opened: {
+            ...opened,
+            [selected]: {
+              ...info,
+              selectedAnnotation: null
+            }
+          }
+        })
+      },
+
+      getSelectedAnnotation: () => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected || !(selected in opened)) {
+          return null
+        }
+
+        const info = opened[selected]
+
+        if (!info.selectedAnnotation) {
+          return null
+        }
+
+        return info.annotations[info.selectedAnnotation] || null
+      },
+
+      getSelectedAnnotationParameters: () => {
+        const selectedAnnotation = get().getSelectedAnnotation()
+
+        return {
+          name: selectedAnnotation?.body.find(
+            (item) => item.purpose === 'naming'
+          )?.value,
+          description: selectedAnnotation?.body.find(
+            (item) => item.purpose === 'describing'
+          )?.value
+        }
+      },
 
       saveAnnotation: (annotation) => {
         const opened = get().opened
@@ -269,15 +442,24 @@ const useImageStore = create<TImageState>()(
         }
 
         const info = opened[selected]
+        const isExisting = annotation.id in info.annotations
+
+        const newAnnotation = isExisting
+          ? annotation
+          : AnnotationService.formatDefault(
+              annotation,
+              Object.keys(info?.annotations).length + 1
+            )
 
         set({
           opened: {
             ...opened,
             [selected]: {
               ...info,
+              selectedAnnotation: newAnnotation.id,
               annotations: {
                 ...info.annotations,
-                [annotation.id]: annotation
+                [newAnnotation.id]: newAnnotation
               }
             }
           }

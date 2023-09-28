@@ -7,10 +7,48 @@ export type TFileInfo = {
 }
 
 export type TImageInfo = TFileInfo & {
-  width: number
-  height: number
-  levels?: number
-  tileWidth: number
-  tileHeight: number
-  pixelsPerMeter: number
+  fillColor: number
+  pixelsPerMeter: {
+    x: number
+    y: number
+    avg: number
+  }
+  magnification: number
+  size: {
+    c: number
+    t: number
+    z: number
+    width: {
+      micro: number
+      pixel: number
+    }
+    height: {
+      micro: number
+      pixel: number
+    }
+  }
+  fileSize: {
+    compressed: number
+    uncompressed: number
+  }
+  tile: {
+    optimal: {
+      width: number
+      height: number
+    }
+  }
+  domains: string[]
+  resolution: number
+  pixel: {
+    width: {
+      micro: number
+      pixel: number
+    }
+    height: {
+      micro: number
+      pixel: number
+    }
+    type: string
+  }
+  levels: number
 }

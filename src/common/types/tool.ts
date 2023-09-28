@@ -1,6 +1,6 @@
-import { ETool, EToolsType } from '@common/constants/tools'
+import { ETool, EToolType } from '@common/constants/tools'
 
 export type TTool = {
-  type: EToolsType
+  type: EToolType
   value: ETool
 }

@@ -7,76 +7,83 @@ const Text = styled('p', {
 
   variants: {
     variant: {
-      xs: {
+      xxs: {
         fontWeight: 400,
         fontSize: '$1',
         lineHeight: '$1'
       },
 
-      sm: {
+      xs: {
         fontWeight: 400,
         fontSize: '$2',
         lineHeight: '$2'
       },
 
-      base: {
+      sm: {
         fontWeight: 400,
         fontSize: '$3',
         lineHeight: '$3'
       },
 
-      md: {
+      base: {
         fontWeight: 400,
         fontSize: '$4',
         lineHeight: '$4'
       },
 
-      lg: {
+      md: {
         fontWeight: 400,
         fontSize: '$5',
         lineHeight: '$5'
       },
 
-      xl: {
+      lg: {
         fontWeight: 400,
         fontSize: '$6',
         lineHeight: '$6'
       },
 
-      '2xl': {
+      xl: {
         fontWeight: 400,
         fontSize: '$7',
         lineHeight: '$7'
       },
 
-      '3xl': {
+      '2xl': {
         fontWeight: 400,
         fontSize: '$8',
         lineHeight: '$8'
       },
 
-      '4xl': {
+      '3xl': {
         fontWeight: 400,
         fontSize: '$9',
         lineHeight: '$9'
       },
 
-      '5xl': {
+      '4xl': {
         fontWeight: 400,
         fontSize: '$10',
         lineHeight: '$10'
       },
 
-      '6xl': {
+      '5xl': {
         fontWeight: 400,
         fontSize: '$11',
         lineHeight: '$11'
       },
 
-      '7xl': {
+      '6xl': {
         fontWeight: 400,
         fontSize: '$12',
         lineHeight: '$12'
+      }
+    },
+    capital: {
+      true: {
+        '&::first-letter': {
+          textTransform: 'capitalize'
+        }
       }
     }
   },

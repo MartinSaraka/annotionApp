@@ -7,5 +7,5 @@ export const ELECTRON_BROWSER_WINDOW_DEFAULT_OPTIONS: Electron.BrowserWindowCons
     autoHideMenuBar: true,
 
     titleBarStyle: 'hidden',
-    trafficLightPosition: { x: 16, y: 22 }
+    trafficLightPosition: { x: 16, y: 13 }
   }

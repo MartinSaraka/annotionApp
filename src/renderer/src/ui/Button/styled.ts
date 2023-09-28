@@ -14,27 +14,68 @@ export const ButtonRoot = styled(motion.button, {
   alignItems: 'center',
   justifyContent: 'center',
 
-  borderRadius: '$8',
-  border: '1px solid $colors$violet9',
+  borderRadius: '$6',
 
-  backgroundColor: '$violet9',
-  color: '$violet1',
-
-  paddingBlock: '$3',
-  paddingInline: '$6',
-
-  fontSize: '16px',
-  lineHeight: '24px',
-  fontWeight: 500,
-
-  '&[aria-disabled="true"]': {
-    opacity: 0.3,
-    cursor: 'not-allowed'
-  },
+  paddingBlock: '$2',
+  paddingInline: '$4',
 
   '&[data-loading="true"][data-cancelable="false"]': {
     opacity: 0.8,
     cursor: 'progress'
+  },
+
+  borderWidth: '$1',
+  borderStyle: 'solid',
+  backgroundColor: '#006CEB',
+  borderColor: '#0074FF',
+
+  fontSize: '$5',
+  lineHeight: 'none',
+  fontWeight: 600,
+
+  variants: {
+    outlined: {
+      true: {
+        backgroundColor: 'transparent',
+        color: '#0074FF',
+
+        '&:disabled': {
+          cursor: 'not-allowed'
+        }
+      }
+    },
+    ghost: {
+      true: {
+        backgroundColor: 'transparent',
+        border: 'none',
+        color: '$light',
+        padding: '$2',
+
+        '&:disabled': {
+          cursor: 'not-allowed'
+        }
+      }
+    },
+    input: {
+      true: {
+        backgroundColor: 'transparent',
+        border: 'none',
+        color: 'currentColor',
+        padding: 'calc($1 - 2px)',
+        fontSize: '$4',
+        fontWeight: 400,
+
+        '&:disabled': {
+          color: '$dark4',
+          cursor: 'default'
+        }
+      }
+    },
+    condensed: {
+      true: {
+        padding: '$1'
+      }
+    }
   }
 })
 
@@ -43,7 +84,7 @@ export const Content = styled(motion.div, {
   flexDirection: 'row',
 
   flexShrink: 0,
-  gap: '$3'
+  gap: '$1'
 })
 
 const animationKeyframes = keyframes({

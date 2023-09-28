@@ -1,26 +1,24 @@
-import { forwardRef, memo } from 'react'
+import React, { forwardRef, memo } from 'react'
 import { ComponentProps } from '@stitches/react'
-import { motion } from 'framer-motion'
-
-import Box from '../Box'
 
 import * as S from './styled'
 
 type TRootBaseProps = {
-  isPlain?: boolean
   children: React.ReactNode
 }
 
 type TToolbarProps = ComponentProps<typeof S.ToolbarRoot> & TRootBaseProps
 
-const Toolbar = ({ children, isPlain, ...rest }: TToolbarProps) => (
-  <S.ToolbarRoot
-    {...rest}
-    css={{ backgroundColor: !isPlain ? '$light' : undefined }}
-  >
-    {children}
-  </S.ToolbarRoot>
-)
+const Root = forwardRef(function Root(
+  { children, ...rest }: TToolbarProps,
+  forwardedRef: React.ForwardedRef<HTMLDivElement>
+) {
+  return (
+    <S.ToolbarRoot ref={forwardedRef} {...rest}>
+      {children}
+    </S.ToolbarRoot>
+  )
+})
 
 type TBaseProps = {
   children: React.ReactNode
@@ -56,14 +54,13 @@ const Toggle = forwardRef(function Toggle(
     <S.ToolbarToggle
       ref={forwardedRef}
       css={{
-        '&:hover': {
-          backgroundColor: '$purple3'
-        },
-
         '&[data-state="on"]': !isActiveControlled && {
-          backgroundColor: '$purple5'
+          backgroundColor: '#3E63DD'
         },
 
+        '&:hover:not(:disabled)[data-state="off"]': !isActive && {
+          color: '#0074FF'
+        },
         ...css
       }}
       {...rest}
@@ -71,23 +68,9 @@ const Toggle = forwardRef(function Toggle(
       {children}
 
       {isActiveControlled && isActive && (
-        <Box
-          as={motion.div}
+        <S.ActiveItem
           key="active"
           layoutId={`toolbar-toggle-active-${group || 'default'}`}
-          transition={{
-            layout: {
-              duration: 0.2,
-              ease: 'easeOut'
-            }
-          }}
-          css={{
-            position: 'absolute',
-            inset: 0,
-            backgroundColor: '$purple5',
-            borderRadius: '$2',
-            zIndex: '$base'
-          }}
         />
       )}
     </S.ToolbarToggle>
@@ -107,20 +90,17 @@ const Button = forwardRef(function Button(
   )
 })
 
-type TSeparatorProps = ComponentProps<typeof S.ToolbarSeparator> &
-  Partial<TBaseProps>
+type TSeparatorProps = ComponentProps<typeof S.ToolbarSeparator>
 
 const Separator = forwardRef(function Separator(
-  { children, ...rest }: TSeparatorProps,
+  props: TSeparatorProps,
   forwardedRef: React.ForwardedRef<HTMLDivElement>
 ) {
-  return (
-    <S.ToolbarSeparator ref={forwardedRef} {...rest}>
-      {children}
-    </S.ToolbarSeparator>
-  )
+  return <S.ToolbarSeparator ref={forwardedRef} {...props} />
 })
 
+const Toolbar = () => <React.Fragment />
+Toolbar.Root = memo(Root) as typeof Root
 Toolbar.Group = memo(Group) as typeof Group
 Toolbar.Toggle = memo(Toggle) as typeof Toggle
 Toolbar.Button = memo(Button) as typeof Button

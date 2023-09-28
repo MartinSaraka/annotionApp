@@ -19,6 +19,7 @@ const Button = forwardRef(function Button(
 ) {
   return (
     <S.ButtonRoot
+      type="button"
       ref={forwardedRef}
       aria-disabled={disabled}
       data-loading={loading}

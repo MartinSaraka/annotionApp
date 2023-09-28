@@ -17,7 +17,7 @@ const FileOpener = ({ css, ...rest }: TFileOpenerProps) => {
   const handleOpen = useCallback(
     (files: File[]) => {
       files.forEach((file) => {
-        open(file.path, false).then(console.info).catch(console.error)
+        open(file.path).then(console.info).catch(console.error)
       })
     },
     [open]

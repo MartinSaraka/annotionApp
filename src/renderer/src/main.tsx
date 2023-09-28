@@ -1,21 +1,26 @@
 import { ApolloProvider } from '@apollo/client'
 import { createRoot } from 'react-dom/client'
-import { HashRouter } from 'react-router-dom'
 
 import App from './App'
 import client from './apollo'
 
+import { Default } from './layouts'
 import { Toasts } from '@renderer/components'
+
+import '@renderer/i18n/config'
 
 const container = document.getElementById('root') as HTMLElement
 const root = createRoot(container!)
 
+import OpenSeadragon from 'openseadragon'
+window.OpenSeadragon = OpenSeadragon
+
 root.render(
   <ApolloProvider client={client}>
-    <HashRouter>
+    <Default>
       <App />
+    </Default>
 
-      <Toasts />
-    </HashRouter>
+    <Toasts />
   </ApolloProvider>
 )

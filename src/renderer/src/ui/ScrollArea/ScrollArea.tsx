@@ -16,8 +16,14 @@ const ScrollArea = forwardRef(function ScrollArea(
   forwardedRef: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
-    <S.ScrollAreaRoot ref={forwardedRef} {...rest}>
-      <S.ScrollAreaViewport>{children}</S.ScrollAreaViewport>
+    <S.ScrollAreaRoot
+      ref={forwardedRef}
+      data-orientation={orientation}
+      {...rest}
+    >
+      <S.ScrollAreaViewport data-orientation={orientation}>
+        {children}
+      </S.ScrollAreaViewport>
 
       {!disabled && (
         <>

@@ -6,15 +6,51 @@ export type TImageMetadataVariables = {
 
 export type TImageMetadata = {
   path: TPath
-  width: number
-  height: number
-  levels: number
+  fillColor: number
+  pixelsPerMeter: {
+    x: number
+    y: number
+    avg: number
+  }
+  magnification: number
+  size: {
+    c: number
+    t: number
+    z: number
+    width: {
+      micro: number
+      pixel: number
+    }
+    height: {
+      micro: number
+      pixel: number
+    }
+  }
+  fileSize: {
+    compressed: number
+    uncompressed: number
+  }
   format: string
-  tileWidth: number
-  tileHeight: number
-  pixelsPerMeterX: number
-  pixelsPerMeterY: number
-  pixelsPerMeter: number
+  tile: {
+    optimal: {
+      width: number
+      height: number
+    }
+  }
+  domains: string[]
+  resolution: number
+  pixel: {
+    width: {
+      micro: number
+      pixel: number
+    }
+    height: {
+      micro: number
+      pixel: number
+    }
+    type: string
+  }
+  levels: number
 }
 
 export default gql`
@@ -22,15 +58,51 @@ export default gql`
     metadata: getImageMetadata(path: $path)
       @rest(type: "TImageMetadata", path: "/metadata{args.path}") {
       path
-      width
-      height
-      levels
+      fillColor
+      pixelsPerMeter {
+        x
+        y
+        avg
+      }
+      magnification
+      size {
+        c
+        t
+        z
+        width {
+          micro
+          pixel
+        }
+        height {
+          micro
+          pixel
+        }
+      }
+      fileSize {
+        compressed
+        uncompressed
+      }
       format
-      tileWidth
-      tileHeight
-      pixelsPerMeterX
-      pixelsPerMeterY
-      pixelsPerMeter
+      tile {
+        optimal {
+          width
+          height
+        }
+      }
+      domains
+      resolution
+      pixel {
+        width {
+          micro
+          pixel
+        }
+        height {
+          micro
+          pixel
+        }
+        type
+      }
+      levels
     }
   }
 `

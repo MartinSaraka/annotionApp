@@ -30,6 +30,12 @@ export default defineConfig({
     define: {
       'process.env': process.env
     },
+    build: {
+      rollupOptions: {
+        // ... other rollup options
+        external: ['openseadragon'] // Specify the library name here
+      }
+    },
     resolve: {
       alias: {
         '@renderer': resolve('src/renderer/src'),

@@ -7,6 +7,7 @@
     "src/common/**/*"
   ],
   "compilerOptions": {
+    "strict": true,
     "composite": true,
     "types": [
       "electron-vite/node"

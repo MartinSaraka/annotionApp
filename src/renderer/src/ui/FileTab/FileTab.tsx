@@ -1,18 +1,19 @@
 import { ComponentProps } from '@stitches/react'
-import { Cross2Icon } from '@radix-ui/react-icons'
-import { motion } from 'framer-motion'
+import { MouseEventHandler } from 'react'
 
 import { TImageInfo } from '@common/types/image'
 
-import Box from '../Box'
 import Text from '../Text'
+import Chip from '../Chip'
+import Icon from '../Icon'
 
 import * as S from './styled'
 
 type TBaseProps = {
   data?: TImageInfo
+  name: string
   isActive?: boolean
-  onSelect?: () => void
+  onSelect?: MouseEventHandler<HTMLButtonElement>
   onClose?: () => void
 }
 
@@ -20,6 +21,7 @@ type TFileTabProps = ComponentProps<typeof S.Root> & TBaseProps
 
 const FileTab = ({
   data,
+  name,
   isActive,
   onSelect,
   onClose,
@@ -28,48 +30,37 @@ const FileTab = ({
   const format = data?.extension.replace('.', '')
 
   return (
-    <S.Root {...rest} onClick={onSelect}>
-      {format && <S.Badge>{format}</S.Badge>}
+    <S.Root role="button" onClick={onSelect} {...rest}>
+      {isActive && <S.Active layoutId="file-tab-active" />}
 
-      <Text css={{ fontWeight: 600, color: isActive ? '$light' : '$gray400' }}>
-        {data?.filename || 'New image'}
-      </Text>
+      <S.Content>
+        {name === 'dashboard' && (
+          <Icon name="HomeIcon" width={16} height={16} />
+        )}
 
-      <S.Close
-        onClick={onClose}
-        data-active={isActive}
-        aria-label="close-active-tab"
-        role="button"
-        css={{
-          opacity: isActive ? 1 : 0,
-          color: isActive ? '$light' : '$gray400'
-        }}
-      >
-        <Cross2Icon width={13} height={13} />
-      </S.Close>
+        {format && <Chip css={{ textTransform: 'uppercase' }}>{format}</Chip>}
 
-      {isActive && (
-        <Box
-          as={motion.div}
-          layoutId="file-tab-active"
-          transition={{
-            layout: {
-              duration: 0.2,
-              ease: 'easeOut'
-            }
-          }}
-          css={{
-            position: 'absolute',
-            height: 2,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: '$purple9',
-            borderRadius: '$pill',
-            zIndex: '$base'
-          }}
-        />
-      )}
+        {name !== 'dashboard' && (
+          <Text variant="base" css={{ fontWeight: isActive ? 600 : 500 }}>
+            {data?.filename || 'New image'}
+          </Text>
+        )}
+
+        {name !== 'dashboard' && (
+          <S.Close
+            ghost
+            condensed
+            onClick={onClose}
+            aria-label="close-active-tab"
+            css={{
+              opacity: isActive ? 1 : undefined,
+              color: isActive ? '$light' : '$dark4'
+            }}
+          >
+            <Icon name="Cross2Icon" width={11} height={11} />
+          </S.Close>
+        )}
+      </S.Content>
     </S.Root>
   )
 }
