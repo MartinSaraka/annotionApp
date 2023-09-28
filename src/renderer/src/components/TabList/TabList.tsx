@@ -20,7 +20,7 @@ const TabList = ({ css, ...rest }: TTabListProps) => {
   )
 
   const handleSelect = useCallback(
-    (tab: (typeof tabs)[number]) => (event: MouseEvent<HTMLButtonElement>) => {
+    (tab: (typeof tabs)[number]) => (event: MouseEvent<HTMLDivElement>) => {
       select(tab)
 
       onNextTick(() => {

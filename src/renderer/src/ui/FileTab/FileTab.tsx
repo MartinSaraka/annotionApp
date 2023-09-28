@@ -13,7 +13,7 @@ type TBaseProps = {
   data?: TImageInfo
   name: string
   isActive?: boolean
-  onSelect?: MouseEventHandler<HTMLButtonElement>
+  onSelect?: MouseEventHandler<HTMLDivElement>
   onClose?: () => void
 }
 
