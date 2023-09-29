@@ -3,14 +3,38 @@ import { autoUpdater } from 'electron-updater'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { join } from 'path'
 
+import childProcess from 'child_process'
+
 import icon from '../../resources/icon.png?asset'
 
 import { IN_MILLISECONDS, MINUTE } from '@common/constants/time'
 import { ELECTRON_BROWSER_WINDOW_DEFAULT_OPTIONS } from '@common/constants/window'
 
+// Hazel Updater
 const server = process.env.MAIN_VITE_HAZEL_SERVER_URL || 'localhost:3001'
 const url = join(server, '/update/', process.platform, app.getVersion())
 autoUpdater.setFeedURL({ provider: 'generic', url })
+
+// Image Server
+const IMAGE_SERVER_EXECUTABLE_PATH =
+  process.env.MAIN_VITE_IMAGE_SERVER_EXECUTABLE_PATH ||
+  'src/java/out/mac/Contents/MacOS/Server'
+
+const runServer = () => {
+  const child = childProcess.spawn(IMAGE_SERVER_EXECUTABLE_PATH, [])
+
+  child.stdout.on('data', (data) => {
+    console.log(`Executable stdout: ${data}`)
+  })
+
+  child.stderr.on('data', (data) => {
+    console.error(`Executable stderr: ${data}`)
+  })
+
+  child.on('close', (code) => {
+    console.log(`Executable exited with code ${code}`)
+  })
+}
 
 let mainWindow: BrowserWindow | null = null
 
@@ -38,6 +62,11 @@ const createWindow = (): void => {
   mainWindow.on('ready-to-show', () => {
     mainWindow?.maximize()
     mainWindow?.show()
+  })
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    // Call the function when the main window is ready.
+    runServer()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
