@@ -7,24 +7,24 @@ An Electron application with React and TypeScript.
 ### Install
 
 ```bash
-$ yarn
+yarn
 ```
 
 ### Development
 
 ```bash
-$ yarn dev
+yarn dev
 ```
 
 ### Build
 
 ```bash
 # For windows
-$ yarn build:win
+yarn build:win
 
 # For macOS
-$ yarn build:mac
+yarn build:mac
 
 # For Linux
-$ yarn build:linux
+yarn build:linux
 ```

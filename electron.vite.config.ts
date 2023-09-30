@@ -27,13 +27,13 @@ export default defineConfig({
   },
 
   renderer: {
+    plugins: [react()],
     define: {
       'process.env': process.env
     },
     build: {
       rollupOptions: {
-        // ... other rollup options
-        external: ['openseadragon'] // Specify the library name here
+        external: ['openseadragon']
       }
     },
     resolve: {
@@ -42,7 +42,6 @@ export default defineConfig({
         '@common': resolve('src/common'),
         path: 'path-browserify'
       }
-    },
-    plugins: [react()]
+    }
   }
 })
