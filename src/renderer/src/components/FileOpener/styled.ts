@@ -13,8 +13,5 @@ export const Dropzone = styled('label', {
   width: '100%',
   height: '100%',
 
-  border: '2px dashed $colors$gray7',
-  borderRadius: '$4',
-
-  backgroundColor: '$gray2'
+  padding: '$15'
 })

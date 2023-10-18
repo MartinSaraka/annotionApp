@@ -9,7 +9,6 @@ import '@renderer/lib/openseadragon-smart-scroll-zoom.js'
 // Annotorious
 import * as Annotorious from '@recogito/annotorious-openseadragon'
 import * as SelectorPack from '@recogito/annotorious-selector-pack'
-import * as ShapeLabelsFormatter from '@recogito/annotorious-shape-labels'
 
 import { OSDAdapter } from '@renderer/adapters'
 import {
@@ -19,7 +18,7 @@ import {
 } from '@renderer/store'
 
 import { TImageInfo } from '@common/types/image'
-import { TAnnotation } from '@common/types/annotation'
+import { TAnnotation, TAnnotationBody } from '@common/types/annotation'
 
 import {
   OPEN_SEADRAGON_PREVIEW_OPTIONS,
@@ -36,10 +35,29 @@ export type TUseViewer = {
   closeAnnotorious: () => void
 }
 
-/*const DEFAULT_VIEWER_STATE: TViewer = {
-  osd: null,
-  helper: null
-}*/
+/**
+ * Register annotorious shape labels plugin and custom formatter
+ * @description Add support for shape labels and colors
+ */
+const formatter = (data: { bodies: TAnnotationBody[] }) => {
+  const label = data.bodies.find((b) => b.purpose === 'tagging')
+
+  const foreignObject = document.createElementNS(
+    'http://www.w3.org/2000/svg',
+    'foreignObject'
+  )
+
+  foreignObject.innerHTML = `
+    <div xmlns="http://www.w3.org/1999/xhtml" class="a9s-shape-label-wrapper">
+      <div class="a9s-shape-label"></div>
+    </div>
+  `
+
+  return {
+    element: foreignObject,
+    'data-class-id': label?.value || ''
+  }
+}
 
 const useViewer = (source: TImageInfo): TUseViewer => {
   const openseadragon = useOpenSeadragonStore((state) => state.osd)
@@ -116,20 +134,12 @@ const useViewer = (source: TImageInfo): TUseViewer => {
     (main: TOSDViewer, preview: TOSDViewer) => {
       const mainAnnotorious = Annotorious(main, {
         ...ANNOTORIOUS_DEFAULT_CONFIG,
-        /**
-         * Register annotorious shape labels plugin
-         * @description Add support for shape labels
-         */
-        formatter: ShapeLabelsFormatter()
+        formatter
       })
 
       const previewAnnotorious = Annotorious(preview, {
         ...ANNOTORIOUS_PREVIEW_CONFIG,
-        /**
-         * Register annotorious shape labels plugin
-         * @description Add support for shape labels
-         */
-        formatter: ShapeLabelsFormatter()
+        formatter
       })
 
       /**
@@ -160,8 +170,8 @@ const useViewer = (source: TImageInfo): TUseViewer => {
         console.log('changeSelectionTarget')
       })
 
-      anno.on('clickAnnotation', () => {
-        console.log('clickAnnotation')
+      anno.on('clickAnnotation', (annotation: TAnnotation) => {
+        console.log('clickAnnotation', annotation)
       })
 
       anno.on('startSelection', (point) => {
@@ -178,6 +188,7 @@ const useViewer = (source: TImageInfo): TUseViewer => {
       anno.on('updateAnnotation', (annotation: TAnnotation) => {
         console.log('updateAnnotation')
         saveAnnotation(annotation)
+        AnnotoriousHandler.instance(preview).showPreview(annotation)
       })
 
       anno.on('deleteAnnotation', (annotation: TAnnotation) => {

@@ -3,6 +3,7 @@ import { ComponentProps } from '@stitches/react'
 
 import { Box } from '@renderer/ui'
 import {
+  AnnotationInfoClass,
   AnnotationInfoDefault,
   AnnotationInfoMeasurements,
   AnnotationInfoParameters,
@@ -16,6 +17,7 @@ const AnnotationInfo = (props: TLeftBarAnnotationInfoProps) => (
     <AnnotationInfoPreview />
     <AnnotationInfoDefault />
     <AnnotationInfoParameters />
+    <AnnotationInfoClass />
     <AnnotationInfoMeasurements />
   </Box>
 )

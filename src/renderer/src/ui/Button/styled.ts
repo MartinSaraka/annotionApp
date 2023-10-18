@@ -71,6 +71,13 @@ export const ButtonRoot = styled(motion.button, {
         }
       }
     },
+    slim: {
+      true: {
+        paddingBlock: 'calc($1 + 2px)',
+        paddingInline: '$3',
+        fontSize: '$4'
+      }
+    },
     condensed: {
       true: {
         padding: '$1'

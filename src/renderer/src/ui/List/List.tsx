@@ -15,29 +15,46 @@ type TBaseProps = {
   as?: React.ElementType
   collapsible?: boolean
   title?: string
-  children: React.ReactNode
+  actions?: React.ReactNode
+  children?: React.ReactNode
 }
 
 type TListProps = ComponentProps<typeof S.Root> & TBaseProps
 
-const List = ({ children, title, collapsible, ...rest }: TListProps) => {
+const List = ({
+  children,
+  actions,
+  title,
+  collapsible,
+  ...rest
+}: TListProps) => {
   const { visible, set } = useToggle(true)
 
   return (
-    <Collapsible.Root asChild open={visible} onOpenChange={set} {...rest}>
+    <Collapsible.Root
+      asChild
+      open={collapsible ? visible : true}
+      onOpenChange={collapsible ? set : undefined}
+      disabled={!collapsible}
+      {...rest}
+    >
       <S.Root role="list">
         {title && (
-          <S.Trigger disabled={!collapsible}>
-            <Text variant="md" capital css={{ flex: 1, fontWeight: 600 }}>
-              {title}
-            </Text>
+          <Collapsible.Trigger asChild>
+            <S.Trigger>
+              <Text variant="md" capital css={{ flex: 1, fontWeight: 600 }}>
+                {title}
+              </Text>
 
-            {collapsible && (
-              <Box as={motion.div} animate={{ rotate: visible ? 0 : -90 }}>
-                <Icon name="ChevronDownIcon" width={16} height={16} />
-              </Box>
-            )}
-          </S.Trigger>
+              {actions && <Box>{actions}</Box>}
+
+              {collapsible && (
+                <Box as={motion.div} animate={{ rotate: visible ? 0 : -90 }}>
+                  <Icon name="ChevronDownIcon" width={16} height={16} />
+                </Box>
+              )}
+            </S.Trigger>
+          </Collapsible.Trigger>
         )}
 
         <S.Content forceMount animate={{ height: visible ? 'auto' : 0 }}>
@@ -61,15 +78,22 @@ const ListBox = forwardRef(function Box(
   )
 })
 
-type TItemProps = ComponentProps<typeof S.Item> & TBaseProps
+type TItemBaseProps = {
+  children: React.ReactNode
+  actions?: React.ReactNode
+}
+
+type TItemProps = ComponentProps<typeof S.Item> & TItemBaseProps
 
 const Item = forwardRef(function Item(
-  { children, ...rest }: TItemProps,
+  { children, actions, ...rest }: TItemProps,
   forwardedRef: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
     <S.Item role="listitem" ref={forwardedRef} {...rest}>
       {children}
+
+      {actions && <S.Actions>{actions}</S.Actions>}
     </S.Item>
   )
 })

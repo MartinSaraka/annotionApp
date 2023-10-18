@@ -85,6 +85,14 @@ export const ScrollAreaRoot = styled(ScrollArea.Root, {
           marginBlock: '$4'
         }
       }
+    },
+
+    noOverflow: {
+      true: {
+        [`${ScrollAreaViewport}`]: {
+          overflow: 'visible !important'
+        }
+      }
     }
   }
 })

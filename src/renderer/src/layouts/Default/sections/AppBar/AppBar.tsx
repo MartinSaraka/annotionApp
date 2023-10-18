@@ -1,8 +1,7 @@
 import { memo } from 'react'
 import { ComponentProps } from '@stitches/react'
-import { QuestionMarkCircledIcon } from '@radix-ui/react-icons'
 
-import { Box, Button } from '@renderer/ui'
+import { Box, Button, Icon } from '@renderer/ui'
 import { TabList } from '@renderer/components'
 
 import * as S from './styled'
@@ -19,8 +18,17 @@ const AppBar = (props: TAppBarProps) => (
     </S.Content>
 
     <S.Aside>
+      <Button
+        outlined
+        slim
+        css={{ _appRegion: 'no-drag', alignSelf: 'center' }}
+      >
+        <Icon name="UpdateIcon" width={12} height={12} />
+        Update available
+      </Button>
+
       <Button ghost aria-label="report" css={{ _appRegion: 'no-drag' }}>
-        <QuestionMarkCircledIcon width={15} height={15} />
+        <Icon name="QuestionMarkCircledIcon" width={15} height={15} />
       </Button>
     </S.Aside>
   </S.Root>

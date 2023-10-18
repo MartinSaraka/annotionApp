@@ -1,9 +1,8 @@
-import { ChangeEvent, memo, useCallback } from 'react'
+import { ChangeEvent, memo, useCallback, useRef } from 'react'
 import { ComponentProps } from '@stitches/react'
-import { FileIcon } from '@radix-ui/react-icons'
 
-import { Box, Button, Text } from '@renderer/ui'
-import { useImageStore, useToastStore } from '@renderer/store'
+import { Box, Button, Icon, Text } from '@renderer/ui'
+import { useImageStore } from '@renderer/store'
 import { preventAllDefaults } from '@common/utils/global'
 
 import * as S from './styled'
@@ -12,7 +11,12 @@ type TFileOpenerProps = ComponentProps<typeof Box>
 
 const FileOpener = ({ css, ...rest }: TFileOpenerProps) => {
   const open = useImageStore((state) => state.open)
-  const show = useToastStore((state) => state.show)
+
+  const inputRef = useRef<HTMLInputElement | null>(null)
+
+  const handleFocus = useCallback(() => {
+    inputRef.current?.click()
+  }, [inputRef])
 
   const handleOpen = useCallback(
     (files: File[]) => {
@@ -66,10 +70,10 @@ const FileOpener = ({ css, ...rest }: TFileOpenerProps) => {
   return (
     <Box
       css={{
-        width: '100%',
-        height: '100%',
-        padding: '$4',
-        flex: 1,
+        borderWidth: '$2',
+        borderStyle: '$dashed',
+        borderColor: '$dark4',
+        borderRadius: '$4',
         ...css
       }}
       {...rest}
@@ -82,41 +86,32 @@ const FileOpener = ({ css, ...rest }: TFileOpenerProps) => {
         onDragLeave={handleDragLeave}
       >
         <Box
-          as={FileIcon}
-          width={50}
-          height={50}
-          css={{
-            color: '$gray12',
-            marginBottom: '$2'
-          }}
-        />
-
-        <Text as="h1" variant="lg" css={{ color: '$gray12', fontWeight: 700 }}>
-          Select a files or drag and drop here
-        </Text>
-
-        <Text variant="base" css={{ color: '$gray11', fontWeight: 500 }}>
-          Supported formats: VSI
-        </Text>
-
-        <Button
-          onClick={() =>
-            show({
-              title: 'Update available'
-            })
-          }
-        >
-          Select file
-        </Button>
-
-        <Box
           multiple
+          hidden
           as="input"
           type="file"
           id="file-opener"
+          ref={inputRef}
           onChange={handleChange}
           css={{ display: 'none' }}
         />
+
+        <Icon
+          name="FileIcon"
+          width={50}
+          height={50}
+          css={{ color: '$light', marginBottom: '$2' }}
+        />
+
+        <Text as="h1" variant="2xl" css={{ color: '$light', fontWeight: 700 }}>
+          Select a files or drag and drop here
+        </Text>
+
+        <Text variant="lg" css={{ color: '$dark4', fontWeight: 500 }}>
+          Supported formats: VSI
+        </Text>
+
+        <Button onClick={handleFocus}>Select file</Button>
       </S.Dropzone>
     </Box>
   )

@@ -4,7 +4,7 @@ import { ComponentProps } from '@stitches/react'
 import * as S from './styled'
 
 type TBaseProps = {
-  children: React.ReactNode
+  children?: React.ReactNode
 }
 
 type TChipProps = ComponentProps<typeof S.Root> & TBaseProps

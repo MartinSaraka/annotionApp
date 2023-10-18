@@ -9,7 +9,8 @@ import {
   blueA,
   green,
   yellow,
-  violet
+  violet,
+  crimsonDark
 } from '@radix-ui/colors'
 
 export const {
@@ -57,6 +58,7 @@ export const {
 
       ...purple,
       ...violet,
+      ...crimsonDark,
 
       ...red,
       ...green,

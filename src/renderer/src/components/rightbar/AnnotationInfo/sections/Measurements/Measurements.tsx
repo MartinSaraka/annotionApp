@@ -76,6 +76,7 @@ const Measurements = () => {
           as={Form}
           title={t('annotation:sections.measurements')}
           collapsible
+          borderTop
         >
           <input type="submit" hidden />
 

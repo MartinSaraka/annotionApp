@@ -8,6 +8,8 @@ export const OPEN_SEADRAGON_PREFIX_URL =
   'https://cdn.jsdelivr.net/npm/openseadragon@3.1.0/build/openseadragon/images/'
 
 export const OPEN_SEADRAGON_DEFAULT_OPTIONS: Partial<OpenSeadragon.Options> = {
+  // debugMode: true,
+
   id: OPEN_SEADRAGON_ID,
   prefixUrl: OPEN_SEADRAGON_PREFIX_URL,
   homeButton: OPEN_SEADRAGON_HOME_ID,
@@ -21,12 +23,11 @@ export const OPEN_SEADRAGON_DEFAULT_OPTIONS: Partial<OpenSeadragon.Options> = {
     clickToZoom: false
   },
 
-  // debugMode: true,
-
   // Minimap
-  showNavigator: true
-  // navigatorId: OPEN_SEA_DRAGON_MINIMAP_ID,
-  // navigatorMaintainSizeRatio: true,
+  showNavigator: true,
+  navigatorBorderColor: 'none',
+  navigatorBackground: '#101021',
+  navigatorMaintainSizeRatio: true
 }
 
 export const OPEN_SEADRAGON_PREVIEW_OPTIONS: Partial<OpenSeadragon.Options> = {

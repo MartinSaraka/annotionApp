@@ -2,11 +2,12 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { parse } from 'path'
 import { omit } from 'lodash'
+import { v4 as uuid } from 'uuid'
 
 import { AnnotationService, ImageService } from '@renderer/services'
 
 import { TImageInfo } from '@common/types/image'
-import { TAnnotation } from '@common/types/annotation'
+import { TAnnotation, TAnnotationClass } from '@common/types/annotation'
 import { TTool } from '@common/types/tool'
 
 import { ETool, TOOLS } from '@common/constants/tools'
@@ -23,6 +24,7 @@ export type TOpenedImageState = {
   annotationTool: TTool
   selectedAnnotation: TID | null
   annotations: Record<TID, TAnnotation>
+  classes: Record<TAnnotationClass['id'], TAnnotationClass>
 }
 
 export type TImageState = {
@@ -70,10 +72,10 @@ export type TImageState = {
   // Annotations
 
   selectAnnotation: (id: TID) => TAnnotation | null
-
   deselectAnnotations: () => void
-
+  getAnnotation: (id: TID) => TAnnotation | null
   getSelectedAnnotation: () => TAnnotation | null
+  getSelectedAnnotationClass: () => TAnnotationClass | null
 
   getSelectedAnnotationParameters: () => {
     name?: string
@@ -97,6 +99,11 @@ export type TImageState = {
    * @returns annotations of the selected image
    */
   getAnnotations: () => Record<TID, TAnnotation> | null
+
+  // Classes
+  getClasses: () => TAnnotationClass[]
+  upsertClass: (data: TAnnotationClass) => TAnnotationClass | null
+  deleteClass: (data: TAnnotationClass) => TAnnotationClass | null
 }
 
 const useImageStore = create<TImageState>()(
@@ -149,7 +156,8 @@ const useImageStore = create<TImageState>()(
               activeTool: DEFAULT_ACTIVE_TOOL,
               annotationTool: DEFAULT_ANNOTATION_TOOL,
               selectedAnnotation: null,
-              annotations: {}
+              annotations: {},
+              classes: {}
             }
           }
         })
@@ -403,6 +411,19 @@ const useImageStore = create<TImageState>()(
         })
       },
 
+      getAnnotation: (id) => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected || !(selected in opened)) {
+          return null
+        }
+
+        const info = opened[selected]
+
+        return info.annotations?.[id] || null
+      },
+
       getSelectedAnnotation: () => {
         const opened = get().opened
         const selected = get().selected
@@ -418,6 +439,27 @@ const useImageStore = create<TImageState>()(
         }
 
         return info.annotations[info.selectedAnnotation] || null
+      },
+
+      getSelectedAnnotationClass: () => {
+        const selectedAnnotation = get().getSelectedAnnotation()
+
+        const selectedClassId = selectedAnnotation?.body.find(
+          (item) => item.purpose === 'tagging'
+        )?.value
+
+        if (!selectedClassId) return null
+
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected || !(selected in opened)) {
+          return null
+        }
+
+        const classes = opened[selected].classes
+
+        return classes[selectedClassId] || null
       },
 
       getSelectedAnnotationParameters: () => {
@@ -507,6 +549,71 @@ const useImageStore = create<TImageState>()(
         }
 
         return opened[selected].annotations
+      },
+
+      // Classes
+      getClasses: () => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected || !(selected in opened)) {
+          return []
+        }
+
+        return Object.values(opened[selected].classes)
+      },
+
+      upsertClass: (data) => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected || !(selected in opened)) {
+          return null
+        }
+
+        const info = opened[selected]
+        const id = !data.id ? uuid() : data.id
+
+        set({
+          opened: {
+            ...opened,
+            [selected]: {
+              ...info,
+              classes: {
+                ...info.classes,
+                [id]: {
+                  ...data,
+                  id
+                }
+              }
+            }
+          }
+        })
+
+        return get().opened[selected].classes[id]
+      },
+
+      deleteClass: (data) => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected || !(selected in opened)) {
+          return null
+        }
+
+        const classes = opened[selected].classes
+
+        set({
+          opened: {
+            ...opened,
+            [selected]: {
+              ...opened[selected],
+              classes: omit(classes, data.id)
+            }
+          }
+        })
+
+        return data
       }
     }),
     {

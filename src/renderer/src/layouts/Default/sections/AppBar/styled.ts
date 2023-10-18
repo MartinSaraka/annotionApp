@@ -35,5 +35,7 @@ export const Aside = styled('aside', {
 
   display: 'flex',
   flexDirection: 'row',
+
+  alignItems: 'center',
   gap: '$3'
 })

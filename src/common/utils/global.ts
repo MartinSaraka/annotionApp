@@ -72,3 +72,16 @@ export const arrayToObject = <
 
   return obj
 }
+
+export const slugify = <TText extends PropertyKey>(text: TText) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .normalize('NFKD')
+    .replace(/[^\w-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/_/g, '-')
+    .replace(/--+/g, '-')
+    .replace(/-$/g, '')
+}

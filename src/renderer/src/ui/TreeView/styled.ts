@@ -87,7 +87,6 @@ export const Node = styled('div', {
   },
 
   p: {
-    flex: 1,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'

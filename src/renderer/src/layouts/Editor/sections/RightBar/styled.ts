@@ -15,3 +15,13 @@ export const Root = styled('aside', {
   borderLeftColor: '$dark3',
   borderLeftStyle: 'solid'
 })
+
+export const Inner = styled('div', {
+  position: 'relative',
+
+  display: 'flex',
+  flexDirection: 'column',
+
+  width: '100%',
+  height: '100%'
+})

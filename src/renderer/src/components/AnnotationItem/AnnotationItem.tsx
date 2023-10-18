@@ -1,8 +1,11 @@
 import { memo, useCallback } from 'react'
 import { INodeRendererProps } from 'react-accessible-treeview'
 
-import { Button, Icon, Shape, Text, TreeView } from '@renderer/ui'
+import { Button, Chip, Icon, Shape, Text, TreeView } from '@renderer/ui'
 import { preventAllDefaults } from '@common/utils/global'
+import { AnnotoriousHandler } from '@renderer/handlers'
+import { useAnnotoriousStore, useImageStore } from '@renderer/store'
+import { omit } from 'lodash'
 
 type TBaseProps = {
   data: INodeRendererProps
@@ -10,8 +13,17 @@ type TBaseProps = {
 
 type TAnnotationItemProps = TBaseProps
 
+// TODO: annotationService to annotationHandler
+// TODO: use toggle not buttons
+
 const AnnotationItem = ({ data }: TAnnotationItemProps) => {
+  const id = data.element.id as TID
   const tag = (data.element.metadata?.tag || 'path') as React.ElementType
+
+  const anno = useAnnotoriousStore((state) => state.anno)
+  const annotation = useImageStore((state) => state.getAnnotation(id))
+
+  const annotoriousHandler = AnnotoriousHandler.instance(anno)
 
   const handleLock = useCallback(
     preventAllDefaults(() => {
@@ -27,9 +39,26 @@ const AnnotationItem = ({ data }: TAnnotationItemProps) => {
     []
   )
 
+  const handleZoomToAnnotation = useCallback(() => {
+    if (!annotation) return
+    annotoriousHandler.zoomToAnnotation(annotation)
+  }, [annotation, annotoriousHandler])
+
+  const handleMouseEnter = useCallback(() => {
+    if (!annotation) return
+    annotoriousHandler.highlightAnnotation(annotation, 'on')
+  }, [annotation, annotoriousHandler])
+
+  const handleMouseLeave = useCallback(() => {
+    if (!annotation) return
+    annotoriousHandler.highlightAnnotation(annotation, 'off')
+  }, [annotation, annotoriousHandler])
+
   return (
     <TreeView.Node
       nodeProps={data}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       actions={
         <>
           <Button ghost condensed onClick={handleLock}>
@@ -52,8 +81,13 @@ const AnnotationItem = ({ data }: TAnnotationItemProps) => {
         </>
       }
     >
-      <Shape tag={tag} props={data.element.metadata || {}} />
+      <Button ghost condensed onDoubleClick={handleZoomToAnnotation}>
+        <Shape tag={tag} props={omit(data.element.metadata || {}, 'class')} />
+      </Button>
+
       <Text variant="md">{data.element.name}</Text>
+
+      <Chip small fromCss data-class-id={data.element.metadata?.class} />
     </TreeView.Node>
   )
 }

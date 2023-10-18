@@ -59,3 +59,9 @@ export type TAnnotationSVGSelector = {
   type: 'SvgSelector'
   value: string
 }
+
+export type TAnnotationClass = {
+  id: TID
+  name: string
+  color: string
+}

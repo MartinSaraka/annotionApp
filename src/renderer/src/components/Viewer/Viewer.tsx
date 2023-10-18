@@ -3,9 +3,11 @@ import { useCallback } from 'react'
 import { OpenSeadragonMain } from '@renderer/ui/openseadragon'
 import { useDidMount, useFullDropzone, useViewer } from '@renderer/hooks'
 
+import { ClassHandler } from '@renderer/handlers'
 import { useImageStore, useSettingsStore } from '@renderer/store'
-import { setGlobalCssVariable } from '@common/utils/global'
+
 import { TImageInfo } from '@common/types/image'
+import { setGlobalCssVariable } from '@common/utils/global'
 
 type TBaseProps = {
   info: TImageInfo
@@ -15,6 +17,7 @@ const Viewer = ({ info }: TBaseProps) => {
   useViewer(info)
 
   const open = useImageStore((state) => state.open)
+  const classes = useImageStore((state) => state.getClasses())
 
   const setInitialPageColor = useSettingsStore(
     (state) => () => setGlobalCssVariable('--page-color', state.pageColor)
@@ -35,6 +38,7 @@ const Viewer = ({ info }: TBaseProps) => {
   useDidMount(() => {
     setInitialPageColor()
     setInitialSelectedAnnotation()
+    ClassHandler.initClasses(classes)
   })
 
   return <OpenSeadragonMain />

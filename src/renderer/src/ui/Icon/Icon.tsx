@@ -1,11 +1,13 @@
 import { forwardRef, memo } from 'react'
 import { ComponentProps } from '@stitches/react'
+
 import * as RadixIcons from '@radix-ui/react-icons'
+import * as CustomIcons from '@renderer/icons'
 
 import Box from '../Box'
 
 type TBaseProps = {
-  name: keyof typeof RadixIcons
+  name: keyof typeof RadixIcons | keyof typeof CustomIcons
 }
 
 type TIconProps = ComponentProps<typeof Box> &

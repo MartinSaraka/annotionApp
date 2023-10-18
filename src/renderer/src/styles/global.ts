@@ -105,8 +105,54 @@ export const globalStyles = globalCss({
     border: '1.5px dashed $purple10'
   },
 
+  // OpenSeadragon
+  '.openseadragon-container': {
+    '.navigator': {
+      marginTop: '$4 !important',
+      marginRight: '$4 !important'
+    }
+  },
+
   // Annotorious
   'svg.a9s-annotationlayer': {
+    foreignObject: {
+      overflow: 'visible',
+      width: '1px',
+      height: '1px'
+    },
+
+    '.a9s-shape-label': {
+      padding: '$1',
+
+      fontSize: '$4',
+      lineHeight: '92%',
+      fontWeight: 600,
+
+      '&:before': {
+        position: 'absolute',
+        borderRadius: '$4',
+
+        backgroundColor: 'rgb(var(--class-color, 12, 140, 233))',
+        filter: 'hue-rotate(-6deg) saturate(118%) brightness(22%)',
+
+        content: 'var(--class-name)',
+        color: 'rgb(var(--class-color, 12, 140, 233))',
+
+        paddingInline: 'calc($1 + 2px)',
+        paddingBlock: 'calc($1 + 1px)'
+      },
+
+      '&:after': {
+        position: 'absolute',
+        content: 'var(--class-name)',
+
+        paddingInline: 'calc($1 + 2px)',
+        paddingBlock: 'calc($1 + 1px)',
+
+        color: 'rgb(var(--class-color, 12, 140, 233))'
+      }
+    },
+
     '.a9s-selection ': {
       '.a9s-outer': {},
       '.a9s-inner': {}
@@ -114,11 +160,19 @@ export const globalStyles = globalCss({
 
     '.a9s-annotation': {
       '.a9s-outer': {
-        stroke: '$blueA7'
+        stroke: 'rgb(var(--class-color, 12, 140, 233))'
       },
 
       '.a9s-inner': {
+        stroke: 'rgb(var(--class-color, 12, 140, 233))',
+
         '&:hover': {
+          stroke: '$blue8'
+        }
+      },
+
+      '&.highlight': {
+        '.a9s-inner': {
           stroke: '$blueA8'
         }
       },
@@ -130,7 +184,7 @@ export const globalStyles = globalCss({
 
         '.a9s-inner': {
           stroke: '$blueA8',
-          fill: '$blueA4'
+          fill: 'rgba(var(--class-color, 12, 140, 233), 0.1)'
         },
 
         '&:hover': {

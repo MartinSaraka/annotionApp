@@ -3,7 +3,11 @@ import { ETool } from '@common/constants/tools'
 export default {
   sections: {
     parameters: 'parameters',
-    measurements: 'measurements'
+    measurements: 'measurements',
+    class: 'class'
+  },
+  popovers: {
+    selectClass: 'class list'
   },
   properties: {
     type: {

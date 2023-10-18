@@ -9,6 +9,7 @@ import {
 import { useImageStore } from '@renderer/store'
 
 import * as S from './styled'
+import { ScrollArea } from '@renderer/ui'
 
 type TRightBarProps = ComponentProps<typeof S.Root>
 
@@ -19,9 +20,21 @@ const RightBar = (props: TRightBarProps) => {
 
   return (
     <S.Root {...props}>
-      <OpenSeadragonPreview visible={!!selectedAnnotation} />
+      <ScrollArea
+        fade
+        orientation="vertical"
+        css={{ maxHeight: '100%', flex: '1 1 auto', minHeight: 0 }}
+      >
+        <S.Inner>
+          <OpenSeadragonPreview visible={!!selectedAnnotation} />
 
-      {selectedAnnotation ? <RightBarAnnotationInfo /> : <RightBarImageInfo />}
+          {selectedAnnotation ? (
+            <RightBarAnnotationInfo />
+          ) : (
+            <RightBarImageInfo />
+          )}
+        </S.Inner>
+      </ScrollArea>
     </S.Root>
   )
 }

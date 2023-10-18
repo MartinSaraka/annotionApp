@@ -4,6 +4,7 @@ import { AnnotationUtils } from '@common/utils'
 
 type TMetadata = {
   tag: ReturnType<(typeof AnnotationUtils)['getShape']>['tag']
+  class: string
 }
 
 class TreeAdapter {
@@ -16,7 +17,10 @@ class TreeAdapter {
     }
 
     for (const annotation of annotations) {
-      const data = AnnotationService.getBody(annotation, ['naming'] as const)
+      const data = AnnotationService.getBody(annotation, [
+        'naming',
+        'tagging'
+      ] as const)
       const shape = AnnotationUtils.from(annotation).shape
 
       nodes.children?.push({
@@ -24,6 +28,7 @@ class TreeAdapter {
         name: data?.naming || '',
         metadata: {
           tag: shape.tag,
+          class: data?.tagging || '',
           ...shape.props
         }
       } as TRATNodes<TMetadata>)
