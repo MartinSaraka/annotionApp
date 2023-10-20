@@ -5,11 +5,41 @@ import {
   bytecodePlugin
 } from 'electron-vite'
 
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 import react from '@vitejs/plugin-react'
+
+const SERVER_PATHS: Partial<
+  Record<NodeJS.Platform, Partial<Record<NodeJS.Architecture, string>>>
+> = {
+  darwin: {
+    arm: 'mac-arm',
+    arm64: 'mac-arm',
+    x64: 'mac-intel'
+  },
+  win32: {
+    x64: 'win'
+  }
+}
+
+const getServerPath = () =>
+  `src/java/build/${
+    SERVER_PATHS[process.platform]?.[process.arch] || 'not-supported'
+  }/Contents`
 
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin(), bytecodePlugin()],
+    plugins: [
+      externalizeDepsPlugin(),
+      bytecodePlugin(),
+      viteStaticCopy({
+        targets: [
+          {
+            src: getServerPath(),
+            dest: 'server'
+          }
+        ]
+      })
+    ],
     resolve: {
       alias: {
         '@common': resolve('src/common')
