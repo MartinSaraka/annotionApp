@@ -4,24 +4,46 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { join } from 'path'
 
 import childProcess from 'child_process'
+import { fixPathForAsarUnpack } from 'electron-util'
 
 import icon from '../../resources/icon.png?asset'
 
 import { IN_MILLISECONDS, MINUTE } from '@common/constants/time'
 import { ELECTRON_BROWSER_WINDOW_DEFAULT_OPTIONS } from '@common/constants/window'
 
+const fixedDirname = fixPathForAsarUnpack(__dirname)
+
 // Hazel Updater
 const server = process.env.MAIN_VITE_HAZEL_SERVER_URL || 'localhost:3001'
 const url = join(server, '/update/', process.platform, app.getVersion())
 autoUpdater.setFeedURL({ provider: 'generic', url })
 
-// Image Server
-const IMAGE_SERVER_EXECUTABLE_PATH =
-  process.env.MAIN_VITE_IMAGE_SERVER_EXECUTABLE_PATH ||
-  'src/java/out/mac/Contents/MacOS/Server'
+// Image server
+const SERVER_PATHS: Partial<
+  Record<NodeJS.Platform, Partial<Record<NodeJS.Architecture, string>>>
+> = {
+  darwin: {
+    arm: 'server/Contents/MacOS/Server',
+    arm64: 'server/Contents/MacOS/Server',
+    x64: 'server/Contents/MacOS/Server'
+  },
+  win32: {
+    x64: 'server/win/Server.exe'
+  }
+}
+
+const SERVER_PATH =
+  process.env.NODE_ENV === 'development'
+    ? 'src/java/build/mac-arm/Contents/MacOS/Server'
+    : join(
+        fixedDirname,
+        SERVER_PATHS[process.platform]?.[process.arch] || 'server/not-supported'
+      )
+
+let mainWindow: BrowserWindow | null = null
 
 const runServer = () => {
-  const child = childProcess.spawn(IMAGE_SERVER_EXECUTABLE_PATH, [])
+  const child = childProcess.spawn(SERVER_PATH)
 
   child.stdout.on('data', (data) => {
     console.log(`Executable stdout: ${data}`)
@@ -35,8 +57,6 @@ const runServer = () => {
     console.log(`Executable exited with code ${code}`)
   })
 }
-
-let mainWindow: BrowserWindow | null = null
 
 const createWindow = (): void => {
   mainWindow = new BrowserWindow({

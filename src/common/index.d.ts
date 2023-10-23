@@ -1,7 +1,7 @@
 import OpenSeadragon from 'openseadragon'
 import OpenSeadragonImagingHelper from '@openseadragon-imaging/openseadragon-imaginghelper'
 
-import * as Annotorious from '@recogito/annotorious-openseadragon'
+import Annotorious from '@recogito/annotorious-openseadragon'
 
 import { flattenTree } from 'react-accessible-treeview'
 import { IFlatMetadata } from 'react-accessible-treeview/dist/TreeView/utils'

@@ -12,9 +12,9 @@ const SERVER_PATHS: Partial<
   Record<NodeJS.Platform, Partial<Record<NodeJS.Architecture, string>>>
 > = {
   darwin: {
-    arm: 'mac-arm',
-    arm64: 'mac-arm',
-    x64: 'mac-intel'
+    arm: 'mac-arm/Contents',
+    arm64: 'mac-arm/Contents',
+    x64: 'mac-intel/Contents'
   },
   win32: {
     x64: 'win'
@@ -24,7 +24,7 @@ const SERVER_PATHS: Partial<
 const getServerPath = () =>
   `src/java/build/${
     SERVER_PATHS[process.platform]?.[process.arch] || 'not-supported'
-  }/Contents`
+  }`
 
 export default defineConfig({
   main: {
@@ -63,7 +63,7 @@ export default defineConfig({
     },
     build: {
       rollupOptions: {
-        external: ['openseadragon']
+        //external: ['openseadragon']
       }
     },
     resolve: {

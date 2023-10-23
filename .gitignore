@@ -9,5 +9,6 @@ out
 *.pem
 
 # env
-.env*
+.env
+.env.*
 !.env.example

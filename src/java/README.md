@@ -42,4 +42,4 @@ java -jar ../lib/packr-all.jar \
 
 ### 5. Run `executable`
 
-Double click on `Server` in [`out/mac/Contents/MacOS`](./out/mac/Contents/MacOS) directory.
+Double click on `Server` in [`build/mac/Contents/MacOS`](./build/mac-arm/Contents/MacOS) directory.

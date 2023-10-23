@@ -7,8 +7,8 @@ import '@renderer/lib/openseadragon-scalebar.js'
 import '@renderer/lib/openseadragon-smart-scroll-zoom.js'
 
 // Annotorious
-import * as Annotorious from '@recogito/annotorious-openseadragon'
-import * as SelectorPack from '@recogito/annotorious-selector-pack'
+import Annotorious from '@recogito/annotorious-openseadragon'
+import SelectorPack from '@recogito/annotorious-selector-pack'
 
 import { OSDAdapter } from '@renderer/adapters'
 import {
