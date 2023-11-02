@@ -32,7 +32,10 @@ export default defineConfig(({ mode }) => ({
             viteStaticCopy({
               targets: [
                 {
-                  src: getServerPath(process.env.PLATFORM, process.env.ARCH),
+                  src: getServerPath(
+                    process.env.PLATFORM || process.platform,
+                    process.env.ARCH || process.arch
+                  ),
                   dest: 'server'
                 }
               ]
