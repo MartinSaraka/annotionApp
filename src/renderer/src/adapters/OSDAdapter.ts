@@ -2,9 +2,11 @@ import { TImageInfo } from '@common/types/image'
 
 class OSDAdapter {
   static fromInfoToTileSources(metadata: TImageInfo): TOSDTileSourceOptions {
-    const uri = import.meta.env.RENDERER_VITE_SERVICE_URI
+    const uri = import.meta.env.RENDERER_VITE_SERVICE_URI.concat(
+      window.electron.process.platform === 'win32' ? '/' : ''
+    )
 
-    const path = `${uri}//${metadata.directory}/${metadata.filename}`
+    const path = `${uri}${metadata.directory}/${metadata.filename}`
     const tileSize = `${metadata.tile.optimal.width}-${metadata.tile.optimal.height}`
 
     const options: TOSDTileSourceOptions = {
@@ -28,7 +30,7 @@ class OSDAdapter {
     sizeWidth: number,
     sizeHeight: number
   ): string {
-    const path = `//${metadata.directory}/${metadata.filename}`
+    const path = `${metadata.directory}/${metadata.filename}`
     const props = `${pointX}-${pointY}-${sizeWidth}-${sizeHeight}`
 
     return `${path}-${props}${metadata.extension}`

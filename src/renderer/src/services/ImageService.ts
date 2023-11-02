@@ -13,8 +13,7 @@ class ImageService {
   static getMetadata = async (
     filePath: TPath
   ): Promise<TImageMetadata | null> => {
-    const normalized = filePath.replace(/^\//, '')
-    const path = `//${normalized}`
+    const path = filePath.replace(/^\//, '')
 
     try {
       const { data } = await client.query<
@@ -36,8 +35,7 @@ class ImageService {
     filePath: TPath
   ): Promise<TImageCropped | null> => {
     try {
-      const normalized = filePath.replace(/^\//, '')
-      const path = `//${normalized}`
+      const path = filePath.replace(/^\//, '')
 
       const { data } = await client.query<
         { cropped: TImageCropped },
