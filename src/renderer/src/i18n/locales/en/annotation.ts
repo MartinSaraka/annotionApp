@@ -12,6 +12,7 @@ export default {
   properties: {
     type: {
       [ETool.POINT]: 'point',
+      [ETool.NUCLICK_POINT]: 'point',
       [ETool.RECTANGLE]: 'rectangle',
       [ETool.CIRCLE]: 'circle',
       [ETool.ELLIPSE]: 'ellipse',

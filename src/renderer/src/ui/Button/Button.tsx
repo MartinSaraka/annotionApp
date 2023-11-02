@@ -26,8 +26,8 @@ const Button = forwardRef(function Button(
       data-cancelable={!!onCancel}
       disabled={disabled || (!onCancel && loading)}
       onClick={!disabled && !loading ? onClick : onCancel}
-      whileHover={!disabled && !loading ? { scale: 1.05 } : { scale: 1 }}
-      whileTap={!disabled && !loading ? { scale: 0.95 } : { scale: 1 }}
+      whileHover={!disabled && !loading ? { scale: 1.03 } : { scale: 1 }}
+      whileTap={!disabled && !loading ? { scale: 0.97 } : { scale: 1 }}
       {...rest}
     >
       <S.Content>{children}</S.Content>

@@ -26,14 +26,14 @@ const Shape = forwardRef(function Shape(
     const viewBox = [bbox.x, bbox.y, bbox.width, bbox.height].join(' ')
 
     ref.current.setAttribute('viewBox', viewBox)
-  }, [ref, refElement])
+  }, [ref, refElement, props])
 
   return (
     <S.Root role="img" ref={ref} width={16} height={16} {...rest}>
       <S.Element
+        as={tag}
         ref={refElement}
         vectorEffect="non-scaling-stroke"
-        as={tag}
         {...props}
       />
     </S.Root>

@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { join, resolve } from 'path'
 import {
   defineConfig,
   externalizeDepsPlugin,
@@ -8,37 +8,37 @@ import {
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import react from '@vitejs/plugin-react'
 
-const SERVER_PATHS: Partial<
-  Record<NodeJS.Platform, Partial<Record<NodeJS.Architecture, string>>>
-> = {
-  darwin: {
-    arm: 'mac-arm/Contents',
-    arm64: 'mac-arm/Contents',
-    x64: 'mac-intel/Contents'
-  },
-  win32: {
-    x64: 'win'
-  }
+import { SERVER_PATHS } from './src/common/constants/core'
+
+const getServerPath = (platform?: string, arch?: string) => {
+  if (!platform) throw new Error('No platform specified.')
+  if (!arch) throw new Error('No architecture specified.')
+
+  const serverPath: string | undefined = SERVER_PATHS[platform]?.[arch]
+
+  if (!serverPath)
+    throw new Error(`Unsupported platform/architecture: ${platform}/${arch}.`)
+
+  return join('src/java/build', serverPath)
 }
 
-const getServerPath = () =>
-  `src/java/build/${
-    SERVER_PATHS[process.platform]?.[process.arch] || 'not-supported'
-  }`
-
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   main: {
     plugins: [
       externalizeDepsPlugin(),
       bytecodePlugin(),
-      viteStaticCopy({
-        targets: [
-          {
-            src: getServerPath(),
-            dest: 'server'
-          }
-        ]
-      })
+      ...(mode === 'production'
+        ? [
+            viteStaticCopy({
+              targets: [
+                {
+                  src: getServerPath(process.env.PLATFORM, process.env.ARCH),
+                  dest: 'server'
+                }
+              ]
+            })
+          ]
+        : [])
     ],
     resolve: {
       alias: {
@@ -61,11 +61,6 @@ export default defineConfig({
     define: {
       'process.env': process.env
     },
-    build: {
-      rollupOptions: {
-        //external: ['openseadragon']
-      }
-    },
     resolve: {
       alias: {
         '@renderer': resolve('src/renderer/src'),
@@ -74,4 +69,4 @@ export default defineConfig({
       }
     }
   }
-})
+}))

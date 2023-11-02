@@ -1,16 +1,19 @@
-import * as RadixIcons from '@radix-ui/react-icons'
+import { v4 as uuid } from 'uuid'
 
-import { TAnnotation } from '@common/types/annotation'
+import { TAnnotation, TAnnotationBody } from '@common/types/annotation'
 import { arrayToObject } from '@common/utils/global'
-
 import { ETool } from '@common/constants/tools'
+
+import { TOOL_ICON_MAP } from '@common/constants/tools'
 import { ANNOTATION_TYPE_REGEX } from '@common/constants/regex'
+import { DEFAULT_ANNOTATION_BODY_ITEM } from '@common/constants/annotation'
 import {
   ANNOTATION_TAG_PROPS_MAP,
   ANNOTATION_TYPE_TAG_MAP
 } from '@common/constants/annotations'
 
 // POINT: xywh=pixel:44094.2578125,54109.70703125,0,0 // CIRCLE
+// NUCLICK: xywh=pixel:44094.2578125,54109.70703125,0,0 // CIRCLE
 // RECTANGLE: xywh=pixel:48276.42578125,60762.24609375,0,0 // RECT x, y, width, height
 // CIRCLE: <svg><circle cx="81521.2890625" cy="52408.9296875" r="2942.51953125"></circle></svg>
 // ELLIPSE: <svg><ellipse cx="81521.2890625" cy="52408.9296875" rx="7386.9921875" ry="2942.51953125"></ellipse></svg>
@@ -36,8 +39,11 @@ class AnnotationUtils {
 
   static getType = (annotation: TAnnotation) => {
     const value = annotation.target.selector.value
+    const renderedVia = annotation.target.renderedVia?.name
 
-    if (value.includes('xywh') && value.includes('0,0')) return ETool.POINT
+    if (value.includes('xywh') && renderedVia === 'point') return ETool.POINT
+    if (value.includes('xywh') && renderedVia === 'point')
+      return ETool.NUCLICK_POINT
     if (value.includes('xywh')) return ETool.RECTANGLE
     if (value.includes('circle')) return ETool.CIRCLE
     if (value.includes('ellipse')) return ETool.ELLIPSE
@@ -50,13 +56,8 @@ class AnnotationUtils {
   static getIcon = (annotation: TAnnotation) => {
     const type = AnnotationUtils.getType(annotation)
 
-    const icons: Record<typeof type, keyof typeof RadixIcons> = {
-      [ETool.POINT]: 'DotFilledIcon',
-      [ETool.RECTANGLE]: 'SquareIcon',
-      [ETool.CIRCLE]: 'CircleIcon',
-      [ETool.ELLIPSE]: 'CircleBackslashIcon',
-      [ETool.POLYGON]: 'ComponentInstanceIcon',
-      [ETool.FREEHAND]: 'Pencil1Icon',
+    const icons: Record<typeof type, string> = {
+      ...TOOL_ICON_MAP,
       unknown: 'QuestionMarkIcon'
     }
 
@@ -79,6 +80,45 @@ class AnnotationUtils {
     if (type === ETool.POINT) props.r = 1
 
     return { tag, props }
+  }
+
+  static createBody = <TValue>(
+    type: TAnnotationBody['type'] = DEFAULT_ANNOTATION_BODY_ITEM['type'],
+    purpose: NonNullable<TAnnotationBody['purpose']>,
+    value: TValue
+  ): TAnnotationBody => ({
+    ...DEFAULT_ANNOTATION_BODY_ITEM,
+    type,
+    purpose,
+    value: `${value}`
+  })
+
+  static createAnnotation = (
+    points: { x: number; y: number }[]
+  ): TAnnotation => {
+    const pointsString = points
+      .map((point) => `${point.x},${point.y}`)
+      .join(' ')
+
+    return {
+      '@context': 'http://www.w3.org/ns/anno.jsonld',
+      id: `#${uuid()}`,
+      type: 'Annotation',
+      motivation: 'generated',
+      body: [
+        {
+          purpose: 'naming',
+          type: 'TextualBody',
+          value: 'Annotation 4'
+        }
+      ],
+      target: {
+        selector: {
+          type: 'SvgSelector',
+          value: `<svg><polygon points="${pointsString}"></polygon></svg>`
+        }
+      }
+    }
   }
 }
 

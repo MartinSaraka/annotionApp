@@ -9,7 +9,9 @@ import '@renderer/lib/openseadragon-smart-scroll-zoom.js'
 // Annotorious
 import Annotorious from '@recogito/annotorious-openseadragon'
 import SelectorPack from '@recogito/annotorious-selector-pack'
+import NuClickTool from '@renderer/tools/NuClick/NuClickTool'
 
+import { AnnotoriousHandler, NuClickHandler } from '@renderer/handlers'
 import { OSDAdapter } from '@renderer/adapters'
 import {
   useAnnotoriousStore,
@@ -20,6 +22,7 @@ import {
 import { TImageInfo } from '@common/types/image'
 import { TAnnotation, TAnnotationBody } from '@common/types/annotation'
 
+import { ETool } from '@common/constants/tools'
 import {
   OPEN_SEADRAGON_PREVIEW_OPTIONS,
   OPEN_SEADRAGON_DEFAULT_OPTIONS
@@ -28,7 +31,6 @@ import {
   ANNOTORIOUS_DEFAULT_CONFIG,
   ANNOTORIOUS_PREVIEW_CONFIG
 } from '@common/constants/annotations'
-import { AnnotoriousHandler } from '@renderer/handlers'
 
 export type TUseViewer = {
   closeOpenSeadragon: () => void
@@ -39,8 +41,28 @@ export type TUseViewer = {
  * Register annotorious shape labels plugin and custom formatter
  * @description Add support for shape labels and colors
  */
-const formatter = (data: { bodies: TAnnotationBody[] }) => {
-  const label = data.bodies.find((b) => b.purpose === 'tagging')
+const formatter = (data: {
+  bodies: TAnnotationBody[]
+  underlying: TAnnotation
+}) => {
+  const props = {}
+
+  for (const body of data.bodies) {
+    switch (body.purpose) {
+      case 'tagging':
+        props['data-class-id'] = body.value
+        break
+      case 'status':
+        props['data-status'] = body.value
+        break
+      case 'editability':
+        props['data-editability'] = body.value
+        break
+      case 'visibility':
+        props['data-visibility'] = body.value
+        break
+    }
+  }
 
   const foreignObject = document.createElementNS(
     'http://www.w3.org/2000/svg',
@@ -54,8 +76,8 @@ const formatter = (data: { bodies: TAnnotationBody[] }) => {
   `
 
   return {
-    element: foreignObject,
-    'data-class-id': label?.value || ''
+    element: props['data-class-id'] ? foreignObject : undefined,
+    ...props
   }
 }
 
@@ -67,6 +89,7 @@ const useViewer = (source: TImageInfo): TUseViewer => {
   const annoPreview = useAnnotoriousStore((state) => state.preview)
 
   const annotations = useImageStore((state) => state.getAnnotations() || {})
+  const getActiveTool = useImageStore((state) => state.activeTool)
   const saveAnnotation = useImageStore((state) => state.saveAnnotation)
   const removeAnnotation = useImageStore((state) => state.removeAnnotation)
   const selectAnnotation = useImageStore((state) => state.selectAnnotation)
@@ -148,6 +171,11 @@ const useViewer = (source: TImageInfo): TUseViewer => {
        */
       SelectorPack(mainAnnotorious)
 
+      /**
+       * Register annotorious NuClick custom tool
+       */
+      mainAnnotorious.addDrawingTool(NuClickTool)
+
       return {
         main: mainAnnotorious,
         preview: previewAnnotorious
@@ -181,8 +209,24 @@ const useViewer = (source: TImageInfo): TUseViewer => {
 
       anno.on('createAnnotation', (annotation: TAnnotation) => {
         console.log('createAnnotation')
+
+        const activeTool = getActiveTool()
+
         saveAnnotation(annotation)
         AnnotoriousHandler.instance(preview).showPreview(annotation)
+
+        if (activeTool.value === ETool.NUCLICK_POINT) {
+          NuClickHandler.handle(annotation).then((data) => {
+            anno.removeAnnotation(annotation.id)
+            removeAnnotation(annotation.id)
+
+            if (data) {
+              anno.addAnnotation(data)
+              saveAnnotation(data)
+              AnnotoriousHandler.instance(preview).showPreview(data)
+            }
+          })
+        }
       })
 
       anno.on('updateAnnotation', (annotation: TAnnotation) => {
@@ -205,6 +249,29 @@ const useViewer = (source: TImageInfo): TUseViewer => {
       anno.on('cancelSelected', () => {
         console.log('cancelSelected')
         deselectAnnotations()
+      })
+
+      anno.on(
+        'mouseEnterAnnotation',
+        (_: TAnnotation, element: HTMLElement) => {
+          console.log('mouseEnterAnnotation')
+
+          const status = element.getAttribute('data-status')
+          const editability = element.getAttribute('data-editability')
+          const visibility = element.getAttribute('data-visibility')
+
+          if (
+            status === 'generating' ||
+            editability === 'locked' ||
+            visibility === 'hidden'
+          ) {
+            anno.disableSelect = true
+          }
+        }
+      )
+
+      anno.on('mouseLeaveAnnotation', () => {
+        anno.disableSelect = false
       })
     },
     [annotations]

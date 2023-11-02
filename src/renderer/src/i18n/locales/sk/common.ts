@@ -1,6 +1,6 @@
 export default {
   appName: {
-    short: 'HIAT',
+    short: 'AnnotAid',
     long: 'Histopathology image annotation tool'
   }
 } as const

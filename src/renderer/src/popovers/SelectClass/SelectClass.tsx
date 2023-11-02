@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo, useRef } from 'react'
+import { memo, useCallback, useMemo } from 'react'
 import { Form, Formik, FormikConfig } from 'formik'
 
 import {
@@ -12,13 +12,15 @@ import {
   RadioGroup,
   ScrollArea
 } from '@renderer/ui'
+import { UpsertClassPopover } from '@renderer/popovers'
 
 import { TAnnotation, TAnnotationClass } from '@common/types/annotation'
 import { useAnnotoriousStore, useImageStore } from '@renderer/store'
-import { AnnotationService } from '@renderer/services'
+import { AnnotationHandler } from '@renderer/handlers'
 
 type TSelectClassProps = {
   selectedClass: TAnnotationClass | null
+  onClose?: () => void
 }
 
 type TFormValues = {
@@ -26,9 +28,7 @@ type TFormValues = {
   classId: TAnnotationClass['id']
 }
 
-const SelectClass = ({ selectedClass }: TSelectClassProps) => {
-  const closeRef = useRef<HTMLButtonElement | null>(null)
-
+const SelectClass = ({ selectedClass, onClose }: TSelectClassProps) => {
   const classes = useImageStore((state) => state.getClasses())
   const update = useAnnotoriousStore((state) => state.saveAndUpdateAnnotation)
   const annotation = useImageStore((state) => state.getSelectedAnnotation())
@@ -45,19 +45,16 @@ const SelectClass = ({ selectedClass }: TSelectClassProps) => {
     (values) => {
       if (!values.annotation) return
 
-      const data = AnnotationService.annotation(values.annotation)
-        .upsertBody({
-          type: 'TextualBody',
-          purpose: 'tagging',
-          value: values.classId
-        })
-        .get()
+      const data = AnnotationHandler.upsertBody(
+        values.annotation,
+        'TextualBody',
+        'tagging',
+        values.classId
+      )
 
-      update(data)
-        .then(() => closeRef.current?.click())
-        .catch(console.error)
+      update(data).then(onClose).catch(console.error)
     },
-    [closeRef, update]
+    [onClose, update]
   )
 
   const renderClasses = useCallback(
@@ -80,66 +77,98 @@ const SelectClass = ({ selectedClass }: TSelectClassProps) => {
       onSubmit={onSubmit}
       initialValues={initialValues}
     >
-      {({ values, setFieldValue, handleSubmit }) => (
-        <List
-          as={Form}
-          title="Class list"
-          actions={
-            <Box css={{ flexDirection: 'row', gap: '$4' }}>
-              <Button ghost condensed css={{ margin: '-$1' }}>
-                <Icon name="PlusIcon" width={16} height={16} />
-              </Button>
+      {({ initialValues: init, values, setFieldValue, handleSubmit }) => (
+        <Popover.Root>
+          <Popover.Anchor>
+            <List
+              as={Form}
+              title="Class list"
+              actions={
+                <Box css={{ flexDirection: 'row', gap: '$4' }}>
+                  <Popover.Trigger asChild>
+                    <Button ghost condensed css={{ margin: '-$1' }}>
+                      <Icon name="PlusIcon" width={16} height={16} />
+                    </Button>
+                  </Popover.Trigger>
 
-              <Popover.Close asChild ref={closeRef}>
-                <Button ghost condensed css={{ margin: '-$1' }}>
-                  <Icon name="Cross2Icon" width={16} height={16} />
-                </Button>
-              </Popover.Close>
-            </Box>
-          }
-        >
-          <Box css={{ marginTop: '$1' }}>
-            <Input size="small" role="searchbox">
-              <Input.Element>
-                <Button input>
-                  <Icon name="MagnifyingGlassIcon" width={14} height={14} />
-                </Button>
-              </Input.Element>
+                  <Button
+                    ghost
+                    condensed
+                    css={{ margin: '-$1' }}
+                    onClick={onClose}
+                  >
+                    <Icon name="Cross2Icon" width={16} height={16} />
+                  </Button>
+                </Box>
+              }
+            >
+              {classes?.length ? (
+                <>
+                  <Box css={{ marginTop: '$1' }}>
+                    <Input size="small" role="searchbox">
+                      <Input.Element>
+                        <Button input>
+                          <Icon
+                            name="MagnifyingGlassIcon"
+                            width={14}
+                            height={14}
+                          />
+                        </Button>
+                      </Input.Element>
 
-              <Input.Field role="search" placeholder="Search classes" />
+                      <Input.Field role="search" placeholder="Search classes" />
 
-              <Input.Element>
-                <Button input>
-                  <Icon name="Cross2Icon" width={12} height={12} />
-                </Button>
-              </Input.Element>
-            </Input>
-          </Box>
+                      <Input.Element>
+                        <Button input>
+                          <Icon name="Cross2Icon" width={12} height={12} />
+                        </Button>
+                      </Input.Element>
+                    </Input>
+                  </Box>
 
-          <ScrollArea
-            fade
-            noOverflow
-            orientation="vertical"
-            css={{
-              maxHeight: 200,
-              minHeight: 0
-            }}
-          >
-            <RadioGroup.Root
-              asChild
-              name="classId"
-              defaultValue={values.classId}
-              onValueChange={(value) => {
-                setFieldValue('classId', value)
+                  <ScrollArea
+                    fade
+                    orientation="vertical"
+                    css={{ $$maxHeight: '200px' }}
+                  >
+                    <RadioGroup.Root
+                      asChild
+                      name="classId"
+                      defaultValue={init.classId}
+                      value={values.classId}
+                      onValueChange={(value) => {
+                        setFieldValue('classId', value)
+                        handleSubmit()
+                      }}
+                    >
+                      <List.Box css={{ $$gap: 0, flex: 1 }}>
+                        {classes.map(renderClasses)}
+                      </List.Box>
+                    </RadioGroup.Root>
+                  </ScrollArea>
+                </>
+              ) : (
+                <List.Box css={{ marginTop: '$1' }}>
+                  <Popover.Trigger asChild>
+                    <Button slim outlined css={{ marginBlock: '-$1' }}>
+                      <Icon name="PlusIcon" width={12} height={12} />
+                      Create first class
+                    </Button>
+                  </Popover.Trigger>
+                </List.Box>
+              )}
+            </List>
+          </Popover.Anchor>
+
+          <Popover.Content alignOffset={-1}>
+            <UpsertClassPopover
+              onCreate={(value) => {
+                setFieldValue('classId', value.id)
                 handleSubmit()
               }}
-            >
-              <List.Box css={{ $$gap: 0, flex: 1 }}>
-                {classes.map(renderClasses)}
-              </List.Box>
-            </RadioGroup.Root>
-          </ScrollArea>
-        </List>
+            />
+          </Popover.Content>
+        </Popover.Root>
       )}
     </Formik>
   )

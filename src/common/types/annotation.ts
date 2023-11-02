@@ -23,15 +23,17 @@ export type TAnnotation = {
   type: string
   body: TAnnotationBody[]
   target: TAnnotationTarget
+  motivation?: string
 }
 
 export type TAnnotationBody = {
   type: string
-  purpose?: string
+  purpose?: TAnnotationPurpose
   value: string
 }
 
 export type TAnnotationTarget = {
+  state?: string
   selector: TAnnotationSelector
   renderedVia?: TAnnotationRenderedVia
 }
@@ -65,3 +67,11 @@ export type TAnnotationClass = {
   name: string
   color: string
 }
+
+export type TAnnotationPurpose =
+  | 'tagging'
+  | 'naming'
+  | 'describing'
+  | 'editability'
+  | 'visibility'
+  | 'status'

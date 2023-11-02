@@ -1,7 +1,7 @@
-import { ETool } from '@common/constants/tools'
-import { setHotkeyViewerCursor } from '@common/utils/tools'
-import { setViewerCursor } from '@common/utils/viewer'
 import { create } from 'zustand'
+
+import { CursorHandler } from '@renderer/handlers'
+import { ETool } from '@common/constants/tools'
 
 export type TOpenSeadragonState = {
   osd: TOSDViewer | null
@@ -25,12 +25,12 @@ export type TOpenSeadragonState = {
   resetTool: () => void
 }
 
-const setZoomOutCursor = setHotkeyViewerCursor('zoom-out', 'Shift')
+/*const setZoomOutCursor = setHotkeyViewerCursor('zoom-out', 'Shift')
 const setZoomInCursor = setHotkeyViewerCursor('zoom-in', 'Shift')
 
 const setZoomCursor = () => setViewerCursor('zoom-in')
 const setGrabCursor = () => setViewerCursor('grab')
-const setGrabbingCursor = () => setViewerCursor('grabbing')
+const setGrabbingCursor = () => setViewerCursor('grabbing')*/
 
 const useOpenSeadragonStore = create<TOpenSeadragonState>()((set, get) => ({
   osd: null,
@@ -64,21 +64,25 @@ const useOpenSeadragonStore = create<TOpenSeadragonState>()((set, get) => ({
     if (!openseadragon) return
 
     if (tool === ETool.ZOOM_IN) {
-      window.addEventListener('keydown', setZoomOutCursor)
+      CursorHandler.setZoomCursor(openseadragon)
+      openseadragon.gestureSettingsMouse.clickToZoom = true
+
+      /*window.addEventListener('keydown', setZoomOutCursor)
       window.addEventListener('keyup', setZoomInCursor)
 
       openseadragon.addHandler('canvas-drag', setGrabbingCursor)
       openseadragon.addHandler('canvas-drag-end', setZoomCursor)
 
       openseadragon.gestureSettingsMouse.clickToZoom = true
-      setZoomCursor()
+      setZoomCursor()*/
     }
 
     if (tool === ETool.HAND) {
-      openseadragon.addHandler('canvas-press', setGrabbingCursor)
+      CursorHandler.setPanCursor(openseadragon)
+      /*openseadragon.addHandler('canvas-press', setGrabbingCursor)
       openseadragon.addHandler('canvas-release', setGrabCursor)
 
-      setGrabCursor()
+      setGrabCursor()*/
     }
   },
 
@@ -86,7 +90,10 @@ const useOpenSeadragonStore = create<TOpenSeadragonState>()((set, get) => ({
     const openseadragon = get().osd
     if (!openseadragon) return
 
-    window.removeEventListener('keydown', setZoomOutCursor)
+    CursorHandler.resetAll(openseadragon)
+    openseadragon.gestureSettingsMouse.clickToZoom = false
+
+    /*window.removeEventListener('keydown', setZoomOutCursor)
     window.removeEventListener('keyup', setZoomInCursor)
 
     openseadragon.removeHandler('canvas-drag', setGrabbingCursor)
@@ -97,7 +104,7 @@ const useOpenSeadragonStore = create<TOpenSeadragonState>()((set, get) => ({
 
     openseadragon.gestureSettingsMouse.clickToZoom = false
 
-    setGrabCursor()
+    setGrabCursor()*/
   }
 }))
 

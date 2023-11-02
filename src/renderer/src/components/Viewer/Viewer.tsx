@@ -1,7 +1,7 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import { OpenSeadragonMain } from '@renderer/ui/openseadragon'
-import { useDidMount, useFullDropzone, useViewer } from '@renderer/hooks'
+import { useFullDropzone, useViewer } from '@renderer/hooks'
 
 import { ClassHandler } from '@renderer/handlers'
 import { useImageStore, useSettingsStore } from '@renderer/store'
@@ -35,11 +35,11 @@ const Viewer = ({ info }: TBaseProps) => {
 
   useFullDropzone(handleFileOpen)
 
-  useDidMount(() => {
+  useEffect(() => {
     setInitialPageColor()
     setInitialSelectedAnnotation()
     ClassHandler.initClasses(classes)
-  })
+  }, [info])
 
   return <OpenSeadragonMain />
 }

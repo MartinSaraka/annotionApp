@@ -18,11 +18,12 @@ import { ClassHandler } from '@renderer/handlers'
 
 type TUpsertClassProps = {
   data?: TAnnotationClass
+  onCreate?: (data: TAnnotationClass) => void
 }
 
 type TFormValues = NonNullable<TUpsertClassProps['data']>
 
-const UpsertClass = ({ data }: TUpsertClassProps) => {
+const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
   const operation = !data ? 'Create' : 'Update'
 
   const closeRef = useRef<HTMLButtonElement | null>(null)
@@ -41,10 +42,13 @@ const UpsertClass = ({ data }: TUpsertClassProps) => {
   const onSubmit: FormikConfig<TFormValues>['onSubmit'] = useCallback(
     (values) => {
       const created = upsertClass(values)
-      if (created) ClassHandler.upsertClass(created)
+      if (created) {
+        ClassHandler.upsertClass(created)
+        onCreate?.(created)
+      }
       closeRef.current?.click()
     },
-    [closeRef, upsertClass]
+    [closeRef, upsertClass, onCreate]
   )
 
   return (

@@ -1,5 +1,8 @@
 import { TAnnotation, TAnnotationBody } from '@common/types/annotation'
 
+/**
+ * @deprecated
+ */
 class AnnotationService {
   static annotation = (annotation: TAnnotation) => {
     return {

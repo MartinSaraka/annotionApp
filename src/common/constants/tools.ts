@@ -1,5 +1,3 @@
-import * as RadixIcons from '@radix-ui/react-icons'
-
 import { TTool } from '@common/types/tool'
 
 export enum ETool {
@@ -39,7 +37,11 @@ export enum ETool {
   /**
    * SelectorPack plugin
    */
-  POINT = 'point'
+  POINT = 'point',
+  /**
+   * Custom plugin
+   */
+  NUCLICK_POINT = 'nuclick'
 }
 
 export enum EToolType {
@@ -83,19 +85,24 @@ export const TOOLS = {
   [ETool.POINT]: {
     type: EToolType.ANNOTATION,
     value: ETool.POINT
+  },
+  [ETool.NUCLICK_POINT]: {
+    type: EToolType.ANNOTATION,
+    value: ETool.NUCLICK_POINT
   }
 } as const
 
 export const DEFAULT_ACTIVE_TOOL: TTool = TOOLS[ETool.HAND]
 export const DEFAULT_ANNOTATION_TOOL: TTool = TOOLS[ETool.RECTANGLE]
 
-export const TOOL_ICON_MAP: Record<ETool, keyof typeof RadixIcons> = {
-  [ETool.POINT]: 'DotFilledIcon',
-  [ETool.RECTANGLE]: 'SquareIcon',
-  [ETool.CIRCLE]: 'CircleIcon',
-  [ETool.ELLIPSE]: 'CircleBackslashIcon',
-  [ETool.POLYGON]: 'ComponentInstanceIcon',
-  [ETool.FREEHAND]: 'Pencil1Icon',
+export const TOOL_ICON_MAP: Record<ETool, string> = {
+  [ETool.POINT]: 'PointToolIcon', // 'DotFilledIcon',
+  [ETool.NUCLICK_POINT]: 'NuclickToolIcon', // 'MagicWandIcon',
+  [ETool.RECTANGLE]: 'RectToolIcon', // 'SquareIcon',
+  [ETool.CIRCLE]: 'CircleToolIcon', // 'CircleIcon',
+  [ETool.ELLIPSE]: 'EllipseToolIcon', // 'CircleBackslashIcon',
+  [ETool.POLYGON]: 'PolygonToolIcon', // 'ComponentInstanceIcon',
+  [ETool.FREEHAND]: 'FreehandToolIcon', // 'Pencil1Icon',
   [ETool.HAND]: 'HandIcon',
   [ETool.ZOOM_IN]: 'MagnifyingGlassIcon',
   [ETool.ZOOM_OUT]: 'ZoomOutIcon'

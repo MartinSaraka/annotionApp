@@ -44,12 +44,17 @@ export const ScrollAreaScrollbar = styled(ScrollArea.Scrollbar, {
 
 export const ScrollAreaRoot = styled(ScrollArea.Root, {
   $$scrollbarSize: '10px',
+  $$maxHeight: 'initial',
 
   position: 'relative',
   whiteSpace: 'nowrap',
 
   width: '100%',
   height: '100%',
+
+  [`${ScrollAreaViewport}`]: {
+    maxHeight: '$$maxHeight'
+  },
 
   '&:before, &:after': {
     display: 'none',

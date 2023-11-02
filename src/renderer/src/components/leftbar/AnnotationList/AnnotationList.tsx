@@ -1,16 +1,20 @@
 import { memo, useCallback, useMemo } from 'react'
 import { ComponentProps } from '@stitches/react'
-import {
-  INodeRendererProps,
-  ITreeViewOnNodeSelectProps
-} from 'react-accessible-treeview'
+import { NodeModel, NodeRender } from '@minoru/react-dnd-treeview'
 
 import { Box, Button, Icon, Input, ScrollArea, TreeView } from '@renderer/ui'
+import { AnnotationItem } from '@renderer/components'
 
 import { TreeAdapter } from '@renderer/adapters'
+import { TNodeData } from '@renderer/adapters/TreeAdapter'
+
 import { useAnnotoriousStore, useImageStore } from '@renderer/store'
 import { AnnotoriousHandler } from '@renderer/handlers'
-import AnnotationItem from '@renderer/components/AnnotationItem'
+
+import {
+  isAnnotationEditable,
+  isAnnotationVisible
+} from '@common/utils/annotation'
 
 type TLeftBarAnnotationListProps = ComponentProps<typeof Box>
 
@@ -18,11 +22,12 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
   const preview = useAnnotoriousStore((state) => state.preview)
   const annotations = useImageStore((state) => state.getAnnotations() || {})
 
-  const selectedAnnotations = useImageStore((state) => {
-    const selected = state.getSelectedAnnotation()
-    return selected ? [selected.id] : []
-  })
-
+  const selectedNodeId = useImageStore(
+    (state) => state.getSelectedAnnotation()?.id
+  )
+  const cancelAllSelected = useAnnotoriousStore(
+    (state) => state.cancelAllSelected
+  )
   const selectAnnotoriousAnnotation = useAnnotoriousStore(
     (state) => state.selectAnnotation
   )
@@ -30,10 +35,18 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
     (state) => state.selectAnnotation
   )
 
-  const handleSelectAnnotation = useCallback(
-    (node: ITreeViewOnNodeSelectProps) => {
-      const id = node.element.id as TID
-      selectAnnotoriousAnnotation(id)
+  const handleSelectNode = useCallback(
+    (node: NodeModel<TNodeData>) => {
+      const id = node.id as TID
+
+      if (
+        isAnnotationEditable(node.data?.editability) &&
+        isAnnotationVisible(node.data?.visibility)
+      ) {
+        selectAnnotoriousAnnotation(id)
+      } else {
+        cancelAllSelected()
+      }
 
       const annotation = saveSelectedAnnotation(id)
       if (!annotation) return
@@ -48,11 +61,17 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
     [annotations]
   )
 
-  const renderNodes = useCallback(
-    (props: INodeRendererProps) => (
-      <AnnotationItem data={props} key={props.element.id} />
+  const renderNode: NodeRender<TNodeData> = useCallback(
+    (node, { depth }) => (
+      <AnnotationItem
+        node={node}
+        key={node.id}
+        depth={depth}
+        isSelected={node.id === selectedNodeId}
+        onSelect={() => handleSelectNode(node)}
+      />
     ),
-    []
+    [selectedNodeId, handleSelectNode]
   )
 
   return (
@@ -85,12 +104,7 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
           aria-labelledby="image-annotations"
           css={{ alignItems: 'scretch', marginBlock: '$4', width: '100%' }}
         >
-          <TreeView.Root
-            nodeRenderer={renderNodes}
-            selectedIds={selectedAnnotations}
-            onNodeSelect={handleSelectAnnotation}
-            nodes={nodes}
-          />
+          <TreeView.Root nodes={nodes} render={renderNode} />
         </Box>
       </ScrollArea>
     </Box>

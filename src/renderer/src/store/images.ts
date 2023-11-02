@@ -4,8 +4,6 @@ import { parse } from 'path'
 import { omit } from 'lodash'
 import { v4 as uuid } from 'uuid'
 
-import { AnnotationService, ImageService } from '@renderer/services'
-
 import { TImageInfo } from '@common/types/image'
 import { TAnnotation, TAnnotationClass } from '@common/types/annotation'
 import { TTool } from '@common/types/tool'
@@ -16,6 +14,9 @@ import {
   DEFAULT_ACTIVE_TOOL,
   DEFAULT_ANNOTATION_TOOL
 } from '@common/constants/tools'
+
+import { ImageService } from '@renderer/services'
+import { AnnotationHandler } from '@renderer/handlers'
 
 export type TOpenedImageState = {
   image: TImageInfo
@@ -87,7 +88,10 @@ export type TImageState = {
    * @param annotation - annotation to add to the selected image
    * @returns current annotations of the selected image
    */
-  saveAnnotation: (annotation: TAnnotation) => Record<TID, TAnnotation> | null
+  saveAnnotation: (
+    annotation: TAnnotation,
+    select?: boolean
+  ) => Record<TID, TAnnotation> | null
   /**
    * Remove annotation from the selected image
    * @param id - id of the annotation to remove
@@ -109,8 +113,8 @@ export type TImageState = {
 const useImageStore = create<TImageState>()(
   persist(
     (set, get) => ({
-      selected: null,
       opened: {},
+      selected: 'dashboard',
       tabs: ['dashboard'],
 
       open: async (path, replace = true) => {
@@ -387,7 +391,7 @@ const useImageStore = create<TImageState>()(
           }
         })
 
-        return info.annotations[id]
+        return get().opened[selected].annotations[id]
       },
 
       deselectAnnotations: () => {
@@ -475,7 +479,7 @@ const useImageStore = create<TImageState>()(
         }
       },
 
-      saveAnnotation: (annotation) => {
+      saveAnnotation: (annotation, select = true) => {
         const opened = get().opened
         const selected = get().selected
 
@@ -488,7 +492,7 @@ const useImageStore = create<TImageState>()(
 
         const newAnnotation = isExisting
           ? annotation
-          : AnnotationService.formatDefault(
+          : AnnotationHandler.formatDefault(
               annotation,
               Object.keys(info?.annotations).length + 1
             )
@@ -498,7 +502,9 @@ const useImageStore = create<TImageState>()(
             ...opened,
             [selected]: {
               ...info,
-              selectedAnnotation: newAnnotation.id,
+              ...(select && {
+                selectedAnnotation: newAnnotation.id
+              }),
               annotations: {
                 ...info.annotations,
                 [newAnnotation.id]: newAnnotation

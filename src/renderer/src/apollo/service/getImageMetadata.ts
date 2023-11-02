@@ -56,7 +56,7 @@ export type TImageMetadata = {
 export default gql`
   query getImageMetadata($path: String!) {
     metadata: getImageMetadata(path: $path)
-      @rest(type: "TImageMetadata", path: "/metadata{args.path}") {
+      @rest(type: "TImageMetadata", path: "/metadata/{args.path}") {
       path
       fillColor
       pixelsPerMeter {

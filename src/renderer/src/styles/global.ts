@@ -113,12 +113,30 @@ export const globalStyles = globalCss({
     }
   },
 
+  '#open-seadragon': {
+    '.a9s-annotation': {
+      '&[data-visibility="hidden"], *[data-visibility="hidden"]': {
+        visibility: 'hidden !important',
+        userSelect: 'none !important',
+        pointerEvents: 'none !important',
+        transform: 'scale(0) !important',
+        overflow: 'hidden !important'
+      }
+    }
+  },
+
   // Annotorious
   'svg.a9s-annotationlayer': {
     foreignObject: {
       overflow: 'visible',
       width: '1px',
       height: '1px'
+    },
+
+    '.a9s-non-scaling': {
+      '.a9s-formatter-el g': {
+        transform: 'scale(1) translateX(-12px) translateY(-12px)'
+      }
     },
 
     '.a9s-shape-label': {
@@ -158,6 +176,12 @@ export const globalStyles = globalCss({
       '.a9s-inner': {}
     },
 
+    '.a9s-point[data-status="generating"]': {
+      '.a9s-outer': {
+        fill: 'red'
+      }
+    },
+
     '.a9s-annotation': {
       '.a9s-outer': {
         stroke: 'rgb(var(--class-color, 12, 140, 233))'
@@ -173,7 +197,7 @@ export const globalStyles = globalCss({
 
       '&.highlight': {
         '.a9s-inner': {
-          stroke: '$blueA8'
+          fill: 'rgba(var(--class-color, 12, 140, 233), 0.2)'
         }
       },
 

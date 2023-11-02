@@ -4,8 +4,12 @@ export const ELECTRON_BROWSER_WINDOW_DEFAULT_OPTIONS: Electron.BrowserWindowCons
     height: 670,
 
     show: false,
+    frame: false,
     autoHideMenuBar: true,
 
     titleBarStyle: 'hidden',
-    trafficLightPosition: { x: 16, y: 13 }
+
+    ...(process.platform === 'darwin' && {
+      trafficLightPosition: { x: 16, y: 13 }
+    })
   }

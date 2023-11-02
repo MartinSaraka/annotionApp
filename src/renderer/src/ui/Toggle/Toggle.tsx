@@ -3,15 +3,11 @@ import { ComponentProps } from '@stitches/react'
 
 import * as PrimitiveToggle from '@radix-ui/react-toggle'
 
-import * as S from './styled'
-
 type TBaseProps = {
   children: React.ReactNode
 }
 
-type TToggleProps = ComponentProps<typeof PrimitiveToggle.Root> &
-  ComponentProps<typeof S.ToggleRoot> &
-  TBaseProps
+type TToggleProps = ComponentProps<typeof PrimitiveToggle.Root> & TBaseProps
 
 const Toggle = forwardRef(function Toggle(
   { children, ...rest }: TToggleProps,
@@ -19,9 +15,7 @@ const Toggle = forwardRef(function Toggle(
 ) {
   return (
     <PrimitiveToggle.Root ref={forwardedRef} asChild {...rest}>
-      <S.ToggleRoot whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-        {children}
-      </S.ToggleRoot>
+      {children}
     </PrimitiveToggle.Root>
   )
 })

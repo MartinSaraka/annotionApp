@@ -1,74 +1,55 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { fixPathForAsarUnpack } from 'electron-util'
 import { join } from 'path'
 
-import childProcess from 'child_process'
-import { fixPathForAsarUnpack } from 'electron-util'
-
-import icon from '../../resources/icon.png?asset'
-
+import { ImageServer } from './core'
 import { IN_MILLISECONDS, MINUTE } from '@common/constants/time'
 import { ELECTRON_BROWSER_WINDOW_DEFAULT_OPTIONS } from '@common/constants/window'
 
-const fixedDirname = fixPathForAsarUnpack(__dirname)
+import { fromRenderer } from '@common/utils/event'
 
 // Hazel Updater
 const server = process.env.MAIN_VITE_HAZEL_SERVER_URL || 'localhost:3001'
 const url = join(server, '/update/', process.platform, app.getVersion())
 autoUpdater.setFeedURL({ provider: 'generic', url })
 
-// Image server
-const SERVER_PATHS: Partial<
-  Record<NodeJS.Platform, Partial<Record<NodeJS.Architecture, string>>>
-> = {
-  darwin: {
-    arm: 'server/Contents/MacOS/Server',
-    arm64: 'server/Contents/MacOS/Server',
-    x64: 'server/Contents/MacOS/Server'
-  },
-  win32: {
-    x64: 'server/win/Server.exe'
-  }
-}
-
-const SERVER_PATH =
-  process.env.NODE_ENV === 'development'
-    ? 'src/java/build/mac-arm/Contents/MacOS/Server'
-    : join(
-        fixedDirname,
-        SERVER_PATHS[process.platform]?.[process.arch] || 'server/not-supported'
-      )
+// Image Server
+const imageServer = new ImageServer(
+  fixPathForAsarUnpack(__dirname),
+  process.platform,
+  process.arch
+)
 
 let mainWindow: BrowserWindow | null = null
-
-const runServer = () => {
-  const child = childProcess.spawn(SERVER_PATH)
-
-  child.stdout.on('data', (data) => {
-    console.log(`Executable stdout: ${data}`)
-  })
-
-  child.stderr.on('data', (data) => {
-    console.error(`Executable stderr: ${data}`)
-  })
-
-  child.on('close', (code) => {
-    console.log(`Executable exited with code ${code}`)
-  })
-}
 
 const createWindow = (): void => {
   mainWindow = new BrowserWindow({
     ...ELECTRON_BROWSER_WINDOW_DEFAULT_OPTIONS,
-
-    ...(process.platform === 'linux' ? { icon } : {}),
 
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
     }
   })
+
+  ipcMain.on(
+    ...fromRenderer('WINDOW_ACTION', (_, { action }) => {
+      switch (action) {
+        case 'close':
+          mainWindow?.close()
+          break
+        case 'minimize':
+          mainWindow?.minimize()
+          break
+        case 'maximize':
+          if (mainWindow?.isMaximized()) mainWindow?.unmaximize()
+          else mainWindow?.maximize()
+          break
+      }
+    })
+  )
 
   const updaterInterval = setInterval(() => {
     autoUpdater.checkForUpdates()
@@ -86,7 +67,7 @@ const createWindow = (): void => {
 
   mainWindow.webContents.on('did-finish-load', () => {
     // Call the function when the main window is ready.
-    runServer()
+    imageServer.run()
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -105,7 +86,7 @@ const createWindow = (): void => {
 
 app.whenReady().then(() => {
   // Set app user model id for windows
-  electronApp.setAppUserModelId('sk.hiat.app')
+  electronApp.setAppUserModelId('sk.annotaid.app')
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.

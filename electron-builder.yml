@@ -1,5 +1,5 @@
-appId: sk.hiat.app
-productName: hiat
+appId: sk.annotaid.app
+productName: AnnotAid
 directories:
   buildResources: build
 files:
@@ -14,25 +14,33 @@ asarUnpack:
   - resources/**
   - out/main/server/**
 afterSign: build/notarize.js
+
 win:
-  executableName: hiat
+  executableName: AnnotAid
+  icon: ./resources/app-icons/win/icon.ico
   target:
     - nsis
     - portable
+
 nsis:
-  artifactName: ${name}-${version}-setup.${ext}
+  artifactName: ${productName}-${version}-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+
 mac:
+  icon: ./resources/app-icons/mac/icon.icns
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:
     - NSCameraUsageDescription: Application requests access to the device's camera.
     - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
     - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+
 dmg:
-  artifactName: ${name}-${version}.${ext}
+  artifactName: ${productName}-${version}.${ext}
+  icon: ./resources/app-icons/mac/icon.icns
+
 linux:
   target:
     - AppImage
@@ -40,12 +48,11 @@ linux:
     - deb
   maintainer: electronjs.org
   category: Utility
+
 appImage:
-  artifactName: ${name}-${version}.${ext}
+  artifactName: ${productName}-${version}.${ext}
+
 npmRebuild: false
 publish:
   provider: generic
   url: https://example.com/auto-updates
-extraResources:
-  - from: ./src/java/out/mac/
-    to: ./resources/mac/

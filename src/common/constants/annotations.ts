@@ -22,6 +22,7 @@ export const ANNOTORIOUS_PREVIEW_CONFIG = {
 
 export const ANNOTATION_TYPE_TAG_MAP = {
   [ETool.POINT]: 'circle',
+  [ETool.NUCLICK_POINT]: 'circle',
   [ETool.RECTANGLE]: 'rect',
   [ETool.CIRCLE]: 'circle',
   [ETool.ELLIPSE]: 'ellipse',

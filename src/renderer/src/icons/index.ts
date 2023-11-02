@@ -1,1 +1,7 @@
-export { default as PolygonIcon } from './PolygonIcon'
+export { default as RectToolIcon } from './RectToolIcon'
+export { default as CircleToolIcon } from './CircleToolIcon'
+export { default as EllipseToolIcon } from './EllipseToolIcon'
+export { default as PointToolIcon } from './PointToolIcon'
+export { default as PolygonToolIcon } from './PolygonToolIcon'
+export { default as FreehandToolIcon } from './FreehandToolIcon'
+export { default as NuclickToolIcon } from './NuclickToolIcon'

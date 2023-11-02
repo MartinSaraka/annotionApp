@@ -17,6 +17,15 @@ export const preventDefault = <TEvent extends React.MouseEvent>(e: TEvent) => {
   e.preventDefault()
 }
 
+export const stopPropagation = <TEvent extends React.MouseEvent>(e: TEvent) => {
+  e.stopPropagation()
+}
+
+export const preventAndStop = <TEvent extends React.MouseEvent>(e: TEvent) => {
+  e.stopPropagation()
+  e.preventDefault()
+}
+
 export const setGlobalCssVariable = <T>(name: string, value: T) => {
   document.documentElement.style.setProperty(name, `${value}`)
 }

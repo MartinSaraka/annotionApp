@@ -4,7 +4,7 @@ class OSDAdapter {
   static fromInfoToTileSources(metadata: TImageInfo): TOSDTileSourceOptions {
     const uri = import.meta.env.RENDERER_VITE_SERVICE_URI
 
-    const path = `${uri}${metadata.directory}/${metadata.filename}`
+    const path = `${uri}//${metadata.directory}/${metadata.filename}`
     const tileSize = `${metadata.tile.optimal.width}-${metadata.tile.optimal.height}`
 
     const options: TOSDTileSourceOptions = {
@@ -19,6 +19,19 @@ class OSDAdapter {
     }
 
     return options
+  }
+
+  static fromInfoToCroppedSource(
+    metadata: TImageInfo,
+    pointX: number,
+    pointY: number,
+    sizeWidth: number,
+    sizeHeight: number
+  ): string {
+    const path = `//${metadata.directory}/${metadata.filename}`
+    const props = `${pointX}-${pointY}-${sizeWidth}-${sizeHeight}`
+
+    return `${path}-${props}${metadata.extension}`
   }
 }
 

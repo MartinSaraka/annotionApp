@@ -1,15 +1,17 @@
 import { memo, useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Button, Chip, Icon, List, Popover } from '@renderer/ui'
-import { useAnnotoriousStore, useImageStore } from '@renderer/store'
-import { useTranslation } from 'react-i18next'
 import { SelectClassPopover } from '@renderer/popovers'
-import { AnnotationService } from '@renderer/services'
+
+import { useAnnotoriousStore, useImageStore } from '@renderer/store'
+import { AnnotationHandler } from '@renderer/handlers'
 
 const Class = () => {
   const { t } = useTranslation(['annotation'])
 
   const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const closeRef = useRef<HTMLButtonElement | null>(null)
 
   const update = useAnnotoriousStore((state) => state.saveAndUpdateAnnotation)
   const annotation = useImageStore((state) => state.getSelectedAnnotation())
@@ -21,16 +23,19 @@ const Class = () => {
     triggerRef.current?.click()
   }, [triggerRef])
 
+  const handleClosePopover = useCallback(() => {
+    closeRef.current?.click()
+  }, [closeRef])
+
   const handleRemoveClass = useCallback(() => {
     if (!annotation) return
 
-    const data = AnnotationService.annotation(annotation)
-      .upsertBody({
-        type: 'TextualBody',
-        purpose: 'tagging',
-        value: ''
-      })
-      .get()
+    const data = AnnotationHandler.upsertBody(
+      annotation,
+      'TextualBody',
+      'tagging',
+      ''
+    )
 
     update(data).catch(console.error)
   }, [annotation, update])
@@ -41,11 +46,15 @@ const Class = () => {
         <List
           title={t('annotation:sections.class')}
           actions={
-            <Popover.Trigger asChild ref={triggerRef}>
-              <Button ghost condensed css={{ margin: '-$1' }}>
-                <Icon name="TokensIcon" width={16} height={16} />
-              </Button>
-            </Popover.Trigger>
+            <>
+              <Popover.Trigger asChild ref={triggerRef}>
+                <Button ghost condensed css={{ margin: '-$1' }}>
+                  <Icon name="TokensIcon" width={16} height={16} />
+                </Button>
+              </Popover.Trigger>
+
+              <Popover.Close ref={closeRef} css={{ display: 'none' }} />
+            </>
           }
         >
           {currentClass && (
@@ -79,7 +88,10 @@ const Class = () => {
       </Popover.Anchor>
 
       <Popover.Content>
-        <SelectClassPopover selectedClass={currentClass} />
+        <SelectClassPopover
+          selectedClass={currentClass}
+          onClose={handleClosePopover}
+        />
       </Popover.Content>
     </Popover.Root>
   )

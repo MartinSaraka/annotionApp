@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,7 +30,6 @@ import ome.units.UNITS;
 import ome.units.quantity.Length;
 
 import java.awt.image.BufferedImage;
-import java.awt.Image;
 
 class Server {
     private static HttpServer server = null;
@@ -463,9 +463,6 @@ class Server {
             int w = reader.getOptimalTileWidth();
             int h = reader.getOptimalTileHeight();
 
-            int width = reader.getSizeX();
-            int height = reader.getSizeY();
-
             Pattern pattern = Pattern.compile("\\d+-\\d+-\\d+-\\d+");
             Matcher matcher = pattern.matcher(filename);
 
@@ -487,26 +484,36 @@ class Server {
                 logger.info("Default values: " + String.format("x=%d, y=%d, w=%d, h=%d", x, y, w, h));
             }
 
-            reader.setSeries(8);
+            reader.setSeries(0);
 
             int seriesWidth = reader.getSizeX();
             int seriesHeight = reader.getSizeY();
 
-            int tileWidth = w;
-            int tileHeight = h;
+            System.out.println("seriesWidth: " + seriesWidth);
 
-            if (x + w > seriesWidth) {
-                tileWidth = seriesWidth - x;
+            int startX = x - w / 2;
+            int startY = y - h / 2;
+
+            if (startX < 0) {
+                startX = 0;
             }
 
-            if (y + h > seriesHeight) {
-                tileHeight = seriesHeight - y;
+            if (startX + w > seriesWidth) {
+                startX = seriesWidth - w;
+            }
+
+            if (startY < 0) {
+                startY = 0;
+            }
+
+            if (startY + h > seriesHeight) {
+                startY = seriesHeight - h;
             }
 
             byte[] imageData = new byte[w * h * 3];
 
             try {
-                reader.openBytes(0, imageData, x, y, tileWidth, tileHeight);
+                reader.openBytes(0, imageData, startX, startY, w, h);
             } catch (FormatException e) {
                 System.out.println(e);
 
@@ -521,56 +528,34 @@ class Server {
 
             BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
 
-            if (tileWidth < w || tileHeight < h) {
-                byte[] bg = new byte[w * h * 3];
+            image.getRaster().setDataElements(0, 0, w, h, imageData);
 
-                for (int i = 0; i < w * h; i++) {
-                    bg[i * 3] = (byte) 0; // Red
-                    bg[i * 3 + 1] = (byte) 0; // Green
-                    bg[i * 3 + 2] = (byte) 0; // Blue
-                }
+            BufferedImage bufferedImage = new BufferedImage(w, h, BufferedImage.TYPE_3BYTE_BGR);
 
-                image.getRaster().setDataElements(0, 0, w, h, bg);
-            }
-
-            image.getRaster().setDataElements(0, 0, tileWidth, tileHeight, imageData);
-
-            double maxSize = Math.max(w, h);
-            double ratio = maxSize / 256;
-
-            int newWidth = (int) Math.round(tileWidth * ratio);
-            int newHeight = (int) Math.round(tileHeight * ratio);
-
-            Image rescaled = image.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-
-            BufferedImage bufferedImage = new BufferedImage(
-                    rescaled.getWidth(null),
-                    rescaled.getHeight(null),
-                    BufferedImage.TYPE_INT_RGB);
-
-            bufferedImage.getGraphics().drawImage(rescaled, 0, 0, null);
+            bufferedImage.getGraphics().drawImage(image, 0, 0, null);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage, "png", baos);
             byte[] imageBytes = baos.toByteArray();
 
-            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
-            exchange.getResponseHeaders().set("Content-Type", "image/png");
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+
+            JSONObject data = new JSONObject();
+            data.put("width", w);
+            data.put("height", h);
+            data.put("x", startX);
+            data.put("y", startY);
+
             exchange.getResponseHeaders().set("X-Path", srcPath);
-            exchange.getResponseHeaders().set("X-Width", String.format("%d", width));
-            exchange.getResponseHeaders().set("X-Height", String.format("%d", height));
-            exchange.getResponseHeaders().set("X-X", String.format("%d", x));
-            exchange.getResponseHeaders().set("X-Y", String.format("%d", y));
-            exchange.getResponseHeaders().set("X-Tile", String.format("%d-%d-%d-%d", x, y, w, h));
-            exchange.sendResponseHeaders(200, imageBytes.length);
+            exchange.getResponseHeaders().set("X-Metadata", data.toString());
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "*");
 
-            logger.info(String.format("%d-%d-%d-%d", x, y, w, h) + " (x-y-w-h)");
-
-            OutputStream responseBody = exchange.getResponseBody();
-            responseBody.write(imageBytes);
-            responseBody.close();
+            data.put("base64Image", base64Image);
 
             reader.close();
+            logger.info("Sending cropped image: " + data.toString());
+            sendResponse(exchange, 200, data.toString());
             logger.info("DONE");
         }
     }

@@ -1,37 +1,46 @@
-import { AnnotationService } from '@renderer/services'
 import { TAnnotation } from '@common/types/annotation'
 import { AnnotationUtils } from '@common/utils'
+import { NodeModel } from '@minoru/react-dnd-treeview'
+import { AnnotationHandler } from '@renderer/handlers'
 
-type TMetadata = {
+export type TNodeData = {
   tag: ReturnType<(typeof AnnotationUtils)['getShape']>['tag']
+  shape: ReturnType<(typeof AnnotationUtils)['getShape']>['props']
   class: string
+  editability: string
+  visibility: string
 }
 
+export type TNodeModel = NodeModel<TNodeData>
+
 class TreeAdapter {
-  static fromAnnotationsToNodes(
-    annotations: TAnnotation[]
-  ): TRATNodes<TMetadata> {
-    const nodes: TRATNodes<TMetadata> = {
-      name: '',
-      children: []
-    }
+  static fromAnnotationsToNodes(annotations: TAnnotation[]): TNodeModel[] {
+    const nodes: TNodeModel[] = []
 
     for (const annotation of annotations) {
-      const data = AnnotationService.getBody(annotation, [
+      const data = AnnotationHandler.getBody(annotation, [
         'naming',
-        'tagging'
-      ] as const)
+        'tagging',
+        'editability',
+        'visibility'
+      ])
+
       const shape = AnnotationUtils.from(annotation).shape
 
-      nodes.children?.push({
+      const newNode: TNodeModel = {
         id: annotation.id,
-        name: data?.naming || '',
-        metadata: {
+        text: data?.naming || '',
+        parent: 0,
+        data: {
           tag: shape.tag,
-          class: data?.tagging || '',
-          ...shape.props
+          shape: shape.props,
+          class: data.tagging,
+          editability: data.editability || 'editable',
+          visibility: data.visibility || 'visible'
         }
-      } as TRATNodes<TMetadata>)
+      }
+
+      nodes.push(newNode)
     }
 
     return nodes

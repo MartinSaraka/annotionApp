@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 
 import { TAnnotation } from '@common/types/annotation'
-import { setHotkeyViewerCursor } from '@common/utils/tools'
-import { setViewerCursor } from '@common/utils/viewer'
+import { CursorHandler } from '@renderer/handlers'
+
 import { DEFAULT_ANNOTATION_TOOL, ETool } from '@common/constants/tools'
 
 export type TAnnotoriousState = {
@@ -18,8 +18,11 @@ export type TAnnotoriousState = {
   saveAndUpdateAnnotation: (
     annotation: TAnnotation
   ) => Promise<TAnnotation | null>
+  removeAnnotation: (annotation: TAnnotation) => void
 
   selectAnnotation: (target: TAnnotation | TID) => void
+  cancelIfSelected: (target: TAnnotation) => void
+  cancelAllSelected: () => void
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getSelectedImage: () => any | null
 
@@ -28,11 +31,11 @@ export type TAnnotoriousState = {
   resetTool: () => void
 }
 
-const setGrabCursor = setHotkeyViewerCursor('grab')
+/*const setGrabCursor = setHotkeyViewerCursor('grab')
 const setCrosshairCursor = setHotkeyViewerCursor('crosshair')
 
 const setAnnotationCursor = () => setViewerCursor('crosshair')
-const setDefaultCursor = () => setViewerCursor('grab')
+const setDefaultCursor = () => setViewerCursor('grab')*/
 
 const useAnotoriousStore = create<TAnnotoriousState>()((set, get) => ({
   anno: null,
@@ -55,10 +58,31 @@ const useAnotoriousStore = create<TAnnotoriousState>()((set, get) => ({
     return annotation
   },
 
+  removeAnnotation: (annotation) => {
+    const annotorious = get().anno
+    if (!annotorious) return
+
+    annotorious.removeAnnotation(annotation.id)
+  },
+
   selectAnnotation: (target) => {
     const annotorious = get().anno
     if (!annotorious) return
     annotorious.selectAnnotation(target)
+  },
+
+  cancelIfSelected: (target) => {
+    const annotorious = get().anno
+    if (!annotorious) return
+    const selected = annotorious.getSelected()
+    if (!selected || selected.id !== target.id) return
+    annotorious.cancelSelected()
+  },
+
+  cancelAllSelected: () => {
+    const annotorious = get().anno
+    if (!annotorious) return
+    annotorious.cancelSelected()
   },
 
   getSelectedImage: () => {
@@ -68,38 +92,36 @@ const useAnotoriousStore = create<TAnnotoriousState>()((set, get) => ({
   },
 
   setTool: (tool) => {
-    console.log('setAnnotoriousTool', 'false')
-
     const annotorious = get().anno
     if (!annotorious) return
 
-    console.log('setAnnotoriousTool', tool)
+    const viewer = annotorious._app.current.__v.props.viewer
+    CursorHandler.setAnnotationCursor(tool, viewer)
 
-    window.addEventListener('keydown', setGrabCursor)
-    window.addEventListener('keyup', setCrosshairCursor)
+    /*window.addEventListener('keydown', setGrabCursor)
+    window.addEventListener('keyup', setCrosshairCursor)*/
 
     annotorious.setDrawingTool(tool)
     annotorious.cancelSelected()
     annotorious.setDrawingEnabled(true)
     annotorious.disableSelect = true
-    setAnnotationCursor()
+    // setAnnotationCursor()
   },
 
   resetTool: () => {
-    console.log('resetAnnotoriousTool', 'false')
-
     const annotorious = get().anno
     if (!annotorious) return
 
-    console.log('resetAnnotoriousTool')
+    const viewer = annotorious._app.current.__v.props.viewer
+    CursorHandler.resetAll(viewer)
 
-    window.removeEventListener('keydown', setGrabCursor)
-    window.removeEventListener('keyup', setCrosshairCursor)
+    /*window.removeEventListener('keydown', setGrabCursor)
+    window.removeEventListener('keyup', setCrosshairCursor)*/
 
     annotorious.setDrawingTool(DEFAULT_ANNOTATION_TOOL.value)
     annotorious.setDrawingEnabled(false)
     annotorious.disableSelect = false
-    setDefaultCursor()
+    // setDefaultCursor()
   }
 }))
 

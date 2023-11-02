@@ -11,6 +11,7 @@ import {
 import { ETool, EToolType, TOOL_ICON_MAP } from '@common/constants/tools'
 import { OPEN_SEADRAGON_HOME_ID } from '@common/constants/viewer'
 
+type TToolIcon = ComponentProps<typeof Icon>['name']
 type TTopBarMiddleProps = ComponentProps<typeof Box>
 
 const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
@@ -74,7 +75,11 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
             aria-labelledby={EToolType.VIEWER}
             isActive={activeTool.value === ETool.HAND}
           >
-            <Icon name={TOOL_ICON_MAP[ETool.HAND]} width={18} height={18} />
+            <Icon
+              name={TOOL_ICON_MAP[ETool.HAND] as TToolIcon}
+              width={18}
+              height={18}
+            />
           </Toolbar.Toggle>
 
           <Toolbar.Toggle
@@ -84,7 +89,11 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
             aria-labelledby={EToolType.VIEWER}
             isActive={activeTool.value === ETool.ZOOM_IN}
           >
-            <Icon name={TOOL_ICON_MAP[ETool.ZOOM_IN]} width={18} height={18} />
+            <Icon
+              name={TOOL_ICON_MAP[ETool.ZOOM_IN] as TToolIcon}
+              width={18}
+              height={18}
+            />
           </Toolbar.Toggle>
 
           <Toolbar.Separator orientation="vertical" />
@@ -104,7 +113,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
                   css={{ pointerEvents: 'all !important' }}
                 >
                   <Icon
-                    name={TOOL_ICON_MAP[annotationTool.value]}
+                    name={TOOL_ICON_MAP[annotationTool.value] as TToolIcon}
                     width={18}
                     height={18}
                   />
@@ -138,7 +147,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
                   aria-labelledby={EToolType.ANNOTATION}
                 >
                   <Icon
-                    name={TOOL_ICON_MAP[ETool.RECTANGLE]}
+                    name={TOOL_ICON_MAP[ETool.RECTANGLE] as TToolIcon}
                     width={18}
                     height={18}
                   />
@@ -153,7 +162,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
                   aria-labelledby={EToolType.ANNOTATION}
                 >
                   <Icon
-                    name={TOOL_ICON_MAP[ETool.CIRCLE]}
+                    name={TOOL_ICON_MAP[ETool.CIRCLE] as TToolIcon}
                     width={18}
                     height={18}
                   />
@@ -168,7 +177,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
                   aria-labelledby={EToolType.ANNOTATION}
                 >
                   <Icon
-                    name={TOOL_ICON_MAP[ETool.ELLIPSE]}
+                    name={TOOL_ICON_MAP[ETool.ELLIPSE] as TToolIcon}
                     width={18}
                     height={18}
                   />
@@ -183,7 +192,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
                   aria-labelledby={EToolType.ANNOTATION}
                 >
                   <Icon
-                    name={TOOL_ICON_MAP[ETool.POLYGON]}
+                    name={TOOL_ICON_MAP[ETool.POLYGON] as TToolIcon}
                     width={18}
                     height={18}
                   />
@@ -198,7 +207,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
                   aria-labelledby={EToolType.ANNOTATION}
                 >
                   <Icon
-                    name={TOOL_ICON_MAP[ETool.POINT]}
+                    name={TOOL_ICON_MAP[ETool.POINT] as TToolIcon}
                     width={18}
                     height={18}
                   />
@@ -213,7 +222,22 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
                   aria-labelledby={EToolType.ANNOTATION}
                 >
                   <Icon
-                    name={TOOL_ICON_MAP[ETool.FREEHAND]}
+                    name={TOOL_ICON_MAP[ETool.FREEHAND] as TToolIcon}
+                    width={18}
+                    height={18}
+                  />
+                </Toolbar.Toggle>
+              </Select.Item>
+
+              <Select.Item value={ETool.NUCLICK_POINT}>
+                <Toolbar.Toggle
+                  group="tools-select"
+                  value={ETool.NUCLICK_POINT}
+                  aria-label={ETool.NUCLICK_POINT}
+                  aria-labelledby={EToolType.ANNOTATION}
+                >
+                  <Icon
+                    name={TOOL_ICON_MAP[ETool.NUCLICK_POINT] as TToolIcon}
                     width={18}
                     height={18}
                   />
@@ -221,10 +245,6 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
               </Select.Item>
             </Select.Content>
           </Select.Root>
-
-          <Toolbar.Toggle disabled group="tools" value={''}>
-            <Icon name="MagicWandIcon" width={18} height={18} />
-          </Toolbar.Toggle>
         </Toolbar.Group>
       </Toolbar.Root>
     </Box>

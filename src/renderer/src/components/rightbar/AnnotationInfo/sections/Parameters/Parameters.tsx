@@ -1,11 +1,12 @@
 import { memo, useCallback, useMemo } from 'react'
 import { Field, Form, Formik, FormikConfig } from 'formik'
+import { useTranslation } from 'react-i18next'
 
 import { Input, Label, List } from '@renderer/ui'
-import { AnnotationService } from '@renderer/services'
-import { useAnnotoriousStore, useImageStore } from '@renderer/store'
 import { TAnnotation } from '@common/types/annotation'
-import { useTranslation } from 'react-i18next'
+
+import { useAnnotoriousStore, useImageStore } from '@renderer/store'
+import { AnnotationHandler } from '@renderer/handlers'
 
 type TFormValues = {
   annotation: TAnnotation | null
@@ -23,18 +24,19 @@ const Parameters = () => {
     async (values) => {
       if (!values.annotation) return
 
-      const data = AnnotationService.annotation(values.annotation)
-        .upsertBody({
-          type: 'TextualBody',
-          purpose: 'naming',
-          value: values.name
-        })
-        .upsertBody({
-          type: 'TextualBody',
-          purpose: 'describing',
-          value: values.description
-        })
-        .get()
+      const withNaming = AnnotationHandler.upsertBody(
+        values.annotation,
+        'TextualBody',
+        'naming',
+        values.name
+      )
+
+      const data = AnnotationHandler.upsertBody(
+        withNaming,
+        'TextualBody',
+        'describing',
+        values.description
+      )
 
       await update(data)
     },
@@ -43,15 +45,15 @@ const Parameters = () => {
 
   const initialValues: FormikConfig<TFormValues>['initialValues'] =
     useMemo(() => {
-      const data = AnnotationService.getBody(annotation, [
+      const data = AnnotationHandler.getBody(annotation, [
         'naming',
         'describing'
-      ] as const)
+      ])
 
       return {
         annotation,
-        name: data?.naming || '',
-        description: data?.describing || ''
+        name: data.naming || '',
+        description: data.describing || ''
       } as TFormValues
     }, [annotation])
 

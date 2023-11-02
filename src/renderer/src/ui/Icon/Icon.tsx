@@ -18,7 +18,13 @@ const Icon = forwardRef(function Icon(
   { name, ...rest }: TIconProps,
   forwardedRef: React.ForwardedRef<SVGSVGElement>
 ) {
-  return <Box as={RadixIcons[name]} ref={forwardedRef} {...rest} />
+  return (
+    <Box
+      as={RadixIcons[name] || CustomIcons[name]}
+      ref={forwardedRef}
+      {...rest}
+    />
+  )
 })
 
 export default memo(Icon) as typeof Icon

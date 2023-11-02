@@ -1,40 +1,52 @@
 import React, { forwardRef, memo } from 'react'
 import { ComponentProps } from '@stitches/react'
+import {
+  DndProvider,
+  MultiBackend,
+  NodeRender,
+  Tree,
+  TreeMethods,
+  getBackendOptions
+} from '@minoru/react-dnd-treeview'
 
-import { flattenTree, INodeRendererProps } from 'react-accessible-treeview'
+import { preventAndStop } from '@common/utils/global'
+import { TNodeData, TNodeModel } from '@renderer/adapters/TreeAdapter'
 
 import * as S from './styled'
-import Icon from '../Icon'
 
 type TRootBaseProps = {
-  nodes: Parameters<typeof flattenTree>[0]
+  nodes: TNodeModel[]
+  render: NodeRender<TNodeData>
 }
 
-type TRootProps = Omit<ComponentProps<typeof S.Root>, 'data'> & TRootBaseProps
+type TRootProps = Omit<
+  ComponentProps<typeof Tree>,
+  'tree' | 'rootId' | 'onDrop' | 'render'
+> &
+  TRootBaseProps
 
 const Root = forwardRef(function Root(
   { nodes, ...rest }: TRootProps,
-  forwardedRef: React.ForwardedRef<HTMLUListElement>
+  forwardedRef: React.ForwardedRef<TreeMethods>
 ) {
-  const data = flattenTree(nodes)
-
   return (
-    <S.Root
-      ref={forwardedRef}
-      data={data}
-      clickAction="EXCLUSIVE_SELECT"
-      multiSelect
-      propagateSelect
-      propagateSelectUpwards
-      expandOnKeyboardSelect
-      propagateCollapse
-      {...rest}
-    />
+    <DndProvider backend={MultiBackend} options={getBackendOptions()}>
+      <Tree
+        ref={forwardedRef}
+        tree={nodes}
+        rootId={0}
+        dragPreviewRender={() => <p>drag</p>}
+        onDrop={() => {}}
+        {...rest}
+      />
+    </DndProvider>
   )
 })
 
 type TNodeBaseProps = {
-  nodeProps: INodeRendererProps
+  depth: number
+  isSelected: boolean
+  onSelect: () => void
   actions?: React.ReactNode
   children: React.ReactNode
 }
@@ -42,28 +54,20 @@ type TNodeBaseProps = {
 type TNodeProps = ComponentProps<typeof S.Node> & TNodeBaseProps
 
 const Node = forwardRef(function Node(
-  { children, actions, nodeProps, ...rest }: TNodeProps,
+  { children, depth, isSelected, onSelect, actions, ...rest }: TNodeProps,
   forwardedRef: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
     <S.Node
       ref={forwardedRef}
-      data-branch-expanded={nodeProps.isBranch && nodeProps.isExpanded}
-      css={{
-        $$offsetLeft: nodeProps.level * 16 + (nodeProps.isBranch ? 0 : 8)
-      }}
-      {...nodeProps.getNodeProps()}
+      data-selected={isSelected}
+      css={{ $$offsetLeft: (depth || 1) * 16 }}
+      onClick={onSelect}
       {...rest}
     >
-      {nodeProps.isBranch && (
-        <S.Chevron data-expanded={nodeProps.isExpanded}>
-          <Icon name="ChevronRightIcon" width={15} height={15} />
-        </S.Chevron>
-      )}
-
       {children}
 
-      {actions && <S.Actions>{actions}</S.Actions>}
+      {actions && <S.Actions onClick={preventAndStop}>{actions}</S.Actions>}
     </S.Node>
   )
 })

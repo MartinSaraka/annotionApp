@@ -34,6 +34,12 @@ export const ButtonRoot = styled(motion.button, {
   fontWeight: 600,
 
   variants: {
+    variant: {
+      danger: {
+        backgroundColor: '#3A1B27',
+        color: '#FF85AC'
+      }
+    },
     outlined: {
       true: {
         backgroundColor: 'transparent',
@@ -81,6 +87,15 @@ export const ButtonRoot = styled(motion.button, {
     condensed: {
       true: {
         padding: '$1'
+      }
+    },
+    toggle: {
+      true: {
+        $$color: '$colors$dark2',
+
+        '&[data-state="on"]': {
+          backgroundColor: '$$color'
+        }
       }
     }
   }

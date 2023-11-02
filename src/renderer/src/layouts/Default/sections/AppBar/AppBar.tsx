@@ -3,6 +3,7 @@ import { ComponentProps } from '@stitches/react'
 
 import { Box, Button, Icon } from '@renderer/ui'
 import { TabList } from '@renderer/components'
+import { TrafficLights } from '@renderer/components/appbar'
 
 import * as S from './styled'
 
@@ -10,8 +11,7 @@ type TAppBarProps = ComponentProps<typeof Box>
 
 const AppBar = (props: TAppBarProps) => (
   <S.Root {...props}>
-    {/* Reserved space for window controls */}
-    <Box css={{ width: 54 }} />
+    <TrafficLights />
 
     <S.Content>
       <TabList css={{ _appRegion: 'no-drag' }} />
