@@ -11,11 +11,7 @@ import Annotorious from '@recogito/annotorious-openseadragon'
 import SelectorPack from '@recogito/annotorious-selector-pack'
 import NuClickTool from '@renderer/tools/NuClick/NuClickTool'
 
-import {
-  AnnotationHandler,
-  AnnotoriousHandler,
-  NuClickHandler
-} from '@renderer/handlers'
+import { AnnotationHandler, AnnotoriousHandler } from '@renderer/handlers'
 import { OSDAdapter } from '@renderer/adapters'
 import {
   useAnnotoriousStore,

@@ -1,7 +1,7 @@
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 
 import { OpenSeadragonMain } from '@renderer/ui/openseadragon'
-import { useFullDropzone, useViewer } from '@renderer/hooks'
+import { useViewer } from '@renderer/hooks'
 
 import { ClassHandler } from '@renderer/handlers'
 import { useImageStore, useSettingsStore } from '@renderer/store'
@@ -16,7 +16,7 @@ type TBaseProps = {
 const Viewer = ({ info }: TBaseProps) => {
   useViewer(info)
 
-  const open = useImageStore((state) => state.open)
+  //const open = useImageStore((state) => state.open)
   const classes = useImageStore((state) => state.getClasses())
 
   const setInitialPageColor = useSettingsStore(
@@ -26,12 +26,12 @@ const Viewer = ({ info }: TBaseProps) => {
     (state) => state.deselectAnnotations
   )
 
-  const handleFileOpen = useCallback(
+  /*const handleFileOpen = useCallback(
     (path: string) => {
       open(path, false).then(console.info).catch(console.error)
     },
     [open]
-  )
+  )*/
 
   //useFullDropzone(handleFileOpen)
 

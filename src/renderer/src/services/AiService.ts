@@ -106,8 +106,8 @@ class AiService {
     console.log(annotationX, annotationY, annotationWidth, annotationHeight)
 
     // TODO: check
-    const areaWidth = AiService.#DEFAULT_MITOTIC_COUNT_SETTINGS.cropSize.width
-    const areaHeight = AiService.#DEFAULT_MITOTIC_COUNT_SETTINGS.cropSize.height
+    //const areaWidth = AiService.#DEFAULT_MITOTIC_COUNT_SETTINGS.cropSize.width
+    //const areaHeight = AiService.#DEFAULT_MITOTIC_COUNT_SETTINGS.cropSize.height
 
     const cropImagePath = OSDAdapter.fromInfoToCroppedSource(
       imageData,
