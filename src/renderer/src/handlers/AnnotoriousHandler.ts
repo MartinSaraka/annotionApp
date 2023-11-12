@@ -10,6 +10,8 @@ class AnnotoriousHandler {
       AnnotoriousHandler.showPreview(anno, annotation),
     zoomToAnnotation: (annotation: TAnnotation) =>
       AnnotoriousHandler.zoomToAnnotation(anno, annotation),
+    zoomToParent: (parentId: TAnnotation['id']) =>
+      AnnotoriousHandler.zoomToParent(anno, parentId),
     highlightAnnotation: (annotation: TAnnotation, state: 'on' | 'off') =>
       AnnotoriousHandler.highlightAnnotation(anno, annotation, state)
   })
@@ -37,6 +39,15 @@ class AnnotoriousHandler {
     anno.fitBoundsWithConstraints(annotation)
   }
 
+  private static zoomToParent = (
+    anno: TAnno | null,
+    parentId: TAnnotation['id']
+  ) => {
+    if (!anno) return
+
+    anno.fitBoundsWithConstraints(parentId)
+  }
+
   private static highlightAnnotation = (
     anno: TAnno | null,
     annotation: TAnnotation,
@@ -52,6 +63,19 @@ class AnnotoriousHandler {
 
     if (state === 'on') element.classList.add('highlight')
     else element.classList.remove('highlight')
+  }
+
+  static highlightNode = (
+    annotation: TAnnotation,
+    state: 'on' | 'off' = 'on'
+  ) => {
+    const element = document.querySelector(
+      `div[data-node-id="${annotation.id}"]`
+    )
+
+    if (!element) return
+
+    element.setAttribute('data-highlighted', state)
   }
 }
 

@@ -27,7 +27,8 @@ export const OPEN_SEADRAGON_DEFAULT_OPTIONS: Partial<OpenSeadragon.Options> = {
   showNavigator: true,
   navigatorBorderColor: 'none',
   navigatorBackground: '#101021',
-  navigatorMaintainSizeRatio: true
+  navigatorMaintainSizeRatio: true,
+  navigatorDisplayRegionColor: '#0074FF'
 }
 
 export const OPEN_SEADRAGON_PREVIEW_OPTIONS: Partial<OpenSeadragon.Options> = {

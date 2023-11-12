@@ -58,7 +58,7 @@ const Toggle = forwardRef(function Toggle(
           backgroundColor: '#3E63DD'
         },
 
-        '&:hover:not(:disabled)[data-state="off"]': !isActive && {
+        '&:hover:not(:disabled)[aria-checked="false"]': !isActive && {
           color: '#0074FF'
         },
         ...css

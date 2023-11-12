@@ -33,6 +33,12 @@ export const ButtonRoot = styled(motion.button, {
   lineHeight: 'none',
   fontWeight: 600,
 
+  '&:disabled': {
+    opacity: 0.5,
+    cursor: 'not-allowed',
+    filter: 'grayScale(0.8)'
+  },
+
   variants: {
     variant: {
       danger: {

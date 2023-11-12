@@ -75,3 +75,4 @@ export type TAnnotationPurpose =
   | 'editability'
   | 'visibility'
   | 'status'
+  | 'parent'

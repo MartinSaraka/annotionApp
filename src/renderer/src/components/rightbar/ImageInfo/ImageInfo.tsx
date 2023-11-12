@@ -13,8 +13,8 @@ type TLeftBarImageInfoProps = ComponentProps<typeof Box>
 const ImageInfo = (props: TLeftBarImageInfoProps) => (
   <Box {...props}>
     <ImageInfoPageColor />
-    <ImageInfoParameters />
     <ImageInfoClasses />
+    <ImageInfoParameters />
   </Box>
 )
 

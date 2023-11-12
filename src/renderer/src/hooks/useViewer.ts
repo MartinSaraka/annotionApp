@@ -11,7 +11,11 @@ import Annotorious from '@recogito/annotorious-openseadragon'
 import SelectorPack from '@recogito/annotorious-selector-pack'
 import NuClickTool from '@renderer/tools/NuClick/NuClickTool'
 
-import { AnnotoriousHandler, NuClickHandler } from '@renderer/handlers'
+import {
+  AnnotationHandler,
+  AnnotoriousHandler,
+  NuClickHandler
+} from '@renderer/handlers'
 import { OSDAdapter } from '@renderer/adapters'
 import {
   useAnnotoriousStore,
@@ -31,6 +35,7 @@ import {
   ANNOTORIOUS_DEFAULT_CONFIG,
   ANNOTORIOUS_PREVIEW_CONFIG
 } from '@common/constants/annotations'
+import { AiService } from '@renderer/services'
 
 export type TUseViewer = {
   closeOpenSeadragon: () => void
@@ -75,8 +80,23 @@ const formatter = (data: {
     </div>
   `
 
+  const pointObject = document.createElementNS(
+    'http://www.w3.org/2000/svg',
+    'foreignObject'
+  )
+
+  pointObject.innerHTML = `
+    <div xmlns="http://www.w3.org/1999/xhtml" class="a9s-generating-wrapper">
+      <div class="a9s-generating"></div>
+    </div>
+  `
+
   return {
-    element: props['data-class-id'] ? foreignObject : undefined,
+    element: props['data-status']
+      ? pointObject
+      : props['data-class-id']
+      ? foreignObject
+      : undefined,
     ...props
   }
 }
@@ -198,25 +218,93 @@ const useViewer = (source: TImageInfo): TUseViewer => {
         console.log('changeSelectionTarget')
       })
 
-      anno.on('clickAnnotation', (annotation: TAnnotation) => {
-        console.log('clickAnnotation', annotation)
-      })
+      anno.on(
+        'clickAnnotation',
+        (annotation: TAnnotation, element: HTMLElement) => {
+          console.log('clickAnnotation', annotation)
+
+          const status = element.getAttribute('data-status')
+          const editability = element.getAttribute('data-editability')
+
+          if (status === 'generating' || editability === 'locked') {
+            selectAnnotation(annotation.id)
+            AnnotoriousHandler.instance(preview).showPreview(annotation)
+          }
+        }
+      )
 
       anno.on('startSelection', (point) => {
         console.log('startSelection')
         console.log(point)
       })
 
-      anno.on('createAnnotation', (annotation: TAnnotation) => {
+      anno.on('createAnnotation', (annotationData: TAnnotation) => {
         console.log('createAnnotation')
 
+        let annotation = annotationData
         const activeTool = getActiveTool()
+
+        const intersections =
+          (anno.getAnnotationsIntersecting(annotation) as [
+            { underlying: TAnnotation }
+          ]) || []
+
+        if (intersections.length > 0) {
+          const parent = intersections[intersections.length - 1]
+          annotation = AnnotationHandler.upsertBody(
+            annotation,
+            'TextualBody',
+            'parent',
+            parent.underlying.id
+          )
+        }
 
         saveAnnotation(annotation)
         AnnotoriousHandler.instance(preview).showPreview(annotation)
 
+        //TODO: temporary solution
+        if (activeTool.value === ETool.RECTANGLE) {
+          AiService.MitoticCount(annotation).then((data) => {
+            if (data) {
+              data.forEach((item) => {
+                anno.addAnnotation(item)
+                saveAnnotation(item)
+              })
+              AnnotoriousHandler.instance(preview).showPreview(annotation)
+            }
+          })
+        }
+
         if (activeTool.value === ETool.NUCLICK_POINT) {
-          NuClickHandler.handle(annotation).then((data) => {
+          AiService.NuClick(annotation).then((data) => {
+            anno.removeAnnotation(annotation.id)
+            removeAnnotation(annotation.id)
+
+            if (data) {
+              let newAnnotation = data
+
+              const intersections =
+                (anno.getAnnotationsIntersecting(newAnnotation) as [
+                  { underlying: TAnnotation }
+                ]) || []
+
+              if (intersections.length > 0) {
+                const parent = intersections[intersections.length - 1]
+                newAnnotation = AnnotationHandler.upsertBody(
+                  newAnnotation,
+                  'TextualBody',
+                  'parent',
+                  parent.underlying.id
+                )
+              }
+
+              anno.addAnnotation(newAnnotation)
+              saveAnnotation(newAnnotation)
+              AnnotoriousHandler.instance(preview).showPreview(newAnnotation)
+            }
+          })
+
+          /*NuClickHandler.handle(annotation).then((data) => {
             anno.removeAnnotation(annotation.id)
             removeAnnotation(annotation.id)
 
@@ -225,7 +313,7 @@ const useViewer = (source: TImageInfo): TUseViewer => {
               saveAnnotation(data)
               AnnotoriousHandler.instance(preview).showPreview(data)
             }
-          })
+          })*/
         }
       })
 
@@ -246,15 +334,18 @@ const useViewer = (source: TImageInfo): TUseViewer => {
         AnnotoriousHandler.instance(preview).showPreview(annotation)
       })
 
-      anno.on('cancelSelected', () => {
+      anno.on('cancelSelected', (annotation: TAnnotation) => {
         console.log('cancelSelected')
+        AnnotoriousHandler.highlightNode(annotation, 'off')
         deselectAnnotations()
       })
 
       anno.on(
         'mouseEnterAnnotation',
-        (_: TAnnotation, element: HTMLElement) => {
+        (annotation: TAnnotation, element: HTMLElement) => {
           console.log('mouseEnterAnnotation')
+
+          AnnotoriousHandler.highlightNode(annotation, 'on')
 
           const status = element.getAttribute('data-status')
           const editability = element.getAttribute('data-editability')
@@ -270,7 +361,11 @@ const useViewer = (source: TImageInfo): TUseViewer => {
         }
       )
 
-      anno.on('mouseLeaveAnnotation', () => {
+      anno.on('mouseLeaveAnnotation', (annotation: TAnnotation) => {
+        console.log('mouseLeaveAnnotation')
+
+        AnnotoriousHandler.highlightNode(annotation, 'off')
+
         anno.disableSelect = false
       })
     },

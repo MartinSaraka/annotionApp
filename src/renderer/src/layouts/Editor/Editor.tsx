@@ -1,6 +1,6 @@
 import { Resizable } from '@renderer/ui'
 
-import { TopBar, LeftBar, RightBar } from './sections'
+import { TopBar, LeftBar, RightBar, FloatingBar, Hints } from './sections'
 
 import * as S from './styled'
 
@@ -24,7 +24,14 @@ const Editor = ({ children }: TEditorProps) => (
       </Resizable>
 
       <S.Content id="editor-layout--content" css={{ _appRegion: 'no-drag' }}>
+        <FloatingBar
+          id="editor-layout--floating-bar"
+          css={{ _appRegion: 'no-drag' }}
+        />
+
         {children}
+
+        <Hints id="editor-layout--hints" />
       </S.Content>
 
       <Resizable

@@ -1,15 +1,16 @@
 import { memo } from 'react'
 import { ComponentProps } from '@stitches/react'
 
+import { ScrollArea } from '@renderer/ui'
 import { OpenSeadragonPreview } from '@renderer/ui/openseadragon'
 import {
   RightBarAnnotationInfo,
   RightBarImageInfo
 } from '@renderer/components/rightbar'
+
 import { useImageStore } from '@renderer/store'
 
 import * as S from './styled'
-import { ScrollArea } from '@renderer/ui'
 
 type TRightBarProps = ComponentProps<typeof S.Root>
 

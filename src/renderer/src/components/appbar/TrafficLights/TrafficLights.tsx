@@ -14,7 +14,7 @@ type TAppBarTrafficLightsProps = ComponentProps<typeof Box>
 const TrafficLights = ({ css, ...rest }: TAppBarTrafficLightsProps) => {
   const isDarwin = window.electron.process.platform === 'darwin'
 
-  /* Reserved space for window controls */
+  /* Reserved space for window controls on MacOS */
   if (isDarwin)
     return (
       <Box
@@ -52,27 +52,36 @@ const TrafficLights = ({ css, ...rest }: TAppBarTrafficLightsProps) => {
       }}
       {...rest}
     >
+      {/* CLOSE WINDOW */}
       <Box
         as={SVG}
         src={trafficLightRed}
+        role="button"
+        aria-label="Close window"
         width={12}
         height={12}
         title="Close window"
         css={{ _appRegion: 'no-drag' }}
         onClick={handleAction('close')}
       />
+      {/* MINIMIZE WINDOW */}
       <Box
         as={SVG}
         src={trafficLightOrange}
+        role="button"
+        aria-label="Minimize window"
         width={12}
         height={12}
         title="Minimize window"
         css={{ _appRegion: 'no-drag' }}
         onClick={handleAction('minimize')}
       />
+      {/* MAXIMIZE WINDOW */}
       <Box
         as={SVG}
         src={trafficLightGreen}
+        role="button"
+        aria-label="Maximize window"
         width={12}
         height={12}
         title="Maximize window"

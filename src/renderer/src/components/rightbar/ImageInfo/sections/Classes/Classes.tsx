@@ -5,6 +5,7 @@ import { useImageStore } from '@renderer/store'
 import { UpsertClassPopover } from '@renderer/popovers'
 import { TAnnotationClass } from '@common/types/annotation'
 import { ClassHandler } from '@renderer/handlers'
+import { isDefaultClass } from '@common/utils/classes'
 
 const Classes = () => {
   const triggerRef = useRef<HTMLButtonElement | null>(null)
@@ -54,14 +55,16 @@ const Classes = () => {
               />
             </Button>
 
-            <Button ghost condensed onClick={handleDeleteClass(item)}>
-              <Icon
-                name="TrashIcon"
-                css={{ color: '$crimson11' }}
-                width={16}
-                height={16}
-              />
-            </Button>
+            {!isDefaultClass(item) && (
+              <Button ghost condensed onClick={handleDeleteClass(item)}>
+                <Icon
+                  name="TrashIcon"
+                  css={{ color: '$crimson11' }}
+                  width={16}
+                  height={16}
+                />
+              </Button>
+            )}
           </>
         }
       >
@@ -93,7 +96,9 @@ const Classes = () => {
             </Popover.Trigger>
           }
         >
-          <List.Box css={{ $$gap: 0 }}>{classes.map(renderClasses)}</List.Box>
+          {!!classes.length && (
+            <List.Box css={{ $$gap: 0 }}>{classes.map(renderClasses)}</List.Box>
+          )}
         </List>
       </Popover.Anchor>
 

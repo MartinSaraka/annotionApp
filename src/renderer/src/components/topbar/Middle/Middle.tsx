@@ -57,7 +57,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
     >
       <Toolbar.Root orientation="horizontal" role="toolbar">
         <Toolbar.Button id={OPEN_SEADRAGON_HOME_ID}>
-          <Icon name="AllSidesIcon" width={18} height={18} />
+          <Icon name="EnterFullScreenIcon" width={18} height={18} />
         </Toolbar.Button>
 
         <Toolbar.Separator orientation="vertical" />

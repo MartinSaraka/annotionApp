@@ -104,6 +104,6 @@ export const TOOL_ICON_MAP: Record<ETool, string> = {
   [ETool.POLYGON]: 'PolygonToolIcon', // 'ComponentInstanceIcon',
   [ETool.FREEHAND]: 'FreehandToolIcon', // 'Pencil1Icon',
   [ETool.HAND]: 'HandIcon',
-  [ETool.ZOOM_IN]: 'MagnifyingGlassIcon',
+  [ETool.ZOOM_IN]: 'ZoomInIcon',
   [ETool.ZOOM_OUT]: 'ZoomOutIcon'
 }

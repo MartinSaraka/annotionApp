@@ -67,7 +67,7 @@ const Parameters = () => {
       initialValues={initialValues}
     >
       {({ handleSubmit }) => (
-        <List as={Form} title="Parameters" collapsible>
+        <List as={Form} title="Parameters" collapsible borderTop>
           <input type="submit" hidden />
 
           <List.Box>
@@ -316,7 +316,7 @@ const Parameters = () => {
             </List.Item>
           </List.Box>
 
-          <List.Box>
+          <List.Box title="pixel">
             <List.Item>
               <Label htmlFor="parameters-pixel-size-w">Size</Label>
 

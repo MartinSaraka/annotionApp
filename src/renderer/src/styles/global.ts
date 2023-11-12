@@ -1,4 +1,19 @@
-import { globalCss } from './theme'
+import { globalCss, keyframes } from './theme'
+
+/*const rotatingKeyframes = keyframes({
+  '100%': {
+    transform: 'rotate(-360deg)'
+  }
+})*/
+
+const pulseKeyframes = keyframes({
+  '0%': {
+    boxShadow: 'rgb(12, 140, 233) 0 0 0 0'
+  },
+  '75%': {
+    boxShadow: 'rgba(12, 140, 233, 0) 0 0 0 8px'
+  }
+})
 
 export const globalStyles = globalCss({
   ':root': {
@@ -96,13 +111,17 @@ export const globalStyles = globalCss({
     '-webkit-app-region': 'no-drag'
   },
 
-  // React Grid Layout
-  '.react-grid-item.react-grid-placeholder': {
-    opacity: '0.7 !important',
-    backgroundColor: '$purple5 !important',
+  // TreeView
+  '.treeRoot': {
+    paddingBlock: 1
+  },
 
-    borderRadius: '$6',
-    border: '1.5px dashed $purple10'
+  '.draggingSource': {
+    opacity: 0.3
+  },
+
+  '.dropTarget': {
+    backgroundColor: '$dark3'
   },
 
   // OpenSeadragon
@@ -110,6 +129,12 @@ export const globalStyles = globalCss({
     '.navigator': {
       marginTop: '$4 !important',
       marginRight: '$4 !important'
+    }
+  },
+
+  ':root:not([style*="--cursor-viewer:grab"]) .a9s-annotation': {
+    '.a9s-outer, .a9s-inner': {
+      pointerEvents: 'none'
     }
   },
 
@@ -176,11 +201,111 @@ export const globalStyles = globalCss({
       '.a9s-inner': {}
     },
 
+    // Generating status
     '.a9s-point[data-status="generating"]': {
-      '.a9s-outer': {
-        fill: 'red'
+      position: 'relative',
+      borderRadius: '50%',
+
+      circle: {
+        fill: 'transparent',
+        stroke: 'transparent'
+      },
+
+      g: {
+        transform: 'scale(1) !important',
+        inset: 0
+      },
+
+      '.a9s-formatter-el': {
+        display: 'block',
+        pointerEvents: 'none',
+        position: 'absolute',
+        borderRadius: '50%',
+        inset: 0,
+        width: '100% !important',
+        height: '100% !important',
+
+        foreignobject: {
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%'
+        }
+      },
+
+      '.a9s-generating-wrapper': {
+        borderRadius: '50%',
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        display: 'block',
+        backgroundColor: 'rgb(12, 140, 233)',
+        animation: `${pulseKeyframes} 1500ms infinite`
       }
     },
+
+    /*'.a9s-point[data-status="generating"]': {
+      position: 'relative !important',
+      borderRadius: '50%',
+
+      circle: {
+        fill: 'transparent',
+        stroke: 'transparent'
+      },
+
+      '.a9s-formatter-el': {
+        display: 'block',
+        pointerEvents: 'none',
+        position: 'absolute',
+        borderRadius: '50%',
+        inset: 0,
+        width: '100% !important',
+        height: '100% !important',
+
+        foreignobject: {
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%'
+        },
+
+        '.a9s-generating-wrapper': {
+          border: '1px solid rgb(12, 140, 233)',
+          boxShadow:
+            '0 0 2px rgb(12, 140, 233), 0 0 15px rgba(12, 140, 233, 0.75)',
+
+          borderRadius: '50%',
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          backgroundImage:
+            'conic-gradient(rgb(12, 140, 233) 3%, rgba(12, 140, 233, 0.75) 8%, transparent 35%)',
+          animation: rotatingKeyframes 3s linear infinite
+        },
+
+        '.a9s-generating': {
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'conic-gradient(#77B9E9 2%, transparent 4%)'
+        },
+
+        g: {
+          transform: 'scale(1) !important',
+          inset: 0
+        }
+      },
+
+      '.a9s-outer': {
+        backgroundImage: 'conic-gradient(red 100%, blue 100%, transparent 35%)',
+        //animation: 'rotate 3s linear infinite',
+
+        '&:after': {
+          position: 'absolute !important',
+          inset: 0,
+          borderRadius: 'inherit',
+          content: '""',
+          background: 'conic-gradient(orange 2%,transparent 4%)'
+        }
+      }
+    },*/
 
     '.a9s-annotation': {
       '.a9s-outer': {

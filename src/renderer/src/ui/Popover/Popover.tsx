@@ -81,7 +81,13 @@ const Content = forwardRef(function Content(
 ) {
   return (
     <Primitive.Portal>
-      <S.Content ref={forwardedRef} side="left" align="start" {...rest}>
+      <S.Content
+        ref={forwardedRef}
+        side="left"
+        align="start"
+        onInteractOutside={(e) => e.preventDefault()}
+        {...rest}
+      >
         {children}
       </S.Content>
     </Primitive.Portal>

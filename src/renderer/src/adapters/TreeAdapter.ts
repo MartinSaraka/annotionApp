@@ -9,6 +9,7 @@ export type TNodeData = {
   class: string
   editability: string
   visibility: string
+  status?: string
 }
 
 export type TNodeModel = NodeModel<TNodeData>
@@ -22,21 +23,27 @@ class TreeAdapter {
         'naming',
         'tagging',
         'editability',
-        'visibility'
+        'visibility',
+        'parent',
+        'status'
       ])
 
       const shape = AnnotationUtils.from(annotation).shape
 
+      console.log(data)
+
       const newNode: TNodeModel = {
         id: annotation.id,
         text: data?.naming || '',
-        parent: 0,
+        parent: data?.parent || '0',
+        droppable: true,
         data: {
           tag: shape.tag,
           shape: shape.props,
           class: data.tagging,
           editability: data.editability || 'editable',
-          visibility: data.visibility || 'visible'
+          visibility: data.visibility || 'visible',
+          status: data.status || undefined
         }
       }
 

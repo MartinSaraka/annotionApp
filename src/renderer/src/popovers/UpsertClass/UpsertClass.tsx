@@ -15,6 +15,8 @@ import {
 import { useImageStore } from '@renderer/store'
 import { TAnnotationClass } from '@common/types/annotation'
 import { ClassHandler } from '@renderer/handlers'
+import { isDefaultClass } from '@common/utils/classes'
+import { DEFAULT_CLASSES } from '@common/constants/classes'
 
 type TUpsertClassProps = {
   data?: TAnnotationClass
@@ -58,7 +60,7 @@ const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
       onSubmit={onSubmit}
       initialValues={initialValues}
     >
-      {({ values, initialValues: init }) => (
+      {({ values, initialValues: init, setFieldValue }) => (
         <List
           as={Form}
           title={`${operation} ${operation === 'Create' ? 'new ' : ''}class`}
@@ -80,11 +82,15 @@ const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
               borderRightWidth: 0,
               borderLeftWidth: 0,
               padding: '$4',
-              marginBlock: '$1'
+              marginBlock: '$1',
+
+              '& > span:before': {
+                boxShadow: 'rgba(16, 16, 33, 0.4) 1px 1px 6px'
+              }
             }}
           >
             <Chip small auto css={{ $$color: values.color }}>
-              {values.name || 'Class'}
+              {values.name || 'Type your class name'}
             </Chip>
           </Box>
 
@@ -101,6 +107,20 @@ const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
                   title={init.name}
                   as={Input.Field}
                 />
+
+                {isDefaultClass(init) && (
+                  <Input.Element>
+                    <Button
+                      input
+                      onClick={() =>
+                        setFieldValue('name', DEFAULT_CLASSES[init.id].name)
+                      }
+                      disabled={values.name === DEFAULT_CLASSES[init.id].name}
+                    >
+                      <Icon name="ResetIcon" width={14} height={14} />
+                    </Button>
+                  </Input.Element>
+                )}
               </Input>
             </List.Item>
 
@@ -126,6 +146,20 @@ const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
                   title={init.color}
                   as={Input.Field}
                 />
+
+                {isDefaultClass(init) && (
+                  <Input.Element>
+                    <Button
+                      input
+                      onClick={() =>
+                        setFieldValue('color', DEFAULT_CLASSES[init.id].color)
+                      }
+                      disabled={values.color === DEFAULT_CLASSES[init.id].color}
+                    >
+                      <Icon name="ResetIcon" width={14} height={14} />
+                    </Button>
+                  </Input.Element>
+                )}
               </Input>
             </List.Item>
 

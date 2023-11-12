@@ -49,7 +49,7 @@ const Icon = forwardRef(function Icon(
 })
 
 type TValueBaseProps = {
-  children: React.ReactNode
+  children?: React.ReactNode
 }
 
 type TValueProps = ComponentProps<typeof S.Value> & TValueBaseProps

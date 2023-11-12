@@ -11,6 +11,10 @@ export const isAnnotationVisible = (value = 'visible') => {
   return value === 'visible'
 }
 
+export const isAnnotationGenerating = (value?: string) => {
+  return value === 'generating'
+}
+
 export const getAnnotationEditabilityIcon = (value: string) => {
   return ANNOTATION_EDITABILITY_ICON_MAP[value || 'editable']
 }

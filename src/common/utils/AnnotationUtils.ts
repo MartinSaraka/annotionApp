@@ -11,6 +11,7 @@ import {
   ANNOTATION_TAG_PROPS_MAP,
   ANNOTATION_TYPE_TAG_MAP
 } from '@common/constants/annotations'
+import { TBoundingBox } from '@common/types/aiService'
 
 // POINT: xywh=pixel:44094.2578125,54109.70703125,0,0 // CIRCLE
 // NUCLICK: xywh=pixel:44094.2578125,54109.70703125,0,0 // CIRCLE
@@ -94,7 +95,8 @@ class AnnotationUtils {
   })
 
   static createAnnotation = (
-    points: { x: number; y: number }[]
+    points: { x: number; y: number }[],
+    body: TAnnotationBody[] = []
   ): TAnnotation => {
     const pointsString = points
       .map((point) => `${point.x},${point.y}`)
@@ -110,12 +112,40 @@ class AnnotationUtils {
           purpose: 'naming',
           type: 'TextualBody',
           value: 'Annotation 4'
-        }
+        },
+        ...body
       ],
       target: {
         selector: {
           type: 'SvgSelector',
           value: `<svg><polygon points="${pointsString}"></polygon></svg>`
+        }
+      }
+    }
+  }
+
+  static createRectAnnotation = (
+    values: TBoundingBox,
+    body: TAnnotationBody[] = []
+  ): TAnnotation => {
+    return {
+      '@context': 'http://www.w3.org/ns/anno.jsonld',
+      id: `#${uuid()}`,
+      type: 'Annotation',
+      motivation: 'generated',
+      body: [
+        {
+          purpose: 'naming',
+          type: 'TextualBody',
+          value: 'Annotation 4'
+        },
+        ...body
+      ],
+      target: {
+        selector: {
+          conformsTo: 'http://www.w3.org/TR/media-frags/',
+          type: 'FragmentSelector',
+          value: `xywh=pixel:${values.x},${values.y},${values.width},${values.height}`
         }
       }
     }

@@ -1,1 +1,1 @@
-export const APP_NAME = '@HIAT'
+export const APP_NAME = '@AnnotAid'

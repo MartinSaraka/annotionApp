@@ -27,3 +27,6 @@ export { default as Handle } from './Handle'
 export { default as Toggle } from './Toggle'
 
 export { default as Toolbar } from './Toolbar'
+
+export { default as DropdownMenu } from './DropdownMenu'
+export { default as Tooltip } from './Tooltip'

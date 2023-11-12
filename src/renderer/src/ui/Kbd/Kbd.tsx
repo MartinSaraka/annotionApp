@@ -17,9 +17,10 @@ const Kbd = forwardRef(function Kbd(
     window.electron.process.platform === 'darwin' ? 'mac' : 'windows'
 
   const text = keys
-    .join(' + ')
+    .join('')
     .replace(/cmd|ctrl/gi, platform === 'mac' ? '⌘' : 'ctrl')
     .replace(/opt|alt/gi, platform === 'mac' ? '⌥' : 'alt')
+    .replace(/shift/gi, platform === 'mac' ? '⇧' : 'shift')
 
   return (
     <S.KbdRoot ref={forwardedRef} {...rest}>

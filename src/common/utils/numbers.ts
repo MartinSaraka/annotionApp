@@ -17,3 +17,7 @@ export const roundNumber = (
   const factor = Math.pow(10, decimals)
   return Math.round(num * factor) / factor
 }
+
+export const toInteger = (value: string | number) => {
+  return +(+value).toFixed(0)
+}

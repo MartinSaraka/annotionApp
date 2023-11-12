@@ -17,6 +17,7 @@ import {
 
 import { ImageService } from '@renderer/services'
 import { AnnotationHandler } from '@renderer/handlers'
+import { DEFAULT_CLASSES } from '@common/constants/classes'
 
 export type TOpenedImageState = {
   image: TImageInfo
@@ -161,7 +162,7 @@ const useImageStore = create<TImageState>()(
               annotationTool: DEFAULT_ANNOTATION_TOOL,
               selectedAnnotation: null,
               annotations: {},
-              classes: {}
+              classes: DEFAULT_CLASSES || {}
             }
           }
         })

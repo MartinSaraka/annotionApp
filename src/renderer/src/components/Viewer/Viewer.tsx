@@ -33,7 +33,7 @@ const Viewer = ({ info }: TBaseProps) => {
     [open]
   )
 
-  useFullDropzone(handleFileOpen)
+  //useFullDropzone(handleFileOpen)
 
   useEffect(() => {
     setInitialPageColor()

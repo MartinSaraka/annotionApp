@@ -4,12 +4,13 @@ export const Actions = styled('div', {
   display: 'none',
   alignItems: 'center',
 
-  position: 'absolute',
+  //position: 'absolute',
   inset: 0,
   left: 'auto',
 
   paddingInline: '$3',
   pointerEvents: 'none',
+  paddingLeft: 0,
 
   '& > *': {
     pointerEvents: 'all'
@@ -38,7 +39,7 @@ export const Node = styled('div', {
 
   cursor: 'pointer',
 
-  p: {
+  'p, input': {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'
@@ -52,15 +53,11 @@ export const Node = styled('div', {
   },
 
   '&:hover:not(:focus):not(:active):not(:active:focus)': {
-    borderColor: '$dark3'
-  },
+    borderColor: '$dark3',
 
-  '&[data-selected="true"]': {
-    backgroundColor: '$dark2'
-  },
-
-  '&[data-branch-expanded="true"]': {
-    borderBottomColor: '$dark3'
+    '&[data-child="true"]': {
+      borderTopColor: 'transparent'
+    }
   },
 
   [`&:hover ${Actions}`]: {
@@ -68,9 +65,40 @@ export const Node = styled('div', {
     $$bg: '$colors$dark1'
   },
 
-  [`&[data-selected="true"]:hover ${Actions}`]: {
-    display: 'inline-flex',
-    $$bg: '$colors$dark2'
+  ['&[data-highlighted="on"]']: {
+    borderColor: '$dark3',
+
+    [`${Actions}`]: {
+      display: 'inline-flex',
+      $$bg: '$colors$dark1'
+    },
+
+    '&[data-child="true"]': {
+      borderTopColor: 'transparent'
+    }
+  },
+
+  variants: {
+    selected: {
+      true: {
+        backgroundColor: '$dark2',
+
+        [`&:hover ${Actions}`]: {
+          display: 'inline-flex',
+          $$bg: '$colors$dark2'
+        },
+
+        [`&[data-highlighted="on"] ${Actions}`]: {
+          display: 'inline-flex',
+          $$bg: '$colors$dark2'
+        }
+      }
+    },
+    opened: {
+      true: {
+        borderBottomColor: '$dark3'
+      }
+    }
   }
 })
 
@@ -78,6 +106,8 @@ export const Chevron = styled('div', {
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
+
+  flexShrink: 0,
   color: '$dark4',
 
   '&[data-expanded="true"]': {
