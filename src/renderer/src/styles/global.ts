@@ -113,7 +113,7 @@ export const globalStyles = globalCss({
 
   // TreeView
   '.treeRoot': {
-    paddingBlock: 1
+    height: '100%'
   },
 
   '.draggingSource': {
@@ -170,6 +170,8 @@ export const globalStyles = globalCss({
       fontSize: '$4',
       lineHeight: '92%',
       fontWeight: 600,
+
+      whiteSpace: 'nowrap',
 
       '&:before': {
         position: 'absolute',

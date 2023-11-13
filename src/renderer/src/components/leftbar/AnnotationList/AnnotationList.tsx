@@ -1,7 +1,7 @@
-import { memo, useCallback, useMemo, useRef } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ComponentProps } from '@stitches/react'
 import { DropOptions, NodeModel, NodeRender } from '@minoru/react-dnd-treeview'
-import { noop } from 'lodash'
+import { debounce, noop } from 'lodash'
 
 import {
   Box,
@@ -17,7 +17,11 @@ import { AnnotationItem } from '@renderer/components'
 import { TreeAdapter } from '@renderer/adapters'
 import { TNodeData } from '@renderer/adapters/TreeAdapter'
 
-import { useAnnotoriousStore, useImageStore } from '@renderer/store'
+import {
+  useAnnotoriousStore,
+  useHotkeysStore,
+  useImageStore
+} from '@renderer/store'
 import { AnnotationHandler, AnnotoriousHandler } from '@renderer/handlers'
 
 import {
@@ -29,7 +33,10 @@ import {
 type TLeftBarAnnotationListProps = ComponentProps<typeof Box>
 
 const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
+  const { addShortcut, removeShortcut } = useHotkeysStore()
   const searchRef = useRef<HTMLInputElement | null>(null)
+
+  const [searchQuery, setSearchQuery] = useState<string | null>(null)
 
   const preview = useAnnotoriousStore((state) => state.preview)
   const annotations = useImageStore((state) => state.getAnnotations() || {})
@@ -75,8 +82,19 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
   )
 
   const nodes = useMemo(
-    () => TreeAdapter.fromAnnotationsToNodes(Object.values(annotations)),
-    [annotations]
+    () =>
+      TreeAdapter.fromAnnotationsToNodes(
+        Object.values(annotations),
+        searchQuery
+      ),
+    [annotations, searchQuery]
+  )
+
+  const handleSearch = useCallback(
+    debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(e.target.value || null)
+    }, 400),
+    []
   )
 
   const handleDrop = useCallback(
@@ -99,6 +117,19 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
     [updateAnnotation]
   )
 
+  const handleFocusSearch = useCallback(() => {
+    if (!searchRef.current) return
+    searchRef.current.focus()
+  }, [searchRef])
+
+  useEffect(() => {
+    addShortcut('META+F', handleFocusSearch)
+
+    return () => {
+      removeShortcut('META+F')
+    }
+  }, [addShortcut, removeShortcut, handleFocusSearch])
+
   const renderNode: NodeRender<TNodeData> = useCallback(
     (node, { depth, hasChild, onToggle, isOpen }) => (
       <AnnotationItem
@@ -120,7 +151,7 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
       <Box css={{ paddingInline: '$3', paddingTop: '$4' }}>
         <Input size="big" role="searchbox">
           <Input.Element>
-            <Button input onClick={() => searchRef?.current?.focus()}>
+            <Button input onClick={handleFocusSearch}>
               <Icon name="MagnifyingGlassIcon" width={20} height={20} />
             </Button>
           </Input.Element>
@@ -131,10 +162,11 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
             placeholder="Search annotations"
             aria-labelledby="Annotations search"
             id="annotation-search"
+            onChange={handleSearch}
           />
 
-          <Input.Element text>
-            <Kbd keys={['cmd', 'f']} />
+          <Input.Element>
+            <Kbd keys={['cmd', 'f']} solid />
           </Input.Element>
         </Input>
       </Box>
@@ -142,12 +174,21 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
       <ScrollArea
         fade
         orientation="vertical"
-        css={{ maxHeight: '100%', flex: '1 1 auto', minHeight: 0 }}
+        css={{
+          maxHeight: '100%',
+          flex: '1 1 auto',
+          minHeight: 0
+        }}
       >
         <Box
           role="listbox"
           aria-labelledby="image-annotations"
-          css={{ alignItems: 'scretch', marginBlock: '$4', width: '100%' }}
+          css={{
+            alignItems: 'scretch',
+            marginBlock: '$4',
+            width: '100%',
+            height: '100%'
+          }}
         >
           <TreeView.Root
             nodes={nodes}

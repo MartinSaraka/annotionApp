@@ -1,20 +1,22 @@
-import { memo, useEffect } from 'react'
+import { memo, useCallback, useEffect } from 'react'
 import { ComponentProps } from '@stitches/react'
 
-import { Box, Icon, Select, Toolbar } from '@renderer/ui'
+import { Box, Icon, Kbd, Select, Text, Toolbar, Tooltip } from '@renderer/ui'
 import {
   useAnnotoriousStore,
+  useHotkeysStore,
   useImageStore,
   useOpenSeadragonStore
 } from '@renderer/store'
 
-import { ETool, EToolType, TOOL_ICON_MAP } from '@common/constants/tools'
+import { ETool, EToolType, TOOLS, TOOL_ICON_MAP } from '@common/constants/tools'
 import { OPEN_SEADRAGON_HOME_ID } from '@common/constants/viewer'
 
 type TToolIcon = ComponentProps<typeof Icon>['name']
 type TTopBarMiddleProps = ComponentProps<typeof Box>
 
 const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
+  const { addShortcut, removeShortcut } = useHotkeysStore()
   const annotorious = useAnnotoriousStore((state) => state.anno)
 
   const activeTool = useImageStore((state) => state.activeTool())
@@ -44,6 +46,49 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
     }
   }, [activeTool.value, annotorious])
 
+  const setInitialZoom = useCallback(() => {
+    if (!annotorious._app.current.__v.props.viewer.viewport) return
+    annotorious._app.current.__v.props.viewer.viewport.goHome()
+  }, [annotorious])
+
+  const handleKeyboardShortcut = useCallback(
+    (tool: ETool) => () => {
+      if (TOOLS[tool].type === EToolType.VIEWER) toggleActiveTool(tool)
+      if (TOOLS[tool].type === EToolType.ANNOTATION) toggleAnnotationTool(tool)
+    },
+    [toggleActiveTool, toggleAnnotationTool]
+  )
+
+  useEffect(() => {
+    addShortcut('0', setInitialZoom)
+
+    addShortcut('H', handleKeyboardShortcut(ETool.HAND))
+    addShortcut('Z', handleKeyboardShortcut(ETool.ZOOM_IN))
+
+    addShortcut('1', handleKeyboardShortcut(ETool.RECTANGLE))
+    addShortcut('2', handleKeyboardShortcut(ETool.CIRCLE))
+    addShortcut('3', handleKeyboardShortcut(ETool.ELLIPSE))
+    addShortcut('4', handleKeyboardShortcut(ETool.POLYGON))
+    addShortcut('5', handleKeyboardShortcut(ETool.POINT))
+    addShortcut('6', handleKeyboardShortcut(ETool.FREEHAND))
+    addShortcut('7', handleKeyboardShortcut(ETool.NUCLICK_POINT))
+
+    return () => {
+      removeShortcut('0')
+
+      removeShortcut('H')
+      removeShortcut('Z')
+
+      removeShortcut('1')
+      removeShortcut('2')
+      removeShortcut('3')
+      removeShortcut('4')
+      removeShortcut('5')
+      removeShortcut('6')
+      removeShortcut('7')
+    }
+  }, [addShortcut, removeShortcut, handleKeyboardShortcut, setInitialZoom])
+
   return (
     <Box
       aria-describedby="image-tools"
@@ -56,9 +101,19 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
       {...rest}
     >
       <Toolbar.Root orientation="horizontal" role="toolbar">
-        <Toolbar.Button id={OPEN_SEADRAGON_HOME_ID}>
-          <Icon name="EnterFullScreenIcon" width={18} height={18} />
-        </Toolbar.Button>
+        <Tooltip.Root>
+          <Tooltip.Trigger asChild>
+            <Toolbar.Button id={OPEN_SEADRAGON_HOME_ID}>
+              <Icon name="EnterFullScreenIcon" width={18} height={18} />
+            </Toolbar.Button>
+          </Tooltip.Trigger>
+
+          <Tooltip.Content side="bottom" align="center">
+            <Text variant="base">Fit to screen</Text>
+            <Kbd keys={['0']} css={{ color: '$dark4' }} />
+            <Tooltip.Arrow />
+          </Tooltip.Content>
+        </Tooltip.Root>
 
         <Toolbar.Separator orientation="vertical" />
 
@@ -68,33 +123,53 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
           value={activeTool.value}
           onValueChange={toggleActiveTool}
         >
-          <Toolbar.Toggle
-            group="tools"
-            value={ETool.HAND}
-            aria-label={ETool.HAND}
-            aria-labelledby={EToolType.VIEWER}
-            isActive={activeTool.value === ETool.HAND}
-          >
-            <Icon
-              name={TOOL_ICON_MAP[ETool.HAND] as TToolIcon}
-              width={18}
-              height={18}
-            />
-          </Toolbar.Toggle>
+          <Tooltip.Root>
+            <Tooltip.Trigger asChild>
+              <Toolbar.Toggle
+                group="tools"
+                value={ETool.HAND}
+                aria-label={ETool.HAND}
+                aria-labelledby={EToolType.VIEWER}
+                isActive={activeTool.value === ETool.HAND}
+              >
+                <Icon
+                  name={TOOL_ICON_MAP[ETool.HAND] as TToolIcon}
+                  width={18}
+                  height={18}
+                />
+              </Toolbar.Toggle>
+            </Tooltip.Trigger>
 
-          <Toolbar.Toggle
-            group="tools"
-            value={ETool.ZOOM_IN}
-            aria-label={ETool.ZOOM_IN}
-            aria-labelledby={EToolType.VIEWER}
-            isActive={activeTool.value === ETool.ZOOM_IN}
-          >
-            <Icon
-              name={TOOL_ICON_MAP[ETool.ZOOM_IN] as TToolIcon}
-              width={18}
-              height={18}
-            />
-          </Toolbar.Toggle>
+            <Tooltip.Content side="bottom" align="center">
+              <Text variant="base">Hand</Text>
+              <Kbd keys={['H']} css={{ color: '$dark4' }} />
+              <Tooltip.Arrow />
+            </Tooltip.Content>
+          </Tooltip.Root>
+
+          <Tooltip.Root>
+            <Tooltip.Trigger asChild>
+              <Toolbar.Toggle
+                group="tools"
+                value={ETool.ZOOM_IN}
+                aria-label={ETool.ZOOM_IN}
+                aria-labelledby={EToolType.VIEWER}
+                isActive={activeTool.value === ETool.ZOOM_IN}
+              >
+                <Icon
+                  name={TOOL_ICON_MAP[ETool.ZOOM_IN] as TToolIcon}
+                  width={18}
+                  height={18}
+                />
+              </Toolbar.Toggle>
+            </Tooltip.Trigger>
+
+            <Tooltip.Content side="bottom" align="center">
+              <Text variant="base">Zoom in / out</Text>
+              <Kbd keys={['Z']} css={{ color: '$dark4' }} />
+              <Tooltip.Arrow />
+            </Tooltip.Content>
+          </Tooltip.Root>
 
           <Toolbar.Separator orientation="vertical" />
 

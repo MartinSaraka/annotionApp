@@ -6,7 +6,9 @@ import {
   Box,
   Button,
   Chip,
+  ContextMenu,
   Icon,
+  Kbd,
   Shape,
   Text,
   Toggle,
@@ -127,97 +129,117 @@ const AnnotationItem = ({
   )
 
   return (
-    <TreeView.Node
-      node={node}
-      data-node-id={node.id}
-      isSelected={isSelected}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      actions={
-        <>
-          <Toggle
-            pressed={editability === 'locked'}
-            onPressedChange={handleToggleEditable}
+    <ContextMenu.Root>
+      <ContextMenu.Trigger asChild>
+        <TreeView.Node
+          node={node}
+          data-node-id={node.id}
+          isSelected={isSelected}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          actions={
+            <>
+              <Toggle
+                pressed={editability === 'locked'}
+                onPressedChange={handleToggleEditable}
+              >
+                <Button ghost condensed>
+                  <Icon
+                    name={ANNOTATION_EDITABILITY_ICON_MAP[editability]}
+                    width={12}
+                    height={12}
+                    css={{ color: '$dark4' }}
+                  />
+                </Button>
+              </Toggle>
+
+              <Toggle
+                pressed={visibility === 'hidden'}
+                onPressedChange={handleToggleVisibility}
+              >
+                <Button ghost condensed>
+                  <Icon
+                    name={ANNOTATION_VISIBILITY_ICON_MAP[visibility]}
+                    width={12}
+                    height={12}
+                    css={{ color: '$dark4' }}
+                  />
+                </Button>
+              </Toggle>
+            </>
+          }
+          {...rest}
+        >
+          <Button ghost condensed onDoubleClick={handleZoomToAnnotation}>
+            <Shape tag={tag} props={node.data?.shape || {}} />
+          </Button>
+
+          <Formik<TFormValues>
+            validateOnChange
+            enableReinitialize
+            onSubmit={onSubmit}
+            initialValues={initialValues}
           >
-            <Button ghost condensed>
-              <Icon
-                name={ANNOTATION_EDITABILITY_ICON_MAP[editability]}
-                width={12}
-                height={12}
-                css={{ color: '$dark4' }}
-              />
-            </Button>
-          </Toggle>
+            {({ handleSubmit }) => (
+              <Box
+                as={Form}
+                css={{ display: 'inline', width: '100%' }}
+                onDoubleClick={handleSetEditable}
+              >
+                <input type="submit" hidden />
 
-          <Toggle
-            pressed={visibility === 'hidden'}
-            onPressedChange={handleToggleVisibility}
-          >
-            <Button ghost condensed>
-              <Icon
-                name={ANNOTATION_VISIBILITY_ICON_MAP[visibility]}
-                width={12}
-                height={12}
-                css={{ color: '$dark4' }}
-              />
-            </Button>
-          </Toggle>
-        </>
-      }
-      {...rest}
-    >
-      <Button ghost condensed onDoubleClick={handleZoomToAnnotation}>
-        <Shape tag={tag} props={node.data?.shape || {}} />
-      </Button>
+                <Field name="name">
+                  {({ field }) => (
+                    <Text
+                      ref={inputRef}
+                      as="input"
+                      variant="md"
+                      disabled
+                      required
+                      css={{
+                        color: '$light',
+                        width: '100%',
+                        cursor: 'text',
 
-      <Formik<TFormValues>
-        validateOnChange
-        enableReinitialize
-        onSubmit={onSubmit}
-        initialValues={initialValues}
-      >
-        {({ handleSubmit }) => (
-          <Box
-            as={Form}
-            css={{ display: 'inline', width: '100%' }}
-            onDoubleClick={handleSetEditable}
-          >
-            <input type="submit" hidden />
+                        outlineColor: '#0074FF',
+                        outlineOffset: 2,
+                        outlineStyle: 'solid',
+                        outlineWidth: 1,
 
-            <Field name="name">
-              {({ field }) => (
-                <Text
-                  ref={inputRef}
-                  as="input"
-                  variant="md"
-                  disabled
-                  required
-                  css={{
-                    color: '$light',
-                    width: '100%',
-                    cursor: 'text',
+                        '&:disabled': {
+                          outline: 'none',
+                          cursor: 'pointer'
+                        }
+                      }}
+                      {...field}
+                      onBlur={handleSubmit}
+                    />
+                  )}
+                </Field>
+              </Box>
+            )}
+          </Formik>
 
-                    outlineColor: '#0074FF',
-                    outlineOffset: 2,
-                    outlineStyle: 'solid',
-                    outlineWidth: 1,
+          <Chip small fromCss data-class-id={node.data?.class} />
+        </TreeView.Node>
+      </ContextMenu.Trigger>
 
-                    '&:disabled': {
-                      outline: 'none',
-                      cursor: 'pointer'
-                    }
-                  }}
-                  {...field}
-                  onBlur={handleSubmit}
-                />
-              )}
-            </Field>
+      <ContextMenu.Content>
+        <ContextMenu.Item>
+          <Text>Zoom to annotation</Text>
+        </ContextMenu.Item>
+
+        <ContextMenu.Item css={{ $$fg: '#FF85AC', $$bg: '#3A1B27' }}>
+          <Box css={{ flexDirection: 'row', alignItems: 'center', gap: '$2' }}>
+            <Icon name="TrashIcon" width={12} height={12} />
+
+            <Text>Delete annotation</Text>
           </Box>
-        )}
-      </Formik>
 
-      <Chip small fromCss data-class-id={node.data?.class} />
-    </TreeView.Node>
+          <Kbd keys={['Delete']} />
+        </ContextMenu.Item>
+      </ContextMenu.Content>
+    </ContextMenu.Root>
   )
 }
 

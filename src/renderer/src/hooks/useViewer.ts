@@ -107,6 +107,9 @@ const useViewer = (source: TImageInfo): TUseViewer => {
   const annotations = useImageStore((state) => state.getAnnotations() || {})
   const getActiveTool = useImageStore((state) => state.activeTool)
   const saveAnnotation = useImageStore((state) => state.saveAnnotation)
+  const getSelectedAnnotation = useImageStore(
+    (state) => state.getSelectedAnnotation
+  )
   const removeAnnotation = useImageStore((state) => state.removeAnnotation)
   const selectAnnotation = useImageStore((state) => state.selectAnnotation)
   const deselectAnnotations = useImageStore(
@@ -191,6 +194,16 @@ const useViewer = (source: TImageInfo): TUseViewer => {
        * Register annotorious NuClick custom tool
        */
       mainAnnotorious.addDrawingTool(NuClickTool)
+
+      /**
+       * Cancel selected locked or not visible annotation
+       */
+      main.addHandler('canvas-click', () => {
+        const isSelected = !!mainAnnotorious.getSelected()
+        if (!isSelected && !!getSelectedAnnotation()) {
+          deselectAnnotations()
+        }
+      })
 
       return {
         main: mainAnnotorious,

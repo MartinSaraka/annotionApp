@@ -7,7 +7,7 @@ type TBaseProps = {
   keys: string[]
 }
 
-type TKbdProps = ComponentProps<typeof S.KbdRoot> & TBaseProps
+type TKbdProps = ComponentProps<typeof S.Root> & TBaseProps
 
 const Kbd = forwardRef(function Kbd(
   { keys, ...rest }: TKbdProps,
@@ -17,15 +17,20 @@ const Kbd = forwardRef(function Kbd(
     window.electron.process.platform === 'darwin' ? 'mac' : 'windows'
 
   const text = keys
-    .join('')
+    .join('+')
     .replace(/cmd|ctrl/gi, platform === 'mac' ? '⌘' : 'ctrl')
     .replace(/opt|alt/gi, platform === 'mac' ? '⌥' : 'alt')
     .replace(/shift/gi, platform === 'mac' ? '⇧' : 'shift')
 
+  const title = keys
+    .join('+')
+    .replace(/cmd|ctrl/gi, platform === 'mac' ? 'cmd' : 'ctrl')
+    .replace(/opt|alt/gi, platform === 'mac' ? 'alt' : 'alt')
+
   return (
-    <S.KbdRoot ref={forwardedRef} {...rest}>
+    <S.Root ref={forwardedRef} title={title} aria-label="shortcut" {...rest}>
       {text}
-    </S.KbdRoot>
+    </S.Root>
   )
 })
 

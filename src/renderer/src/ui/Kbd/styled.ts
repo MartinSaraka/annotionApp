@@ -1,6 +1,6 @@
 import { styled } from '@renderer/styles'
 
-export const KbdRoot = styled('kbd', {
+export const Root = styled('kbd', {
   display: 'inline-flex',
   flexShrink: 0,
 
@@ -11,5 +11,24 @@ export const KbdRoot = styled('kbd', {
   color: 'inherit',
 
   fontSize: 'inherit',
-  fontWeight: 'inherit'
+  fontWeight: 'inherit',
+  fontFamily: 'inherit',
+
+  variants: {
+    solid: {
+      true: {
+        $$borderRadius: '$space$2',
+
+        backgroundColor: '$dark1',
+        borderRadius: '$$borderRadius',
+
+        borderWidth: '$1',
+        borderStyle: '$solid',
+        borderColor: '$dark3',
+
+        paddingInline: '$2',
+        paddingBlock: '$1'
+      }
+    }
+  }
 })

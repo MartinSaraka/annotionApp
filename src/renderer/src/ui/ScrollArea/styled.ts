@@ -8,7 +8,14 @@ export const ScrollAreaViewport = styled(ScrollArea.Viewport, {
 
   position: 'relative',
 
-  "&[data-orientation='horizontal']": {
+  '&[data-orientation="vertical"]': {
+    '& > div': {
+      flexDirection: 'column',
+      height: '100%'
+    }
+  },
+
+  '&[data-orientation="horizontal"]': {
     paddingInline: '$2'
   },
 

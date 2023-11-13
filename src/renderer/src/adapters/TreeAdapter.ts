@@ -1,7 +1,9 @@
-import { TAnnotation } from '@common/types/annotation'
-import { AnnotationUtils } from '@common/utils'
 import { NodeModel } from '@minoru/react-dnd-treeview'
+
 import { AnnotationHandler } from '@renderer/handlers'
+
+import { AnnotationUtils } from '@common/utils'
+import { TAnnotation } from '@common/types/annotation'
 
 export type TNodeData = {
   tag: ReturnType<(typeof AnnotationUtils)['getShape']>['tag']
@@ -15,8 +17,13 @@ export type TNodeData = {
 export type TNodeModel = NodeModel<TNodeData>
 
 class TreeAdapter {
-  static fromAnnotationsToNodes(annotations: TAnnotation[]): TNodeModel[] {
+  static fromAnnotationsToNodes(
+    annotations: TAnnotation[],
+    query: string | null
+  ): TNodeModel[] {
     const nodes: TNodeModel[] = []
+
+    const queryRegex = query ? new RegExp(query, 'gi') : null
 
     for (const annotation of annotations) {
       const data = AnnotationHandler.getBody(annotation, [
@@ -28,9 +35,18 @@ class TreeAdapter {
         'status'
       ])
 
-      const shape = AnnotationUtils.from(annotation).shape
+      if (queryRegex) {
+        const matchId =
+          !!annotation.id &&
+          query?.charAt(0) === '#' &&
+          queryRegex.test(annotation.id)
 
-      console.log(data)
+        const matchName = !!data.naming && queryRegex.test(data.naming)
+
+        if (!matchId && !matchName) continue
+      }
+
+      const shape = AnnotationUtils.from(annotation).shape
 
       const newNode: TNodeModel = {
         id: annotation.id,
