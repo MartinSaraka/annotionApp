@@ -1,4 +1,3 @@
-import { omit } from 'lodash'
 import { create } from 'zustand'
 
 export type THotkeysState = {
@@ -35,6 +34,7 @@ const useHotkeysStore = create<THotkeysState>()((set) => {
     ]
       .filter(Boolean)
       .join('+')
+      .toLowerCase()
 
     const callback = callbacks[shortcut]
     if (callback) callback(event)
@@ -54,11 +54,11 @@ const useHotkeysStore = create<THotkeysState>()((set) => {
   }
 
   const removeShortcut: THotkeysState['removeShortcut'] = (shortcut) => {
-    const newCallbacks = omit(callbacks, shortcut.toLowerCase())
+    delete callbacks[shortcut.toLowerCase()]
 
-    set({ callbacks: newCallbacks })
+    set({ callbacks })
 
-    if (isListenerAttached && !Object.keys(newCallbacks).length) {
+    if (isListenerAttached && !Object.keys(callbacks).length) {
       window.removeEventListener('keydown', handleKeyPress)
       isListenerAttached = false
     }

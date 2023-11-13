@@ -74,7 +74,7 @@ export const ToolbarButton = styled(Toolbar.Button, {
   color: '$light',
 
   '&:hover': {
-    color: '#0074FF'
+    color: '$blue2'
   }
 })
 
@@ -99,7 +99,7 @@ export const ActiveItem = styled(motion.div, {
   position: 'absolute',
   inset: 0,
 
-  backgroundColor: '#3E63DD',
+  backgroundColor: '$blue3',
   borderRadius: '$5',
 
   zIndex: '$base'

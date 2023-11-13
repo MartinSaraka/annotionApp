@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { styled } from '@renderer/styles'
 
 export const Root = styled(motion.span, {
-  $$color: '#3E63DD',
+  $$color: '$colors$blue3',
 
   position: 'relative',
 
@@ -46,6 +46,7 @@ export const Root = styled(motion.span, {
         }
       }
     },
+
     auto: {
       true: {
         '&:before': {
@@ -87,6 +88,21 @@ export const Root = styled(motion.span, {
           paddingBlock: 'calc($1 + 1px)',
 
           color: 'rgb(var(--class-color, 12, 140, 233))'
+        }
+      }
+    },
+    ellipsis: {
+      true: {
+        '&:hover:before, &:hover:after': {
+          maxWidth: 'unset',
+          overflow: 'unset',
+          textOverflow: 'unset'
+        },
+
+        '&:before, &:after': {
+          maxWidth: '12ch',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis'
         }
       }
     }

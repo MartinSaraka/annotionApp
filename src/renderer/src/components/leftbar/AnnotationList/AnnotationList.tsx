@@ -123,10 +123,10 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
   }, [searchRef])
 
   useEffect(() => {
-    addShortcut('META+F', handleFocusSearch)
+    addShortcut('Meta+F', handleFocusSearch)
 
     return () => {
-      removeShortcut('META+F')
+      removeShortcut('Meta+F')
     }
   }, [addShortcut, removeShortcut, handleFocusSearch])
 

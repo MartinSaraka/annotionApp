@@ -1,33 +1,76 @@
-import { memo } from 'react'
+import { memo, useCallback, useState } from 'react'
 import { ComponentProps } from '@stitches/react'
 import { motion } from 'framer-motion'
 
-import { Box } from '@renderer/ui'
+import { Box, ContextMenu } from '@renderer/ui'
 import { OPEN_SEADRAGON_ID } from '@common/constants/viewer'
 
 type TOpenSeadragonMainProps = ComponentProps<typeof Box> &
   React.ComponentProps<typeof motion.div>
 
-const OpenSeadragonMain = ({ css, ...rest }: TOpenSeadragonMainProps) => (
-  <Box
-    as={motion.div}
-    id={OPEN_SEADRAGON_ID}
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    css={{
-      isolation: 'isolate',
-      zIndex: '$base',
+type TContextMenuData = {
+  x: number
+  y: number
+  id?: TID
+}
 
-      position: 'absolute',
-      inset: 0,
+// TODO: move to component and to viewer
+const OpenSeadragonMain = ({ css, ...rest }: TOpenSeadragonMainProps) => {
+  const [data, setData] = useState<TContextMenuData>({
+    x: 0,
+    y: 0
+  })
 
-      cursor: 'var(--cursor-viewer)',
-      backgroundColor: 'var(--page-color)',
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const element = e.target as HTMLElement
+      if (!element) return
 
-      ...css
-    }}
-    {...rest}
-  />
-)
+      // Global context menu
+      if (element.classList.value.includes('a9s-annotationlayer')) {
+        return setData({ x: e.clientX, y: e.clientY })
+      }
+
+      const closest = element.closest('.a9s-annotation')
+      if (!closest) return
+
+      const annotationId = closest.getAttribute('data-id')
+      if (!annotationId) return
+
+      // Annotation context menu
+      return setData({ x: e.clientX, y: e.clientY, id: annotationId })
+    },
+    []
+  )
+
+  return (
+    <ContextMenu.Root>
+      <ContextMenu.Trigger asChild>
+        <Box
+          as={motion.div}
+          id={OPEN_SEADRAGON_ID}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          onContextMenu={handleContextMenu}
+          css={{
+            isolation: 'isolate',
+            zIndex: '$base',
+
+            position: 'absolute',
+            inset: 0,
+
+            cursor: 'var(--cursor-viewer)',
+            backgroundColor: 'var(--page-color)',
+
+            ...css
+          }}
+          {...rest}
+        />
+      </ContextMenu.Trigger>
+
+      <ContextMenu.Content>{data?.id}</ContextMenu.Content>
+    </ContextMenu.Root>
+  )
+}
 
 export default memo(OpenSeadragonMain) as typeof OpenSeadragonMain

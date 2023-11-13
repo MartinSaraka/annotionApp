@@ -1,7 +1,7 @@
 import { memo, useCallback, useEffect } from 'react'
 import { ComponentProps } from '@stitches/react'
 
-import { Box, Icon, Kbd, Select, Text, Toolbar, Tooltip } from '@renderer/ui'
+import { Box, Icon, Kbd, Text, Toolbar, Tooltip } from '@renderer/ui'
 import {
   useAnnotoriousStore,
   useHotkeysStore,
@@ -173,7 +173,44 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
 
           <Toolbar.Separator orientation="vertical" />
 
-          <Select.Root
+          <Tooltip.Root>
+            <Tooltip.Trigger asChild>
+              <Toolbar.Toggle
+                group="tools"
+                value={annotationTool.value}
+                aria-label={annotationTool.value}
+                aria-labelledby={EToolType.ANNOTATION}
+                isActive={activeTool.value === annotationTool.value}
+              >
+                <Icon
+                  name={TOOL_ICON_MAP[annotationTool.value] as TToolIcon}
+                  width={18}
+                  height={18}
+                />
+
+                <Icon
+                  name="TriangleRightIcon"
+                  css={{
+                    transform: 'rotate(45deg)',
+                    pointerEvents: 'none',
+                    position: 'absolute',
+                    bottom: 2,
+                    right: 2
+                  }}
+                  width={10}
+                  height={10}
+                />
+              </Toolbar.Toggle>
+            </Tooltip.Trigger>
+
+            <Tooltip.Content side="bottom" align="center">
+              <Text variant="base">Click to pick tool</Text>
+              <Kbd keys={['1']} css={{ color: '$dark4' }} />
+              <Tooltip.Arrow />
+            </Tooltip.Content>
+          </Tooltip.Root>
+
+          {/*<Select.Root
             value={annotationTool.value}
             onValueChange={toggleAnnotationTool}
           >
@@ -319,7 +356,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
                 </Toolbar.Toggle>
               </Select.Item>
             </Select.Content>
-          </Select.Root>
+              </Select.Root>*/}
         </Toolbar.Group>
       </Toolbar.Root>
     </Box>

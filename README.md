@@ -7,22 +7,19 @@ An Electron application with React and TypeScript.
 ## TODO
 
 - [ ] REMOVE PARENT ANNOTATION AND MOVE TREE, ADAPTER
-
 - [ ] FIGMA hodit do napadov vsetko
 - [ ] REPORT Z TESTOVANIA
-- [ ] Class update
-- [ ] Tooltips
+- [x] Tooltips
 - [x] Hints
 - [x] Icons
 - [ ] Action hints
-- [ ] Annotation loading
+- [x] Annotation loading
 - [ ] Annotation processes
-- [ ] Annotation context menu
-- [ ] Tree context menu
-- [ ] Tree grouping
-- [ ] Floating bar for tools
+- [x] Annotation context menu
+- [x] Tree context menu
+- [x] Tree grouping
+- [x] Floating bar for tools
 - [ ] Floating bar for annotation
-- [ ] Commands
 
 ## Project Setup
 

@@ -16,11 +16,14 @@ const Kbd = forwardRef(function Kbd(
   const platform =
     window.electron.process.platform === 'darwin' ? 'mac' : 'windows'
 
+  // TODO: control
   const text = keys
     .join('+')
     .replace(/cmd|ctrl/gi, platform === 'mac' ? '⌘' : 'ctrl')
     .replace(/opt|alt/gi, platform === 'mac' ? '⌥' : 'alt')
     .replace(/shift/gi, platform === 'mac' ? '⇧' : 'shift')
+    .replace(/backspace/gi, platform === 'mac' ? '⌫' : 'backspace')
+    .replace(/enter/gi, platform === 'mac' ? '⏎' : 'enter')
 
   const title = keys
     .join('+')

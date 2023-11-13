@@ -5,12 +5,10 @@ import {
   gray,
   purple,
   red,
-  blue,
   blueA,
   green,
   yellow,
-  violet,
-  crimsonDark
+  violet
 } from '@radix-ui/colors'
 
 export const {
@@ -36,7 +34,16 @@ export const {
       dark1: '#101021',
       dark2: '#212134',
       dark3: '#2D2D42',
-      dark4: '#6A6A8C'
+      dark4: '#6A6A8C',
+      dark5: '#4B4B68',
+
+      blue1: '#006CEB',
+      blue2: '#0074FF',
+      blue3: '#3E63DD',
+      blue4: '#0C8CE9',
+
+      crimson1: '#3A1B27',
+      crimson4: '#FF85AC'
     },
 
     colors: {
@@ -47,23 +54,30 @@ export const {
       dark2: '$palette$dark2',
       dark3: '$palette$dark3',
       dark4: '$palette$dark4',
+      dark5: '$palette$dark5',
 
       gray200: '$palette$gray200',
       gray400: '$palette$gray400',
       gray800: '$palette$gray800',
       gray900: '$palette$gray900',
 
+      blue1: '$palette$blue1',
+      blue2: '$palette$blue2',
+      blue3: '$palette$blue3',
+      blue4: '$palette$blue4',
+
+      crimson1: '$palette$crimson1',
+      crimson4: '$palette$crimson4',
+
       ...blackA,
       ...gray,
 
       ...purple,
       ...violet,
-      ...crimsonDark,
 
       ...red,
       ...green,
       ...yellow,
-      ...blue,
       ...blueA
     },
 

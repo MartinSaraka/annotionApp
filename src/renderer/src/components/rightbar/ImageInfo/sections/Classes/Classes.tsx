@@ -59,7 +59,7 @@ const Classes = () => {
               <Button ghost condensed onClick={handleDeleteClass(item)}>
                 <Icon
                   name="TrashIcon"
-                  css={{ color: '$crimson11' }}
+                  css={{ color: '$crimson4' }}
                   width={16}
                   height={16}
                 />

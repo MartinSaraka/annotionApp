@@ -23,6 +23,7 @@ import {
   ANNOTATION_EDITABILITY_ICON_MAP,
   ANNOTATION_VISIBILITY_ICON_MAP
 } from '@common/constants/annotation'
+import { TAnnotation } from '@common/types/annotation'
 
 type TFormValues = {
   name: string
@@ -55,6 +56,17 @@ const AnnotationItem = ({
   const annotation = useImageStore((state) => state.getAnnotation(id))
   const saveAnnotation = useImageStore((state) => state.saveAnnotation)
   const update = useAnnotoriousStore((state) => state.saveAndUpdateAnnotation)
+
+  // REMOVE ANNOTATION
+  const removeAnnotationFromAnnotorious = useAnnotoriousStore(
+    (state) => state.removeAnnotation
+  )
+  const removeAnnotationFromStore = useImageStore(
+    (state) => (annotation: TAnnotation) => {
+      state.deselectAnnotations()
+      state.removeAnnotation(annotation.id)
+    }
+  )
 
   const handleToggleEditable = useCallback(
     async (pressed: boolean) => {
@@ -93,8 +105,14 @@ const AnnotationItem = ({
     annotoriousHandler.highlightAnnotation(annotation, 'off')
   }, [annotation, annotoriousHandler])
 
+  const handleDelete = useCallback(() => {
+    if (!annotation) return
+    removeAnnotationFromStore(annotation)
+    removeAnnotationFromAnnotorious(annotation)
+  }, [annotation])
+
   const handleSetEditable = useCallback(
-    (e) => {
+    (e: React.MouseEvent<HTMLFormElement>) => {
       e.stopPropagation()
       e.preventDefault()
       if (!inputRef.current) return
@@ -129,7 +147,11 @@ const AnnotationItem = ({
   )
 
   return (
-    <ContextMenu.Root>
+    <ContextMenu.Root
+      onOpenChange={(open) => {
+        if (open) rest.onSelect()
+      }}
+    >
       <ContextMenu.Trigger asChild>
         <TreeView.Node
           node={node}
@@ -201,7 +223,7 @@ const AnnotationItem = ({
                         width: '100%',
                         cursor: 'text',
 
-                        outlineColor: '#0074FF',
+                        outlineColor: '$blue2',
                         outlineOffset: 2,
                         outlineStyle: 'solid',
                         outlineWidth: 1,
@@ -220,23 +242,46 @@ const AnnotationItem = ({
             )}
           </Formik>
 
-          <Chip small fromCss data-class-id={node.data?.class} />
+          <Chip small fromCss ellipsis data-class-id={node.data?.class} />
         </TreeView.Node>
       </ContextMenu.Trigger>
 
       <ContextMenu.Content>
-        <ContextMenu.Item>
+        <ContextMenu.Item onSelect={handleZoomToAnnotation}>
           <Text>Zoom to annotation</Text>
         </ContextMenu.Item>
 
-        <ContextMenu.Item css={{ $$fg: '#FF85AC', $$bg: '#3A1B27' }}>
+        <ContextMenu.Separator />
+
+        <ContextMenu.Item
+          onSelect={() => handleToggleEditable(editability !== 'locked')}
+        >
+          <Text>{editability === 'locked' ? 'Unlock' : 'Lock'} annotation</Text>
+
+          <Kbd keys={['Ctrl+L']} />
+        </ContextMenu.Item>
+
+        <ContextMenu.Item
+          onSelect={() => handleToggleVisibility(visibility !== 'hidden')}
+        >
+          <Text>{visibility === 'hidden' ? 'Show' : 'Hide'} annotation</Text>
+
+          <Kbd keys={['Ctrl+H']} />
+        </ContextMenu.Item>
+
+        <ContextMenu.Separator />
+
+        <ContextMenu.Item
+          css={{ $$bg: '$colors$crimson1', $$fg: '$colors$crimson4' }}
+          onSelect={handleDelete}
+        >
           <Box css={{ flexDirection: 'row', alignItems: 'center', gap: '$2' }}>
             <Icon name="TrashIcon" width={12} height={12} />
 
             <Text>Delete annotation</Text>
           </Box>
 
-          <Kbd keys={['Delete']} />
+          <Kbd keys={['Backspace']} />
         </ContextMenu.Item>
       </ContextMenu.Content>
     </ContextMenu.Root>

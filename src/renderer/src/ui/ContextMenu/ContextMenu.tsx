@@ -67,10 +67,28 @@ const Item = forwardRef(function Item(
   )
 })
 
+type TSeparatorBaseProps = {
+  children?: React.ReactNode
+}
+
+type TSeparatorProps = ComponentProps<typeof S.Separator> & TSeparatorBaseProps
+
+const Separator = forwardRef(function Separator(
+  { children, ...rest }: TSeparatorProps,
+  forwardedRef: React.ForwardedRef<HTMLDivElement>
+) {
+  return (
+    <S.Separator ref={forwardedRef} {...rest}>
+      {children}
+    </S.Separator>
+  )
+})
+
 const ContextMenu = () => <React.Fragment />
 ContextMenu.Root = memo(Root) as typeof Root
 ContextMenu.Trigger = memo(Trigger) as typeof Trigger
 ContextMenu.Content = memo(Content) as typeof Content
 ContextMenu.Item = memo(Item) as typeof Item
+ContextMenu.Separator = memo(Separator) as typeof Separator
 
 export default ContextMenu

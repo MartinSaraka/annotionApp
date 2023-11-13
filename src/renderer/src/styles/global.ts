@@ -164,6 +164,20 @@ export const globalStyles = globalCss({
       }
     },
 
+    'g[data-class-id="hard_negative_mitosis"] .a9s-shape-label': {
+      '&:before, &:after': {
+        content: 'var(--class-warning, "⚠ ") var(--class-name)'
+      }
+    },
+
+    '.a9s-annotation:hover .a9s-shape-label, .a9s-annotation.selected .a9s-shape-label, .a9s-shape-label:hover':
+      {
+        '&:before, &:after': {
+          maxWidth: 'initial',
+          textOverflow: 'initial'
+        }
+      },
+
     '.a9s-shape-label': {
       padding: '$1',
 
@@ -172,6 +186,12 @@ export const globalStyles = globalCss({
       fontWeight: 600,
 
       whiteSpace: 'nowrap',
+
+      '&:before, &:after': {
+        maxWidth: '15ch',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
+      },
 
       '&:before': {
         position: 'absolute',

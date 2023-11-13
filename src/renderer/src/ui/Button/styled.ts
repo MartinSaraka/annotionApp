@@ -26,8 +26,8 @@ export const ButtonRoot = styled(motion.button, {
 
   borderWidth: '$1',
   borderStyle: 'solid',
-  backgroundColor: '#006CEB',
-  borderColor: '#0074FF',
+  backgroundColor: '$blue1',
+  borderColor: '$blue2',
 
   fontSize: '$5',
   lineHeight: 'none',
@@ -42,14 +42,14 @@ export const ButtonRoot = styled(motion.button, {
   variants: {
     variant: {
       danger: {
-        backgroundColor: '#3A1B27',
-        color: '#FF85AC'
+        backgroundColor: '$crimson1',
+        color: '$crimson4'
       }
     },
     outlined: {
       true: {
         backgroundColor: 'transparent',
-        color: '#0074FF',
+        color: '$blue2',
 
         '&:disabled': {
           cursor: 'not-allowed'

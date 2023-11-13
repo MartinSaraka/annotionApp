@@ -203,7 +203,7 @@ const AnnotationTools = ({
                   name="AiIcon"
                   width={12}
                   height={12}
-                  css={{ color: '#0074FF' }}
+                  css={{ color: '$blue2' }}
                 />
                 <Text variant="base">Single click</Text>
               </Box>

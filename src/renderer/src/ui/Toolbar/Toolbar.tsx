@@ -55,11 +55,11 @@ const Toggle = forwardRef(function Toggle(
       ref={forwardedRef}
       css={{
         '&[data-state="on"]': !isActiveControlled && {
-          backgroundColor: '#3E63DD'
+          backgroundColor: '$blue3'
         },
 
         '&:hover:not(:disabled)[aria-checked="false"]': !isActive && {
-          color: '#0074FF'
+          color: '$blue2'
         },
         ...css
       }}

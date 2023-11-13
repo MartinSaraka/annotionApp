@@ -17,6 +17,7 @@ import { TAnnotationClass } from '@common/types/annotation'
 import { ClassHandler } from '@renderer/handlers'
 import { isDefaultClass } from '@common/utils/classes'
 import { DEFAULT_CLASSES } from '@common/constants/classes'
+import { theme } from '@renderer/styles'
 
 type TUpsertClassProps = {
   data?: TAnnotationClass
@@ -36,7 +37,7 @@ const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
     () => ({
       id: data?.id || '',
       name: data?.name || '',
-      color: data?.color || '#0C8CE9'
+      color: data?.color || theme.palette.blue4.value
     }),
     [data]
   )

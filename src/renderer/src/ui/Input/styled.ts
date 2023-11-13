@@ -18,7 +18,7 @@ export const InputRoot = styled(motion.div, {
   borderColor: 'transparent',
 
   '&:focus-within': {
-    borderColor: '#006CEB'
+    borderColor: '$blue1'
   },
 
   '&:hover:not(:focus-within)': {
@@ -91,7 +91,7 @@ export const TextAreaRoot = styled(motion.textarea, {
   },
 
   '&::placeholder': {
-    color: '#4B4B68'
+    color: '$dark5'
   },
 
   '&:disabled': {
@@ -124,7 +124,7 @@ export const FieldRoot = styled(motion.input, {
   },
 
   '&::placeholder': {
-    color: '#4B4B68'
+    color: '$dark4'
   },
 
   '&:disabled': {

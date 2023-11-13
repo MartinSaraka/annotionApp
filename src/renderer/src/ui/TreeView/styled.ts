@@ -3,12 +3,13 @@ import { styled } from '@renderer/styles'
 export const Actions = styled('div', {
   display: 'none',
   alignItems: 'center',
+  flexShrink: 0,
 
   //position: 'absolute',
   inset: 0,
   left: 'auto',
 
-  paddingInline: '$3',
+  marginRight: '-$2',
   pointerEvents: 'none',
   paddingLeft: 0,
 
@@ -46,7 +47,7 @@ export const Node = styled('div', {
   },
 
   '&:focus, &:active, &:active:focus': {
-    outlineColor: '#0074FF',
+    outlineColor: '$blue2',
     outlineOffset: 0,
     outlineStyle: 'solid',
     outlineWidth: 1

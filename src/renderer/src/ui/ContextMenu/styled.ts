@@ -8,7 +8,7 @@ export const Root = styled(ContextMenu.Root, {
 
 export const Trigger = styled(ContextMenu.Trigger, {
   '&[data-state="open"]': {
-    outlineColor: '#0074FF',
+    outlineColor: '$blue2',
     outlineOffset: 0,
     outlineStyle: 'solid',
     outlineWidth: 1
@@ -49,7 +49,10 @@ export const Item = styled(ContextMenu.Item, {
   userSelect: 'none',
 
   borderRadius: '3px',
-  fontWeight: 500,
+
+  p: {
+    fontWeight: '500 !important'
+  },
 
   height: 25,
   paddingLeft: '25px',
@@ -67,4 +70,10 @@ export const Item = styled(ContextMenu.Item, {
       color: '$fg'
     }
   }
+})
+
+export const Separator = styled(ContextMenu.Separator, {
+  height: 1,
+  backgroundColor: '$dark3',
+  margin: 5
 })
