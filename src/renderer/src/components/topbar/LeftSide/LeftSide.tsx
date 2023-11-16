@@ -17,41 +17,44 @@ const LeftSide = ({ css, ...rest }: TTopBarLeftSideProps) => {
       css={{ flexDirection: 'row', alignItems: 'center', gap: '$3', ...css }}
       {...rest}
     >
-      <Box>
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger
-            css={{ display: 'flex', alignItems: 'center', gap: '$1' }}
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger
+          css={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '$1',
+            userSelect: 'none'
+          }}
+        >
+          <Box
+            css={{
+              _size: 34,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '$dark2',
+              borderRadius: '$5'
+            }}
           >
             <Box
-              css={{
-                _size: 34,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '$dark2',
-                borderRadius: '$5'
-              }}
-            >
-              <Box
-                as="img"
-                src={logo}
-                width={15}
-                height={15}
-                alt="AnnotAid Logo"
-                css={{ filter: 'drop-shadow(0 0 1px $colors$dark1)' }}
-              />
-            </Box>
-
-            <Icon
-              name="ChevronDownIcon"
+              as="img"
+              src={logo}
               width={15}
               height={15}
-              css={{ color: '$dark4' }}
+              alt="AnnotAid Logo"
+              css={{ filter: 'drop-shadow(0 0 1px $colors$dark1)' }}
             />
-          </DropdownMenu.Trigger>
+          </Box>
 
-          <DropdownMenu.Content>TODO</DropdownMenu.Content>
-        </DropdownMenu.Root>
-      </Box>
+          <Icon
+            name="ChevronDownIcon"
+            width={15}
+            height={15}
+            css={{ color: '$dark4' }}
+          />
+        </DropdownMenu.Trigger>
+
+        <DropdownMenu.Content>TODO</DropdownMenu.Content>
+      </DropdownMenu.Root>
 
       <Box css={{ flexDirection: 'row', gap: '$1' }}>
         <Text

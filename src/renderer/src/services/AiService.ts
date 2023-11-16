@@ -14,6 +14,11 @@ import {
 import { TAnnotation } from '@common/types/annotation'
 
 import ImageService from './ImageService'
+import {
+  TProcess,
+  TProcessResponse,
+  TProcessStatus
+} from '@common/types/process'
 
 class AiService {
   static readonly #AI_URI = import.meta.env.RENDERER_VITE_AI_URI
@@ -28,6 +33,8 @@ class AiService {
 
   static readonly #DEFAULT_MITOTIC_COUNT_SETTINGS = {
     uri: join(AiService.#AI_URI, 'models/mc/predict'),
+    result: (id: string) =>
+      join(AiService.#AI_URI, `models/mc/result?task_id=${id}`),
     cropSize: {
       width: 512,
       height: 512
@@ -92,35 +99,55 @@ class AiService {
     return newAnnotation
   }
 
-  static MitoticCount = async (annotation: TAnnotation) => {
-    const imageData = useImageStore.getState().getData()
-    if (!imageData) throw new Error('Image data is not available')
+  static #getData = (annotationId: TID) => {
+    const imageData = useImageStore.getState().getSelected()
+    if (!imageData) throw new Error('Failed to get image data')
+
+    const annotation = imageData.annotations?.[annotationId]
+    if (!annotation) throw new Error('Could not find annotation')
 
     const { props } = AnnotationUtils.from(annotation).shape
+
+    return { imageData, props }
+  }
+
+  static MitoticCount = async (
+    annotationId: TID,
+    setStatus: (status: TProcessStatus) => void
+  ) => {
+    setStatus({
+      type: 'PENDING',
+      message: 'Collecting data'
+    })
+
+    const { imageData, props } = AiService.#getData(annotationId)
 
     const annotationX = toInteger(props['x'])
     const annotationY = toInteger(props['y'])
     const annotationWidth = toInteger(props['width'])
     const annotationHeight = toInteger(props['height'])
 
-    console.log(annotationX, annotationY, annotationWidth, annotationHeight)
-
-    // TODO: check
-    //const areaWidth = AiService.#DEFAULT_MITOTIC_COUNT_SETTINGS.cropSize.width
-    //const areaHeight = AiService.#DEFAULT_MITOTIC_COUNT_SETTINGS.cropSize.height
+    setStatus({
+      type: 'PENDING',
+      message: 'Cropping image'
+    })
 
     const cropImagePath = OSDAdapter.fromInfoToCroppedSource(
-      imageData,
-      toInteger(annotationX + annotationWidth / 2),
-      toInteger(annotationY + annotationHeight / 2),
+      imageData.image,
+      annotationX,
+      annotationY,
       annotationWidth,
-      annotationHeight
+      annotationHeight,
+      'top-left'
     )
 
     const croppedImage = await ImageService.getCroppedImage(cropImagePath)
-    if (!croppedImage) throw new Error('Cropped image is not available')
+    if (!croppedImage) throw new Error('Failed to crop image')
 
-    console.log(croppedImage.x, croppedImage.y)
+    setStatus({
+      type: 'PENDING',
+      message: 'Processing image'
+    })
 
     const serverPath = AiService.#DEFAULT_MITOTIC_COUNT_SETTINGS.uri
     const variables: TMitoticCountBody = {
@@ -131,6 +158,11 @@ class AiService {
       }
     }
 
+    setStatus({
+      type: 'PENDING',
+      message: 'Sending to AI'
+    })
+
     const response = await fetch(serverPath, {
       method: 'POST',
       headers: {
@@ -139,29 +171,72 @@ class AiService {
       },
       body: JSON.stringify(variables)
     })
-    if (!response.ok) throw new Error('MitoticCount failed')
+    if (!response || !response.ok) throw new Error('Failed to reach AI server')
 
-    const data: TMitoticCountResponse = await response.json()
+    setStatus({
+      type: 'PENDING',
+      message: 'Analyzing response from AI'
+    })
 
-    console.log(data)
+    const data: TProcessResponse = await response.json()
+    if (data.status === 'FAILURE') throw new Error('AI failed to process image')
 
-    const newAnnotations = data.mitosis.map((item) =>
-      AnnotationUtils.createRectAnnotation(item.bbox, [
-        AnnotationUtils.createBody('TextualBody', 'tagging', item.label),
-        AnnotationUtils.createBody('TextualBody', 'describing', item.confidence)
-      ])
+    return data.task_id
+  }
+
+  static ResultStatus = async (
+    process: TProcess,
+    setStatus: (status: TProcessStatus) => void
+  ) => {
+    if (!process.taskId) throw new Error('Task ID not available')
+
+    setStatus({
+      type: 'PENDING',
+      message: 'Waiting for AI'
+    })
+
+    const serverPath = AiService.#DEFAULT_MITOTIC_COUNT_SETTINGS.result(
+      process.taskId
     )
 
-    newAnnotations.push(
-      AnnotationUtils.createRectAnnotation({
-        x: annotationX,
-        y: annotationY,
-        width: annotationWidth,
-        height: annotationHeight
+    setStatus({
+      type: 'PENDING',
+      message: 'Asking AI for result'
+    })
+
+    const response = await fetch(serverPath, {
+      method: 'GET',
+      headers: {
+        accept: 'application/json'
+      }
+    })
+
+    if (!response || !response.ok) throw new Error('Failed to reach AI server')
+
+    if (response.status === 202) {
+      const data: TProcessResponse = await response.json()
+      if (data.status === 'FAILURE')
+        throw new Error('AI failed to process image')
+
+      setStatus({
+        type: data.status,
+        message: 'Waiting for AI'
       })
-    )
 
-    return newAnnotations
+      return null
+    } else if (response.status === 200) {
+      const data: TMitoticCountResponse = await response.json()
+      if (!data.mitosis) throw new Error('AI failed to process image')
+
+      setStatus({
+        type: 'SUCCESS',
+        message: 'AI finished processing image'
+      })
+
+      return data
+    }
+
+    throw new Error('AI failed to process image')
   }
 }
 

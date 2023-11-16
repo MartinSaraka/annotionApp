@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo } from 'react'
 import { Field, Form, Formik, FormikConfig } from 'formik'
 
 import { Button, Input, Label, List } from '@renderer/ui'
-import { useImageStore } from '@renderer/store'
+import { useImageStore, useProcessStore } from '@renderer/store'
 
 import { MeasurementUtils } from '@common/utils'
 import { roundNumber } from '@common/utils/numbers'
@@ -31,6 +31,13 @@ const defaultValues: TFormValues = {
 
 const Measurements = () => {
   const { t } = useTranslation(['common', 'annotation'])
+
+  // TODO: TEST
+
+  const addProcess = useProcessStore((state) => state.addProcess)
+  const process = useProcessStore((state) => state.getProcess('1'))
+
+  // TEST
 
   const annotation = useImageStore((state) => state.getSelectedAnnotation())
   const data = useImageStore((state) => state.getData())
@@ -65,186 +72,202 @@ const Measurements = () => {
     }, [annotation, data])
 
   return (
-    <Formik<TFormValues>
-      validateOnChange
-      enableReinitialize
-      onSubmit={onSubmit}
-      initialValues={initialValues}
-    >
-      {({ handleSubmit }) => (
-        <List
-          as={Form}
-          title={t('annotation:sections.measurements')}
-          collapsible
-          borderTop
-        >
-          <input type="submit" hidden />
+    <>
+      <button
+        onClick={() => {
+          if (!annotation) return
+          addProcess('mitotic_count', annotation.id)
 
-          {/* Box 1 */}
-          <List.Box>
-            {/* Position */}
-            <List.Item>
-              <Label htmlFor="measurements-position-x">
-                {t('annotation:properties.position.label')}
-              </Label>
+          // TODO: function on end callback
+          // TODO: process actualize status
+        }}
+      >
+        test
+        <br />
+        {process?.status.message}
+      </button>
 
-              <Input>
-                <Input.Element text>
-                  <Label small htmlFor="measurements-position-x">
-                    {t('common:position.x')}
-                  </Label>
-                </Input.Element>
+      <Formik<TFormValues>
+        validateOnChange
+        enableReinitialize
+        onSubmit={onSubmit}
+        initialValues={initialValues}
+      >
+        {({ handleSubmit }) => (
+          <List
+            as={Form}
+            title={t('annotation:sections.measurements')}
+            collapsible
+            borderTop
+          >
+            <input type="submit" hidden />
 
-                <Field
-                  disabled
-                  required
-                  id="measurements-position-x"
-                  name="positionX"
-                  as={Input.Field}
-                  onBlur={handleSubmit}
-                />
+            {/* Box 1 */}
+            <List.Box>
+              {/* Position */}
+              <List.Item>
+                <Label htmlFor="measurements-position-x">
+                  {t('annotation:properties.position.label')}
+                </Label>
 
-                <Input.Element>
-                  <Button input disabled>
-                    {t('common:unit.micro')}
-                  </Button>
-                </Input.Element>
-              </Input>
+                <Input>
+                  <Input.Element text>
+                    <Label small htmlFor="measurements-position-x">
+                      {t('common:position.x')}
+                    </Label>
+                  </Input.Element>
 
-              <Input>
-                <Input.Element text>
-                  <Label small htmlFor="measurements-position-y">
-                    {t('common:position.y')}
-                  </Label>
-                </Input.Element>
+                  <Field
+                    disabled
+                    required
+                    id="measurements-position-x"
+                    name="positionX"
+                    as={Input.Field}
+                    onBlur={handleSubmit}
+                  />
 
-                <Field
-                  disabled
-                  required
-                  id="measurements-position-y"
-                  name="positionY"
-                  as={Input.Field}
-                  onBlur={handleSubmit}
-                />
-
-                <Input.Element>
-                  <Button input disabled>
-                    {t('common:unit.micro')}
-                  </Button>
-                </Input.Element>
-              </Input>
-            </List.Item>
-
-            {/* Centroid */}
-            <List.Item>
-              <Label htmlFor="measurements-centroid-x">
-                {t('annotation:properties.centroid.label')}
-              </Label>
-
-              <Input>
-                <Input.Element text>
-                  <Label small htmlFor="measurements-centroid-x">
-                    {t('common:position.x')}
-                  </Label>
-                </Input.Element>
-
-                <Field
-                  disabled
-                  required
-                  id="measurements-centroid-x"
-                  name="centroidX"
-                  as={Input.Field}
-                  onBlur={handleSubmit}
-                />
-
-                <Input.Element>
-                  <Button input disabled>
-                    {t('common:unit.micro')}
-                  </Button>
-                </Input.Element>
-              </Input>
-
-              <Input>
-                <Input.Element text>
-                  <Label small htmlFor="measurements-centroid-y">
-                    {t('common:position.y')}
-                  </Label>
-                </Input.Element>
-
-                <Field
-                  disabled
-                  required
-                  id="measurements-centroid-y"
-                  name="centroidY"
-                  as={Input.Field}
-                  onBlur={handleSubmit}
-                />
-
-                <Input.Element>
-                  <Button input disabled>
-                    {t('common:unit.micro')}
-                  </Button>
-                </Input.Element>
-              </Input>
-            </List.Item>
-          </List.Box>
-
-          {/* Box 2 */}
-          <List.Box>
-            {/* Area */}
-            <List.Item>
-              <Label htmlFor="measurements-area">
-                {t('annotation:properties.area.label')}
-              </Label>
-
-              <Input>
-                <Field
-                  disabled
-                  required
-                  id="measurements-area"
-                  name="area"
-                  as={Input.Field}
-                  onBlur={handleSubmit}
-                />
-
-                <Input.Element>
-                  <Button input disabled>
-                    <span>
+                  <Input.Element>
+                    <Button input disabled>
                       {t('common:unit.micro')}
-                      <sup>2</sup>
-                    </span>
-                  </Button>
-                </Input.Element>
-              </Input>
-            </List.Item>
+                    </Button>
+                  </Input.Element>
+                </Input>
 
-            {/* Perimeter */}
-            <List.Item>
-              <Label htmlFor="measurements-perimeter">
-                {t('annotation:properties.perimeter.label')}
-              </Label>
+                <Input>
+                  <Input.Element text>
+                    <Label small htmlFor="measurements-position-y">
+                      {t('common:position.y')}
+                    </Label>
+                  </Input.Element>
 
-              <Input>
-                <Field
-                  disabled
-                  required
-                  id="measurements-perimeter"
-                  name="perimeter"
-                  as={Input.Field}
-                  onBlur={handleSubmit}
-                />
+                  <Field
+                    disabled
+                    required
+                    id="measurements-position-y"
+                    name="positionY"
+                    as={Input.Field}
+                    onBlur={handleSubmit}
+                  />
 
-                <Input.Element>
-                  <Button input disabled>
-                    {t('common:unit.micro')}
-                  </Button>
-                </Input.Element>
-              </Input>
-            </List.Item>
-          </List.Box>
-        </List>
-      )}
-    </Formik>
+                  <Input.Element>
+                    <Button input disabled>
+                      {t('common:unit.micro')}
+                    </Button>
+                  </Input.Element>
+                </Input>
+              </List.Item>
+
+              {/* Centroid */}
+              <List.Item>
+                <Label htmlFor="measurements-centroid-x">
+                  {t('annotation:properties.centroid.label')}
+                </Label>
+
+                <Input>
+                  <Input.Element text>
+                    <Label small htmlFor="measurements-centroid-x">
+                      {t('common:position.x')}
+                    </Label>
+                  </Input.Element>
+
+                  <Field
+                    disabled
+                    required
+                    id="measurements-centroid-x"
+                    name="centroidX"
+                    as={Input.Field}
+                    onBlur={handleSubmit}
+                  />
+
+                  <Input.Element>
+                    <Button input disabled>
+                      {t('common:unit.micro')}
+                    </Button>
+                  </Input.Element>
+                </Input>
+
+                <Input>
+                  <Input.Element text>
+                    <Label small htmlFor="measurements-centroid-y">
+                      {t('common:position.y')}
+                    </Label>
+                  </Input.Element>
+
+                  <Field
+                    disabled
+                    required
+                    id="measurements-centroid-y"
+                    name="centroidY"
+                    as={Input.Field}
+                    onBlur={handleSubmit}
+                  />
+
+                  <Input.Element>
+                    <Button input disabled>
+                      {t('common:unit.micro')}
+                    </Button>
+                  </Input.Element>
+                </Input>
+              </List.Item>
+            </List.Box>
+
+            {/* Box 2 */}
+            <List.Box>
+              {/* Area */}
+              <List.Item>
+                <Label htmlFor="measurements-area">
+                  {t('annotation:properties.area.label')}
+                </Label>
+
+                <Input>
+                  <Field
+                    disabled
+                    required
+                    id="measurements-area"
+                    name="area"
+                    as={Input.Field}
+                    onBlur={handleSubmit}
+                  />
+
+                  <Input.Element>
+                    <Button input disabled>
+                      <span>
+                        {t('common:unit.micro')}
+                        <sup>2</sup>
+                      </span>
+                    </Button>
+                  </Input.Element>
+                </Input>
+              </List.Item>
+
+              {/* Perimeter */}
+              <List.Item>
+                <Label htmlFor="measurements-perimeter">
+                  {t('annotation:properties.perimeter.label')}
+                </Label>
+
+                <Input>
+                  <Field
+                    disabled
+                    required
+                    id="measurements-perimeter"
+                    name="perimeter"
+                    as={Input.Field}
+                    onBlur={handleSubmit}
+                  />
+
+                  <Input.Element>
+                    <Button input disabled>
+                      {t('common:unit.micro')}
+                    </Button>
+                  </Input.Element>
+                </Input>
+              </List.Item>
+            </List.Box>
+          </List>
+        )}
+      </Formik>
+    </>
   )
 }
 

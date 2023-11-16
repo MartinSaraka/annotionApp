@@ -1,0 +1,18 @@
+{
+  "name": "hiat-app-java-tests",
+  "description": "Tests for java local backend",
+  "author": "PeterSkriba <peter.skriba@gmail.com> (https://github.com/PeterSkriba)",
+  "repository": "https://github.com/histopathology-image-annotation-tool/hiat-app.git",
+  "homepage": "https://github.com/histopathology-image-annotation-tool/hiat-app#readme",
+  "license": "MIT",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test": "mocha src"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0",
+    "supertest": "^6.3.3"
+  }
+}

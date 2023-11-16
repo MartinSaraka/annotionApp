@@ -27,6 +27,7 @@ export type TOpenedImageState = {
   selectedAnnotation: TID | null
   annotations: Record<TID, TAnnotation>
   classes: Record<TAnnotationClass['id'], TAnnotationClass>
+  activeClass: TAnnotationClass['id'] | null
 }
 
 export type TImageState = {
@@ -37,6 +38,7 @@ export type TImageState = {
   select: (path: TPath | string) => void
   close: (path: TPath | string) => void
 
+  getSelected: () => TOpenedImageState | null
   setData: (data: Partial<TImageInfo>) => TImageInfo | undefined
   getData: (path?: TPath | string) => TImageInfo | undefined
 
@@ -109,6 +111,11 @@ export type TImageState = {
   getClasses: () => TAnnotationClass[]
   upsertClass: (data: TAnnotationClass) => TAnnotationClass | null
   deleteClass: (data: TAnnotationClass) => TAnnotationClass | null
+
+  // Active class
+  getActiveClass: () => TAnnotationClass | null
+  setActiveClass: (id: TAnnotationClass['id']) => TAnnotationClass | null
+  resetActiveClass: () => void
 }
 
 const useImageStore = create<TImageState>()(
@@ -162,7 +169,8 @@ const useImageStore = create<TImageState>()(
               annotationTool: DEFAULT_ANNOTATION_TOOL,
               selectedAnnotation: null,
               annotations: {},
-              classes: DEFAULT_CLASSES || {}
+              classes: DEFAULT_CLASSES || {},
+              activeClass: null
             }
           }
         })
@@ -268,6 +276,17 @@ const useImageStore = create<TImageState>()(
         return undefined
       },
 
+      getSelected: () => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected || !(selected in opened)) {
+          return null
+        }
+
+        return opened[selected]
+      },
+
       // Tools
 
       activeTool: () => {
@@ -311,6 +330,7 @@ const useImageStore = create<TImageState>()(
             ...opened,
             [selected]: {
               ...info,
+              activeClass: null,
               activeTool
             }
           }
@@ -609,18 +629,71 @@ const useImageStore = create<TImageState>()(
         }
 
         const classes = opened[selected].classes
+        const activeClass = opened[selected].activeClass
 
         set({
           opened: {
             ...opened,
             [selected]: {
               ...opened[selected],
-              classes: omit(classes, data.id)
+              classes: omit(classes, data.id),
+              ...(activeClass === data.id && {
+                activeClass: null
+              })
             }
           }
         })
 
         return data
+      },
+
+      // Active class
+      getActiveClass: () => {
+        const image = get().getSelected()
+        if (!image) return null
+
+        const activeClassId = image?.activeClass
+        if (!activeClassId) return null
+
+        const activeClass = image?.classes?.[activeClassId]
+        if (!activeClass) return null
+
+        return activeClass
+      },
+
+      setActiveClass: (id) => {
+        const selectedImage = get().getSelected()
+        if (!selectedImage) return null
+
+        if (!(id in selectedImage.classes)) return null
+        const path = selectedImage.image.path
+
+        set({
+          opened: {
+            ...get().opened,
+            [path]: {
+              ...selectedImage,
+              activeClass: id
+            }
+          }
+        })
+
+        return get().opened[path].classes[id]
+      },
+
+      resetActiveClass: () => {
+        const selectedImage = get().getSelected()
+        if (!selectedImage) return
+
+        set({
+          opened: {
+            ...get().opened,
+            [selectedImage.image.path]: {
+              ...selectedImage,
+              activeClass: null
+            }
+          }
+        })
       }
     }),
     {

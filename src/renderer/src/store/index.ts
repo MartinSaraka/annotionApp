@@ -7,3 +7,5 @@ export { default as useHotkeysStore } from './hotkeys'
 
 export { default as useToastStore } from './toast'
 export { default as useSettingsStore } from './settings'
+
+export { default as useProcessStore } from './process'

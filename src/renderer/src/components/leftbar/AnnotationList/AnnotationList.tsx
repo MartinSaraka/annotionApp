@@ -29,6 +29,7 @@ import {
   isAnnotationGenerating,
   isAnnotationVisible
 } from '@common/utils/annotation'
+import { HOTKEYS } from '@common/constants/hotkeys'
 
 type TLeftBarAnnotationListProps = ComponentProps<typeof Box>
 
@@ -123,10 +124,10 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
   }, [searchRef])
 
   useEffect(() => {
-    addShortcut('Meta+F', handleFocusSearch)
+    addShortcut(HOTKEYS.search, handleFocusSearch)
 
     return () => {
-      removeShortcut('Meta+F')
+      removeShortcut(HOTKEYS.search)
     }
   }, [addShortcut, removeShortcut, handleFocusSearch])
 

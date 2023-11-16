@@ -1,10 +1,22 @@
-import { memo } from 'react'
+import { memo, useCallback } from 'react'
 import { ComponentProps } from '@stitches/react'
 
-import { Box, Icon, Kbd, Select, Text, Toolbar, Tooltip } from '@renderer/ui'
+import {
+  Box,
+  Chip,
+  Icon,
+  Kbd,
+  Select,
+  Text,
+  Toolbar,
+  Tooltip
+} from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
 
 import { ETool, EToolType, TOOL_ICON_MAP } from '@common/constants/tools'
+import { useTranslation } from 'react-i18next'
+import { HOTKEYS } from '@common/constants/hotkeys'
+import { TAnnotationClass } from '@common/types/annotation'
 
 type TToolIcon = ComponentProps<typeof Icon>['name']
 type TFloatingBarAnnotationToolsProps = ComponentProps<typeof Box>
@@ -13,21 +25,49 @@ const AnnotationTools = ({
   css,
   ...rest
 }: TFloatingBarAnnotationToolsProps) => {
+  const { t } = useTranslation('common')
+
+  const classes = useImageStore((state) => state.getClasses())
+
+  const activeClass = useImageStore((state) => state.getActiveClass())
+  const setActiveClass = useImageStore((state) => state.setActiveClass)
+  const resetActiveClass = useImageStore((state) => state.resetActiveClass)
+
   const annotationTool = useImageStore((state) => state.annotationTool())
   const toggleAnnotationTool = useImageStore(
     (state) => state.toggleAnnotationTool
   )
 
+  const handleActiveClass = useCallback(
+    (value: string) => {
+      if (value === '-') return resetActiveClass()
+      setActiveClass(value)
+    },
+    [resetActiveClass, setActiveClass]
+  )
+
+  const renderClass = useCallback(
+    (item: TAnnotationClass) => (
+      <Select.Item key={item.id} value={item.id}>
+        <Chip small auto css={{ $$color: item.color }} data-class-id={item.id}>
+          {item.name}
+        </Chip>
+      </Select.Item>
+    ),
+    []
+  )
+
   return (
     <Box
-      aria-describedby="annotation-tools"
+      aria-describedby={t('aria.description.annotationTools')}
       css={{
         flexDirection: 'row',
+        paddingRight: '$1',
         ...css
       }}
       {...rest}
     >
-      <Toolbar.Root orientation="horizontal" role="annotation-toolbar">
+      <Toolbar.Root orientation="horizontal" role="toolbar">
         <Toolbar.Group
           type="single"
           orientation="horizontal"
@@ -52,8 +92,13 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">Rectangle</Text>
-              <Kbd keys={['1']} css={{ color: '$dark4' }} />
+              <Text variant="base">
+                {t(`tooltips.tools.${ETool.RECTANGLE}`)}
+              </Text>
+              <Kbd
+                keys={HOTKEYS.tools[ETool.RECTANGLE]}
+                css={{ color: '$dark4' }}
+              />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -76,8 +121,11 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">Circle</Text>
-              <Kbd keys={['2']} css={{ color: '$dark4' }} />
+              <Text variant="base">{t(`tooltips.tools.${ETool.CIRCLE}`)}</Text>
+              <Kbd
+                keys={HOTKEYS.tools[ETool.CIRCLE]}
+                css={{ color: '$dark4' }}
+              />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -100,8 +148,11 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">Ellipse</Text>
-              <Kbd keys={['3']} css={{ color: '$dark4' }} />
+              <Text variant="base">{t(`tooltips.tools.${ETool.ELLIPSE}`)}</Text>
+              <Kbd
+                keys={HOTKEYS.tools[ETool.ELLIPSE]}
+                css={{ color: '$dark4' }}
+              />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -124,8 +175,11 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">Polygon</Text>
-              <Kbd keys={['4']} css={{ color: '$dark4' }} />
+              <Text variant="base">{t(`tooltips.tools.${ETool.POLYGON}`)}</Text>
+              <Kbd
+                keys={HOTKEYS.tools[ETool.POLYGON]}
+                css={{ color: '$dark4' }}
+              />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -148,8 +202,11 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">Point</Text>
-              <Kbd keys={['5']} css={{ color: '$dark4' }} />
+              <Text variant="base">{t(`tooltips.tools.${ETool.POINT}`)}</Text>
+              <Kbd
+                keys={HOTKEYS.tools[ETool.POINT]}
+                css={{ color: '$dark4' }}
+              />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -172,8 +229,13 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">Freehand</Text>
-              <Kbd keys={['6']} css={{ color: '$dark4' }} />
+              <Text variant="base">
+                {t(`tooltips.tools.${ETool.FREEHAND}`)}
+              </Text>
+              <Kbd
+                keys={HOTKEYS.tools[ETool.FREEHAND]}
+                css={{ color: '$dark4' }}
+              />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -205,10 +267,14 @@ const AnnotationTools = ({
                   height={12}
                   css={{ color: '$blue2' }}
                 />
-                <Text variant="base">Single click</Text>
+                <Text variant="base">
+                  {t(`tooltips.tools.${ETool.NUCLICK_POINT}`)}
+                </Text>
               </Box>
-
-              <Kbd keys={['7']} css={{ color: '$dark4' }} />
+              <Kbd
+                keys={HOTKEYS.tools[ETool.NUCLICK_POINT]}
+                css={{ color: '$dark4' }}
+              />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -216,14 +282,33 @@ const AnnotationTools = ({
 
         <Toolbar.Separator orientation="vertical" />
 
-        <Select.Root>
+        <Select.Root
+          value={activeClass?.id || ''}
+          onValueChange={handleActiveClass}
+        >
           <Select.Trigger>
-            <Select.Value placeholder="Select class" />
+            <Select.Value placeholder="Default class" />
           </Select.Trigger>
 
-          <Select.Content>
-            <Select.Item value={'foo'}>foo</Select.Item>
-            <Select.Item value={'bar'}>bar</Select.Item>
+          <Select.Content
+            css={{
+              background: '$dark1',
+              padding: '$2',
+              borderRadius: '$7',
+
+              borderWidth: '$1',
+              borderStyle: '$solid',
+              borderColor: '$dark3',
+
+              '& > div': {
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '$1'
+              }
+            }}
+          >
+            <Select.Item value="-">no class</Select.Item>
+            {classes.map(renderClass)}
           </Select.Content>
         </Select.Root>
       </Toolbar.Root>

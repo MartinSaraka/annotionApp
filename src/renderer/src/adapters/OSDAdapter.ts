@@ -28,10 +28,13 @@ class OSDAdapter {
     pointX: number,
     pointY: number,
     sizeWidth: number,
-    sizeHeight: number
+    sizeHeight: number,
+    type: 'top-left' | 'center-center' = 'center-center'
   ): string {
+    const cropType = type === 'top-left' ? 0 : 1
+
     const path = `${metadata.directory}/${metadata.filename}`
-    const props = `${pointX}-${pointY}-${sizeWidth}-${sizeHeight}`
+    const props = `${pointX}-${pointY}-${sizeWidth}-${sizeHeight}-${cropType}`
 
     return `${path}-${props}${metadata.extension}`
   }

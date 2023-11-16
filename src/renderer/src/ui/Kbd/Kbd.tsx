@@ -4,7 +4,7 @@ import { ComponentProps } from '@stitches/react'
 import * as S from './styled'
 
 type TBaseProps = {
-  keys: string[]
+  keys: readonly string[]
 }
 
 type TKbdProps = ComponentProps<typeof S.Root> & TBaseProps

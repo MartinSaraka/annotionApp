@@ -106,6 +106,7 @@ const useViewer = (source: TImageInfo): TUseViewer => {
 
   const annotations = useImageStore((state) => state.getAnnotations() || {})
   const getActiveTool = useImageStore((state) => state.activeTool)
+  const getActiveClass = useImageStore((state) => state.getActiveClass)
   const saveAnnotation = useImageStore((state) => state.saveAnnotation)
   const getSelectedAnnotation = useImageStore(
     (state) => state.getSelectedAnnotation
@@ -220,7 +221,21 @@ const useViewer = (source: TImageInfo): TUseViewer => {
 
       anno.on('createSelection', (selection: TAnnotation) => {
         console.log('createSelection')
-        anno.updateSelected(selection, true)
+
+        let annotation = selection
+
+        // Active Class
+        const activeClass = getActiveClass()
+        if (activeClass?.id) {
+          annotation = AnnotationHandler.upsertBody(
+            annotation,
+            'TextualBody',
+            'tagging',
+            activeClass.id
+          )
+        }
+
+        anno.updateSelected(annotation, true)
       })
 
       anno.on('changeSelectionTarget', () => {
@@ -251,6 +266,8 @@ const useViewer = (source: TImageInfo): TUseViewer => {
         console.log('createAnnotation')
 
         let annotation = annotationData
+
+        // Active Tool
         const activeTool = getActiveTool()
 
         const intersections =
@@ -271,8 +288,8 @@ const useViewer = (source: TImageInfo): TUseViewer => {
         saveAnnotation(annotation)
         AnnotoriousHandler.instance(preview).showPreview(annotation)
 
-        //TODO: temporary solution
-        if (activeTool.value === ETool.RECTANGLE) {
+        //TODO: MITOTIC temporary solution
+        /*if (activeTool.value === ETool.RECTANGLE) {
           AiService.MitoticCount(annotation).then((data) => {
             if (data) {
               data.forEach((item) => {
@@ -282,7 +299,7 @@ const useViewer = (source: TImageInfo): TUseViewer => {
               AnnotoriousHandler.instance(preview).showPreview(annotation)
             }
           })
-        }
+        }*/
 
         if (activeTool.value === ETool.NUCLICK_POINT) {
           AiService.NuClick(annotation).then((data) => {

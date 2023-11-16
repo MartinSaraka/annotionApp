@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect } from 'react'
 import { ComponentProps } from '@stitches/react'
+import { useTranslation } from 'react-i18next'
 
 import { Box, Icon, Kbd, Text, Toolbar, Tooltip } from '@renderer/ui'
 import {
@@ -11,11 +12,14 @@ import {
 
 import { ETool, EToolType, TOOLS, TOOL_ICON_MAP } from '@common/constants/tools'
 import { OPEN_SEADRAGON_HOME_ID } from '@common/constants/viewer'
+import { HOTKEYS } from '@common/constants/hotkeys'
 
 type TToolIcon = ComponentProps<typeof Icon>['name']
 type TTopBarMiddleProps = ComponentProps<typeof Box>
 
 const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
+  const { t } = useTranslation('common')
+
   const { addShortcut, removeShortcut } = useHotkeysStore()
   const annotorious = useAnnotoriousStore((state) => state.anno)
 
@@ -60,38 +64,58 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
   )
 
   useEffect(() => {
-    addShortcut('0', setInitialZoom)
+    addShortcut(HOTKEYS.fitToScreen, setInitialZoom)
 
-    addShortcut('H', handleKeyboardShortcut(ETool.HAND))
-    addShortcut('Z', handleKeyboardShortcut(ETool.ZOOM_IN))
-
-    addShortcut('1', handleKeyboardShortcut(ETool.RECTANGLE))
-    addShortcut('2', handleKeyboardShortcut(ETool.CIRCLE))
-    addShortcut('3', handleKeyboardShortcut(ETool.ELLIPSE))
-    addShortcut('4', handleKeyboardShortcut(ETool.POLYGON))
-    addShortcut('5', handleKeyboardShortcut(ETool.POINT))
-    addShortcut('6', handleKeyboardShortcut(ETool.FREEHAND))
-    addShortcut('7', handleKeyboardShortcut(ETool.NUCLICK_POINT))
+    addShortcut(HOTKEYS.tools[ETool.HAND], handleKeyboardShortcut(ETool.HAND))
+    addShortcut(
+      HOTKEYS.tools[ETool.ZOOM_IN],
+      handleKeyboardShortcut(ETool.ZOOM_IN)
+    )
+    addShortcut(
+      HOTKEYS.tools[ETool.RECTANGLE],
+      handleKeyboardShortcut(ETool.RECTANGLE)
+    )
+    addShortcut(
+      HOTKEYS.tools[ETool.CIRCLE],
+      handleKeyboardShortcut(ETool.CIRCLE)
+    )
+    addShortcut(
+      HOTKEYS.tools[ETool.ELLIPSE],
+      handleKeyboardShortcut(ETool.ELLIPSE)
+    )
+    addShortcut(
+      HOTKEYS.tools[ETool.POLYGON],
+      handleKeyboardShortcut(ETool.POLYGON)
+    )
+    addShortcut(HOTKEYS.tools[ETool.POINT], handleKeyboardShortcut(ETool.POINT))
+    addShortcut(
+      HOTKEYS.tools[ETool.FREEHAND],
+      handleKeyboardShortcut(ETool.FREEHAND)
+    )
+    addShortcut(
+      HOTKEYS.tools[ETool.NUCLICK_POINT],
+      handleKeyboardShortcut(ETool.NUCLICK_POINT)
+    )
 
     return () => {
-      removeShortcut('0')
+      removeShortcut(HOTKEYS.fitToScreen)
 
-      removeShortcut('H')
-      removeShortcut('Z')
+      removeShortcut(HOTKEYS.tools[ETool.HAND])
+      removeShortcut(HOTKEYS.tools[ETool.ZOOM_IN])
 
-      removeShortcut('1')
-      removeShortcut('2')
-      removeShortcut('3')
-      removeShortcut('4')
-      removeShortcut('5')
-      removeShortcut('6')
-      removeShortcut('7')
+      removeShortcut(HOTKEYS.tools[ETool.RECTANGLE])
+      removeShortcut(HOTKEYS.tools[ETool.CIRCLE])
+      removeShortcut(HOTKEYS.tools[ETool.ELLIPSE])
+      removeShortcut(HOTKEYS.tools[ETool.POLYGON])
+      removeShortcut(HOTKEYS.tools[ETool.POINT])
+      removeShortcut(HOTKEYS.tools[ETool.FREEHAND])
+      removeShortcut(HOTKEYS.tools[ETool.NUCLICK_POINT])
     }
   }, [addShortcut, removeShortcut, handleKeyboardShortcut, setInitialZoom])
 
   return (
     <Box
-      aria-describedby="image-tools"
+      aria-description={t('aria.description.toolbar')}
       css={{
         flexDirection: 'row',
         alignItems: 'center',
@@ -109,8 +133,8 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
           </Tooltip.Trigger>
 
           <Tooltip.Content side="bottom" align="center">
-            <Text variant="base">Fit to screen</Text>
-            <Kbd keys={['0']} css={{ color: '$dark4' }} />
+            <Text variant="base">{t('tooltips.fitToScreen')}</Text>
+            <Kbd keys={HOTKEYS.fitToScreen} css={{ color: '$dark4' }} />
             <Tooltip.Arrow />
           </Tooltip.Content>
         </Tooltip.Root>
@@ -141,8 +165,8 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">Hand</Text>
-              <Kbd keys={['H']} css={{ color: '$dark4' }} />
+              <Text variant="base">{t(`tooltips.tools.${ETool.HAND}`)}</Text>
+              <Kbd keys={HOTKEYS.tools[ETool.HAND]} css={{ color: '$dark4' }} />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -165,8 +189,11 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">Zoom in / out</Text>
-              <Kbd keys={['Z']} css={{ color: '$dark4' }} />
+              <Text variant="base">{t(`tooltips.tools.${ETool.ZOOM_IN}`)}</Text>
+              <Kbd
+                keys={HOTKEYS.tools[ETool.ZOOM_IN]}
+                css={{ color: '$dark4' }}
+              />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -204,8 +231,11 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">Click to pick tool</Text>
-              <Kbd keys={['1']} css={{ color: '$dark4' }} />
+              <Text variant="base">{t(`tooltips.tools.annotation`)}</Text>
+              <Kbd
+                keys={HOTKEYS.tools[ETool.RECTANGLE]}
+                css={{ color: '$dark4' }}
+              />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>

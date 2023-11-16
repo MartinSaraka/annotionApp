@@ -39,6 +39,7 @@ class Server {
 
     public static void start() throws IOException {
         InetSocketAddress socket = new InetSocketAddress(port);
+
         server = HttpServer.create(socket, 0);
 
         server.createContext("/", new ImageHandler());

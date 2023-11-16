@@ -6,26 +6,22 @@ export const Root = styled(Select.Root, {
   position: 'relative'
 })
 
-export const Trigger = styled(Select.Trigger, {})
+export const Trigger = styled(Select.Trigger, {
+  display: 'inline-flex',
+  cursor: 'pointer'
+})
 
 export const Value = styled(Select.Value, {})
 
-export const Item = styled(Select.Item, {})
-
-export const Icon = styled(Select.Icon, {
-  position: 'absolute',
-  bottom: 1.5,
-  right: 1.5
+export const Item = styled(Select.Item, {
+  cursor: 'pointer'
 })
 
-export const Content = styled(Select.Content, {
-  backgroundColor: '$dark2',
-  paddingBlock: '$1',
-  paddingInline: '$1',
-  borderRadius: '$7'
-})
+export const Icon = styled(Select.Icon, {})
+
+export const Content = styled(Select.Content, {})
 
 export const Viewport = styled(Select.Viewport, {
   display: 'flex',
-  gap: '$1'
+  flexDirection: 'column'
 })

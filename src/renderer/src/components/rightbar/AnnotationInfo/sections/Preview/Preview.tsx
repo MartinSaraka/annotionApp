@@ -20,6 +20,7 @@ import {
 } from '@common/utils/annotation'
 
 import * as S from './styled'
+import { HOTKEYS } from '@common/constants/hotkeys'
 
 type TIcon = ComponentProps<typeof Icon>['name']
 
@@ -107,14 +108,14 @@ const Preview = () => {
   }, [annotation, annotationBody.visibility])
 
   useEffect(() => {
-    addShortcut('Ctrl+L', switchEditability)
-    addShortcut('Ctrl+H', switchVisibility)
-    addShortcut('Backspace', handleDelete)
+    addShortcut(HOTKEYS.editability, switchEditability)
+    addShortcut(HOTKEYS.visibility, switchVisibility)
+    addShortcut(HOTKEYS.delete, handleDelete)
 
     return () => {
-      removeShortcut('Ctrl+L')
-      removeShortcut('Ctrl+H')
-      removeShortcut('Backspace')
+      removeShortcut(HOTKEYS.editability)
+      removeShortcut(HOTKEYS.visibility)
+      removeShortcut(HOTKEYS.delete)
     }
   }, [
     addShortcut,

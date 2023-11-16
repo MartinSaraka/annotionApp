@@ -3,8 +3,12 @@ import { create } from 'zustand'
 export type THotkeysState = {
   callbacks: Record<string, (event: KeyboardEvent) => void>
 
-  addShortcut: (keys: string, callback: (event: KeyboardEvent) => void) => void
-  removeShortcut: (keys: string) => void
+  addShortcut: (
+    keys: readonly string[],
+    callback: (event: KeyboardEvent) => void
+  ) => void
+
+  removeShortcut: (keys: readonly string[]) => void
 
   destroy: () => void
 }
@@ -43,7 +47,7 @@ const useHotkeysStore = create<THotkeysState>()((set) => {
   let isListenerAttached = false
 
   const addShortcut: THotkeysState['addShortcut'] = (keys, callback) => {
-    callbacks[keys.toLowerCase()] = callback
+    callbacks[keys.join('+').toLowerCase()] = callback
 
     if (!isListenerAttached) {
       window.addEventListener('keydown', handleKeyPress)
@@ -54,7 +58,7 @@ const useHotkeysStore = create<THotkeysState>()((set) => {
   }
 
   const removeShortcut: THotkeysState['removeShortcut'] = (shortcut) => {
-    delete callbacks[shortcut.toLowerCase()]
+    delete callbacks[shortcut.join('+').toLowerCase()]
 
     set({ callbacks })
 
