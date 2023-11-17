@@ -14,12 +14,12 @@ import * as S from './styled'
 type TBaseProps = {
   as?: React.ElementType
   collapsible?: boolean
-  title?: string
+  title?: React.ReactNode
   actions?: React.ReactNode
   children?: React.ReactNode
 }
 
-type TListProps = ComponentProps<typeof S.Root> & TBaseProps
+type TListProps = Omit<ComponentProps<typeof S.Root>, 'title'> & TBaseProps
 
 const List = ({
   children,
@@ -42,7 +42,12 @@ const List = ({
         {title && (
           <Collapsible.Trigger asChild>
             <S.Trigger>
-              <Text variant="md" capital css={{ flex: 1, fontWeight: 600 }}>
+              <Text
+                as="div"
+                variant="md"
+                capital
+                css={{ flex: 1, fontWeight: 600 }}
+              >
                 {title}
               </Text>
 

@@ -7,7 +7,8 @@ import {
   AnnotationInfoDefault,
   AnnotationInfoMeasurements,
   AnnotationInfoParameters,
-  AnnotationInfoPreview
+  AnnotationInfoPreview,
+  AnnotationInfoProcess
 } from './sections'
 
 type TLeftBarAnnotationInfoProps = ComponentProps<typeof Box>
@@ -15,6 +16,7 @@ type TLeftBarAnnotationInfoProps = ComponentProps<typeof Box>
 const AnnotationInfo = (props: TLeftBarAnnotationInfoProps) => (
   <Box {...props}>
     <AnnotationInfoPreview />
+    <AnnotationInfoProcess />
     <AnnotationInfoDefault />
     <AnnotationInfoParameters />
     <AnnotationInfoClass />

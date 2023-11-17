@@ -62,7 +62,7 @@ const Default = () => {
       initialValues={initialValues}
     >
       {({ handleSubmit, values }) => (
-        <List as={Form}>
+        <List as={Form} borderTop>
           <input type="submit" hidden />
 
           <List.Box>

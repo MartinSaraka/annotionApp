@@ -9,9 +9,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.Base64;
-// import java.util.Map;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-// import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,7 +31,6 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.in.CellSensReader;
 import loci.formats.meta.IMetadata;
-// import loci.plugins.config.CellSensWidgets;
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 
@@ -54,8 +54,8 @@ class AnnotAid {
     private static HttpServer server = null;
     private static int port = 9090;
 
-    // private static Map<String, CellSensReader> cache = new ConcurrentHashMap<>();
-    // private static int MIN_CACHE_SIZE = 10;
+    private static Map<String, CellSensReader> cache = new ConcurrentHashMap<>();
+    private static int MIN_CACHE_SIZE = 10;
 
     private static Logger logger = Logger.getLogger(AnnotAid.class.getName());
 
@@ -102,8 +102,8 @@ class AnnotAid {
      */
     public static void start() throws IOException {
         // Cache
-        // int maxCacheSize = calculateMaxCacheSize();
-        // cache = new ConcurrentHashMap<>(maxCacheSize);
+        int maxCacheSize = calculateMaxCacheSize();
+        cache = new ConcurrentHashMap<>(maxCacheSize);
 
         // Server
         InetSocketAddress socket = new InetSocketAddress(port);
@@ -113,7 +113,7 @@ class AnnotAid {
         server.createContext("/metadata", new MetadataHandler());
         server.createContext("/crop", new CropHandler());
         server.createContext("/stop", new StopHandler());
-        // server.setExecutor(null);
+        server.setExecutor(Executors.newCachedThreadPool());
 
         server.start();
         System.out.println("Server started on port: " + port);
@@ -338,7 +338,7 @@ class AnnotAid {
          * @param exchange HttpExchange object
          * @throws IOException
          */
-        public void process(HttpExchange exchange) throws IOException {
+        public synchronized void process(HttpExchange exchange) throws IOException {
             String originalPath = null;
 
             try {
@@ -491,7 +491,7 @@ class AnnotAid {
          * @param exchange HttpExchange object
          * @throws IOException
          */
-        public void process(HttpExchange exchange) throws IOException {
+        public synchronized void process(HttpExchange exchange) throws IOException {
             String originalPath = null;
 
             try {
@@ -655,15 +655,15 @@ class AnnotAid {
      * @apiNote 10% of max memory
      * @return Max cache size
      */
-    // private static int calculateMaxCacheSize() {
-    // long maxMemory = Runtime.getRuntime().maxMemory();
-    // logger.info("Max available memory: " + maxMemory + " bytes");
+    private static int calculateMaxCacheSize() {
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        logger.info("Max available memory: " + maxMemory + " bytes");
 
-    // int maxCacheSize = (int) (maxMemory / (1024 * 1024) / 10);
-    // logger.info("Max cache size: " + maxCacheSize);
+        int maxCacheSize = (int) (maxMemory / (1024 * 1024) / 10);
+        logger.info("Max cache size: " + maxCacheSize);
 
-    // return Math.max(maxCacheSize, MIN_CACHE_SIZE);
-    // }
+        return Math.max(maxCacheSize, MIN_CACHE_SIZE);
+    }
 
     /**
      * Get or create reader
@@ -673,8 +673,7 @@ class AnnotAid {
      * @throws Exception
      */
     private static CellSensReader getOrCreateReader(String srcPath) throws Exception {
-        // CellSensReader reader = cache.get(srcPath);
-        CellSensReader reader = null;
+        CellSensReader reader = cache.get(srcPath);
 
         if (reader == null) {
             IMetadata metadataStore = MetadataTools.createOMEXMLMetadata();
@@ -694,7 +693,7 @@ class AnnotAid {
                 throw new Exception("Cannot open file from source path: " + srcPath);
             }
 
-            // cache.put(srcPath, reader);
+            cache.put(srcPath, reader);
         }
 
         return reader;

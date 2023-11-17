@@ -111,7 +111,7 @@ class AiService {
     return { imageData, props }
   }
 
-  static MitoticCount = async (
+  static MC = async (
     annotationId: TID,
     setStatus: (status: TProcessStatus) => void
   ) => {

@@ -88,11 +88,12 @@ const formatter = (data: {
   `
 
   return {
-    element: props['data-status']
-      ? pointObject
-      : props['data-class-id']
-      ? foreignObject
-      : undefined,
+    element:
+      props['data-status'] === 'generating'
+        ? pointObject
+        : props['data-class-id']
+        ? foreignObject
+        : undefined,
     ...props
   }
 }

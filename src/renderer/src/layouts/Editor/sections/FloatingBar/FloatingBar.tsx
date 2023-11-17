@@ -15,20 +15,12 @@ const FloatingBar = (props: TFloatingBarProps) => {
     (state) => state.activeTool().type === EToolType.ANNOTATION
   )
 
-  const isAnnotationSelected = useImageStore(
-    (state) => !!state.getSelectedAnnotation()
-  )
-
-  if (!isAnnotationToolSelected && !isAnnotationSelected) return null
+  if (!isAnnotationToolSelected) return null
 
   return (
     <S.Root {...props}>
       <S.Content>
-        {isAnnotationToolSelected ? (
-          <FloatingBarAnnotationTools />
-        ) : isAnnotationSelected ? (
-          <p>todo</p>
-        ) : null}
+        {isAnnotationToolSelected ? <FloatingBarAnnotationTools /> : null}
       </S.Content>
     </S.Root>
   )

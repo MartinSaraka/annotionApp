@@ -76,3 +76,6 @@ export type TAnnotationPurpose =
   | 'visibility'
   | 'status'
   | 'parent'
+  | 'subtagging'
+
+export type TAnnotationIntersection = { underlying: TAnnotation }
