@@ -1,8 +1,10 @@
 import { v4 as uuid } from 'uuid'
+import { toInteger } from 'lodash'
 
 import { TAnnotation, TAnnotationBody } from '@common/types/annotation'
 import { arrayToObject } from '@common/utils/global'
 import { ETool } from '@common/constants/tools'
+import { TBoundingBox } from '@common/types/aiService'
 
 import { TOOL_ICON_MAP } from '@common/constants/tools'
 import { ANNOTATION_TYPE_REGEX } from '@common/constants/regex'
@@ -11,7 +13,6 @@ import {
   ANNOTATION_TAG_PROPS_MAP,
   ANNOTATION_TYPE_TAG_MAP
 } from '@common/constants/annotations'
-import { TBoundingBox } from '@common/types/aiService'
 
 // POINT: xywh=pixel:44094.2578125,54109.70703125,0,0 // CIRCLE
 // NUCLICK: xywh=pixel:44094.2578125,54109.70703125,0,0 // CIRCLE
@@ -35,6 +36,9 @@ class AnnotationUtils {
     },
     get shape() {
       return AnnotationUtils.getShape(annotation)
+    },
+    get bbox() {
+      return AnnotationUtils.getBbox(annotation)
     }
   })
 
@@ -81,6 +85,78 @@ class AnnotationUtils {
     if (type === ETool.POINT) props.r = 1
 
     return { tag, props }
+  }
+
+  static getBbox = (annotation: TAnnotation): TBoundingBox | null => {
+    const type = AnnotationUtils.getType(annotation)
+    if (type === 'unknown') return null
+
+    const shape = AnnotationUtils.getShape(annotation)
+    if (!shape.props || shape.tag === 'unknown') return null
+
+    switch (type) {
+      case ETool.RECTANGLE:
+        return {
+          x: toInteger(shape.props['x']),
+          y: toInteger(shape.props['y']),
+          width: toInteger(shape.props['width']),
+          height: toInteger(shape.props['height'])
+        }
+      case ETool.CIRCLE: {
+        const cx = toInteger(shape.props['cx'])
+        const cy = toInteger(shape.props['cy'])
+        const r = toInteger(shape.props['r'])
+
+        return {
+          x: cx - r,
+          y: cy - r,
+          width: 2 * r,
+          height: 2 * r
+        }
+      }
+      case ETool.ELLIPSE: {
+        const cx = toInteger(shape.props['cx'])
+        const cy = toInteger(shape.props['cy'])
+        const rx = toInteger(shape.props['rx'])
+        const ry = toInteger(shape.props['rx'])
+
+        return {
+          x: cx - rx,
+          y: cy - ry,
+          width: 2 * rx,
+          height: 2 * ry
+        }
+      }
+      case ETool.POLYGON: {
+        const points = shape.props['points'].split(' ') as string[]
+
+        let minX = Infinity
+        let minY = Infinity
+        let maxX = -Infinity
+        let maxY = -Infinity
+
+        for (let i = 0; i < points.length; i++) {
+          const [currentX, currentY] = points[i].split(',').map(toInteger)
+
+          minX = Math.min(minX, currentX)
+          minY = Math.min(minY, currentY)
+          maxX = Math.max(maxX, currentX)
+          maxY = Math.max(maxY, currentY)
+        }
+
+        if (minX === Infinity || minY === Infinity) return null
+        if (maxX === -Infinity || maxY === -Infinity) return null
+
+        return {
+          x: minX,
+          y: minY,
+          width: maxX - minX,
+          height: maxY - minY
+        }
+      }
+    }
+
+    return null
   }
 
   static createBody = <TValue>(

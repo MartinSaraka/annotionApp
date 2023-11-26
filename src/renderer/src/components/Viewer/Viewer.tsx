@@ -18,6 +18,7 @@ const Viewer = ({ info }: TBaseProps) => {
 
   //const open = useImageStore((state) => state.open)
   const classes = useImageStore((state) => state.getClasses())
+  const checkClasses = useImageStore((state) => state.checkClasses)
 
   const setInitialPageColor = useSettingsStore(
     (state) => () => setGlobalCssVariable('--page-color', state.pageColor)
@@ -38,6 +39,7 @@ const Viewer = ({ info }: TBaseProps) => {
   useEffect(() => {
     setInitialPageColor()
     setInitialSelectedAnnotation()
+    checkClasses()
     ClassHandler.initClasses(classes)
   }, [info])
 

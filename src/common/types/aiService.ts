@@ -1,3 +1,8 @@
+export enum BBoxOrigin {
+  TOP_LEFT = 0,
+  CENTER_CENTER = 1
+}
+
 export type TKeypoint = {
   x: number
   y: number
@@ -15,6 +20,7 @@ export type TOffset = {
   y: number
 }
 
+// NC
 export type TNuClickBody = {
   image: string
   keypoints: TKeypoint[]
@@ -25,19 +31,7 @@ export type TNuClickResponse = {
   segmented_nuclei: TKeypoint[][]
 }
 
-export type TMitoticCountBody = {
-  image: string
-  offset: TOffset
-}
-
-export type TMitoticCountResponse = {
-  mitosis: {
-    bbox: TBoundingBox
-    confidence: number
-    label: string
-  }[]
-}
-
+// Common
 export type TAiError = {
   detail: {
     loc: (string | number)[]

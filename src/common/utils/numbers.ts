@@ -21,3 +21,7 @@ export const roundNumber = (
 export const toInteger = (value: string | number) => {
   return +(+value).toFixed(0)
 }
+
+export const toPercent = (value: string | number, postfix = '%') => {
+  return `${(+value * 100).toFixed(0)}${postfix}`
+}

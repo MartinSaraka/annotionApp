@@ -11,7 +11,11 @@ import Annotorious from '@recogito/annotorious-openseadragon'
 import SelectorPack from '@recogito/annotorious-selector-pack'
 import NuClickTool from '@renderer/tools/NuClick/NuClickTool'
 
-import { AnnotationHandler, AnnotoriousHandler } from '@renderer/handlers'
+import {
+  AnnotationHandler,
+  AnnotoriousHandler,
+  ProcessHandler
+} from '@renderer/handlers'
 import { OSDAdapter } from '@renderer/adapters'
 import {
   useAnnotoriousStore,
@@ -32,6 +36,7 @@ import {
   ANNOTORIOUS_PREVIEW_CONFIG
 } from '@common/constants/annotations'
 import { AiService } from '@renderer/services'
+import { InstantType } from '@common/types/process'
 
 export type TUseViewer = {
   closeOpenSeadragon: () => void
@@ -53,6 +58,9 @@ const formatter = (data: {
       case 'tagging':
         props['data-class-id'] = body.value
         break
+      case 'subtagging':
+        props['data-subtagging'] = body.value
+        break
       case 'status':
         props['data-status'] = body.value
         break
@@ -73,6 +81,12 @@ const formatter = (data: {
   foreignObject.innerHTML = `
     <div xmlns="http://www.w3.org/1999/xhtml" class="a9s-shape-label-wrapper">
       <div class="a9s-shape-label"></div>
+
+      ${
+        props['data-subtagging']
+          ? `<div class="a9s-shape-sublabel"><span>${props['data-subtagging']}</span></div>`
+          : ''
+      }
     </div>
   `
 
@@ -91,7 +105,7 @@ const formatter = (data: {
     element:
       props['data-status'] === 'generating'
         ? pointObject
-        : props['data-class-id']
+        : props['data-class-id'] || props['data-subtagging']
         ? foreignObject
         : undefined,
     ...props
@@ -289,58 +303,17 @@ const useViewer = (source: TImageInfo): TUseViewer => {
         saveAnnotation(annotation)
         AnnotoriousHandler.instance(preview).showPreview(annotation)
 
-        //TODO: MITOTIC temporary solution
-        /*if (activeTool.value === ETool.RECTANGLE) {
-          AiService.MitoticCount(annotation).then((data) => {
-            if (data) {
-              data.forEach((item) => {
-                anno.addAnnotation(item)
-                saveAnnotation(item)
-              })
-              AnnotoriousHandler.instance(preview).showPreview(annotation)
-            }
-          })
-        }*/
-
         if (activeTool.value === ETool.NUCLICK_POINT) {
-          AiService.NuClick(annotation).then((data) => {
-            anno.removeAnnotation(annotation.id)
-            removeAnnotation(annotation.id)
-
-            if (data) {
-              let newAnnotation = data
-
-              const intersections =
-                (anno.getAnnotationsIntersecting(newAnnotation) as [
-                  { underlying: TAnnotation }
-                ]) || []
-
-              if (intersections.length > 0) {
-                const parent = intersections[intersections.length - 1]
-                newAnnotation = AnnotationHandler.upsertBody(
-                  newAnnotation,
-                  'TextualBody',
-                  'parent',
-                  parent.underlying.id
-                )
-              }
-
-              anno.addAnnotation(newAnnotation)
-              saveAnnotation(newAnnotation)
-              AnnotoriousHandler.instance(preview).showPreview(newAnnotation)
-            }
-          })
-
-          /*NuClickHandler.handle(annotation).then((data) => {
-            anno.removeAnnotation(annotation.id)
-            removeAnnotation(annotation.id)
-
-            if (data) {
-              anno.addAnnotation(data)
-              saveAnnotation(data)
-              AnnotoriousHandler.instance(preview).showPreview(data)
-            }
-          })*/
+          AiService.instant(InstantType.NUCLICK, annotation)
+            .then((response) => {
+              return ProcessHandler.handleInstant(
+                InstantType.NUCLICK,
+                annotation,
+                response
+              )
+            })
+            .then(() => console.log('OK'))
+            .catch(console.error)
         }
       })
 

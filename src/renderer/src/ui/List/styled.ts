@@ -65,7 +65,7 @@ export const Actions = styled('div', {
   marginRight: '-$1'
 })
 
-export const Item = styled('div', {
+export const Item = styled(motion.div, {
   display: 'flex',
   flexDirection: 'row',
 

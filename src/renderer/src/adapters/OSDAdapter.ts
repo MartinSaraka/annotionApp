@@ -1,3 +1,4 @@
+import { BBoxOrigin } from '@common/types/aiService'
 import { TImageInfo } from '@common/types/image'
 
 class OSDAdapter {
@@ -14,7 +15,7 @@ class OSDAdapter {
       height: metadata.size.height.pixel,
       tileWidth: metadata.tile.optimal.width,
       tileHeight: metadata.tile.optimal.height,
-      minLevel: 1,
+      minLevel: 2,
       maxLevel: metadata.levels,
       getTileUrl: (l, x, y) =>
         `${path}-${l}-${x}-${y}-${tileSize}${metadata.extension}`
@@ -29,12 +30,13 @@ class OSDAdapter {
     pointY: number,
     sizeWidth: number,
     sizeHeight: number,
-    type: 'top-left' | 'center-center' = 'center-center'
+    origin: BBoxOrigin = BBoxOrigin.CENTER_CENTER,
+    magnification = 40
   ): string {
-    const cropType = type === 'top-left' ? 0 : 1
+    console.log('IMPLEMENT magnification: ', magnification)
 
     const path = `${metadata.directory}/${metadata.filename}`
-    const props = `${pointX}-${pointY}-${sizeWidth}-${sizeHeight}-${cropType}`
+    const props = `${pointX}-${pointY}-${sizeWidth}-${sizeHeight}-${origin}`
 
     return `${path}-${props}${metadata.extension}`
   }

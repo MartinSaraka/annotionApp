@@ -4,3 +4,5 @@ export { default as ClassHandler } from './ClassHandler'
 export { default as CursorHandler } from './CursorHandler'
 
 export { default as NuClickHandler } from './NuClickHandler'
+
+export { default as ProcessHandler } from './ProcessHandler'

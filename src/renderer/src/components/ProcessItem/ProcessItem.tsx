@@ -3,8 +3,7 @@ import { ComponentProps } from '@stitches/react'
 
 import { Box, Button, Icon, Text } from '@renderer/ui'
 
-import { ProcessType } from '@common/types/process'
-
+import { ProcessType, TProcessStatus } from '@common/types/process'
 import { PROCESS_ICON_MAP } from '@common/constants/processes'
 
 import * as S from './styled'
@@ -14,6 +13,7 @@ type TBaseProps = {
   title: string
   description: string
   isActive?: boolean
+  status?: TProcessStatus['type']
   onStart?: () => void
   onStop?: () => void
 }
@@ -29,9 +29,11 @@ const ProcessItem = ({
   description,
   onStart,
   onStop,
-  isActive,
+  status,
   ...rest
 }: TProcessItemProps) => {
+  const isActive = status && ['STARTED', 'PENDING', 'RETRY'].includes(status)
+
   const handleStart: MouseEventHandler<HTMLElement> = useCallback(
     (event) => {
       if (isActive) return
@@ -73,22 +75,64 @@ const ProcessItem = ({
           </Text>
         </Box>
 
-        <Text css={{ color: '$dark4' }}>{description}</Text>
+        <Text
+          css={{
+            color:
+              status === 'SUCCESS'
+                ? '$blue2'
+                : status === 'FAILURE'
+                ? '$crimson4'
+                : '$dark4'
+          }}
+        >
+          {description}
+        </Text>
       </S.Content>
 
-      <Button
-        ghost
-        condensed
-        onClick={isActive ? handleStop : handleStart}
-        css={{ marginLeft: 'auto', marginRight: 0 }}
-      >
-        <Icon
-          name={isActive ? 'StopIcon' : 'PlayIcon'}
-          width={13}
-          height={13}
-          css={{ color: '$blue2' }}
-        />
-      </Button>
+      {status && ['SUCCESS', 'FAILURE'].includes(status) && (
+        <Box css={{ padding: '$1', marginLeft: 'auto', marginRight: 0 }}>
+          <Icon
+            name={
+              status === 'SUCCESS' ? 'CheckCircledIcon' : 'CrossCircledIcon'
+            }
+            css={{ color: status === 'SUCCESS' ? '$blue2' : '$crimson4' }}
+            width={13}
+            height={13}
+          />
+        </Box>
+      )}
+
+      {status && ['PENDING', 'RETRY'].includes(status) && (
+        <Button
+          ghost
+          condensed
+          onClick={handleStop}
+          css={{ marginLeft: 'auto', marginRight: 0 }}
+        >
+          <Icon
+            name="StopIcon"
+            width={13}
+            height={13}
+            css={{ color: '$blue2' }}
+          />
+        </Button>
+      )}
+
+      {!status && (
+        <Button
+          ghost
+          condensed
+          onClick={handleStart}
+          css={{ marginLeft: 'auto', marginRight: 0 }}
+        >
+          <Icon
+            name="PlayIcon"
+            width={13}
+            height={13}
+            css={{ color: '$blue2' }}
+          />
+        </Button>
+      )}
     </S.Root>
   )
 }

@@ -1,6 +1,11 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ComponentProps } from '@stitches/react'
-import { DropOptions, NodeModel, NodeRender } from '@minoru/react-dnd-treeview'
+import {
+  DropOptions,
+  NodeModel,
+  NodeRender,
+  TreeMethods
+} from '@minoru/react-dnd-treeview'
 import { debounce, noop } from 'lodash'
 
 import {
@@ -36,6 +41,7 @@ type TLeftBarAnnotationListProps = ComponentProps<typeof Box>
 const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
   const { addShortcut, removeShortcut } = useHotkeysStore()
   const searchRef = useRef<HTMLInputElement | null>(null)
+  const treeRef = useRef<TreeMethods | null>(null)
 
   const [searchQuery, setSearchQuery] = useState<string | null>(null)
 
@@ -83,11 +89,7 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
   )
 
   const nodes = useMemo(
-    () =>
-      TreeAdapter.fromAnnotationsToNodes(
-        Object.values(annotations),
-        searchQuery
-      ),
+    () => TreeAdapter.fromAnnotationsToNodes(annotations, searchQuery),
     [annotations, searchQuery]
   )
 
@@ -130,6 +132,19 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
       removeShortcut(HOTKEYS.search)
     }
   }, [addShortcut, removeShortcut, handleFocusSearch])
+
+  useEffect(() => {
+    if (!treeRef.current || !selectedNodeId) return
+
+    const parentIds = AnnotationHandler.getParentNodesChain(
+      selectedNodeId,
+      annotations
+    )
+
+    if (parentIds.length) {
+      treeRef.current.open(parentIds)
+    }
+  }, [annotations, selectedNodeId])
 
   const renderNode: NodeRender<TNodeData> = useCallback(
     (node, { depth, hasChild, onToggle, isOpen }) => (
@@ -192,6 +207,7 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
           }}
         >
           <TreeView.Root
+            ref={treeRef}
             nodes={nodes}
             render={renderNode}
             onDrop={handleDrop}

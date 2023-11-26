@@ -51,6 +51,45 @@ class AnnotationHandler {
     return annotation
   }
 
+  static deleteBody = (
+    annotation: TAnnotation,
+    purpose: NonNullable<TAnnotationBody['purpose']>
+  ) => {
+    const toUpdate = annotation.body.findIndex(
+      (item) => item.purpose === purpose
+    )
+
+    if (toUpdate !== -1) {
+      annotation.body.splice(toUpdate, 1)
+    }
+
+    return annotation
+  }
+
+  static getParentNodesChain = (
+    annotationId: TID,
+    annotations: Record<TID, TAnnotation>
+  ) => {
+    const parentIds: TID[] = []
+
+    const findParent = (currentAnnotation: TAnnotation) => {
+      const body = AnnotationHandler.getBody(currentAnnotation, ['parent'])
+      if (!body.parent || body.parent === '0') return
+
+      parentIds.push(body.parent)
+
+      const parent = annotations[body.parent]
+      if (!parent) return
+
+      findParent(parent)
+    }
+
+    const annotation = annotations[annotationId]
+    if (annotation) findParent(annotation)
+
+    return parentIds.reverse()
+  }
+
   static setEditability = (annotation: TAnnotation, value: boolean) =>
     AnnotationHandler.upsertBody(
       annotation,
@@ -66,6 +105,12 @@ class AnnotationHandler {
       'visibility',
       value ? 'visible' : 'hidden'
     )
+
+  static setStatus = (annotation: TAnnotation, value: string) =>
+    AnnotationHandler.upsertBody(annotation, 'TextualBody', 'status', value)
+
+  static setTagging = (annotation: TAnnotation, value: string) =>
+    AnnotationHandler.upsertBody(annotation, 'TextualBody', 'tagging', value)
 
   static formatDefault = (annotation: TAnnotation, index = 0) => {
     annotation.body.push({

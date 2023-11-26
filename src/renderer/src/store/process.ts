@@ -1,14 +1,14 @@
-import { v4 as uuid } from 'uuid'
 import { create } from 'zustand'
+import { v4 as uuid } from 'uuid'
 
 import { AiService } from '@renderer/services'
+import { ProcessHandler } from '@renderer/handlers'
 
-import { TMitoticCountResponse } from '@common/types/aiService'
-import { ProcessType, TProcess, TProcessStatus } from '@common/types/process'
-import { AnnotationUtils } from '@common/utils'
-import { useAnnotoriousStore, useImageStore } from '.'
-import { TAnnotationIntersection } from '@common/types/annotation'
-import { AnnotoriousHandler } from '@renderer/handlers'
+import {
+  TProcess,
+  TProcessStatus,
+  TProcessTypeMap
+} from '@common/types/process'
 
 export type TProcessState = {
   processes: Record<TProcess['id'], TProcess>
@@ -34,18 +34,16 @@ const useProcessStore = create<TProcessState>()((set, get) => {
     const process = processes?.[id]
     if (!process) throw new Error('Process is not available')
 
+    // First stage PREDICT
     try {
-      const handler = {
-        [ProcessType.MITOSIS_DETECTION]: AiService.MC,
-        [ProcessType.NUCLEAR_PLEOMORPHISM]: AiService.MC
-      }
-
-      const taskId = await handler[process.type](
+      const taskId = await AiService.predict(
+        process.type,
         process.annotationId,
         (status) => setProcessStatus(process.id, status)
       )
 
       processes[process.id].taskId = taskId
+
       set({ processes })
     } catch (error) {
       setProcessStatus(process.id, {
@@ -56,16 +54,18 @@ const useProcessStore = create<TProcessState>()((set, get) => {
       throw new Error((error as Error).message)
     }
 
-    return await new Promise<TMitoticCountResponse>((resolve, reject) => {
+    // Second stage RESULT polling
+    return await new Promise<
+      TProcessTypeMap[keyof TProcessTypeMap]['response']
+    >((resolve, reject) => {
       if (!processes[process.id].taskId) return reject('Task ID not available')
 
       const poll = async () => {
         try {
           if (!processes[process.id]) throw new Error('Process not found')
 
-          const data = await AiService.ResultStatus(
-            processes[process.id],
-            (status) => setProcessStatus(process.id, status)
+          const data = await AiService.result(processes[process.id], (status) =>
+            setProcessStatus(process.id, status)
           )
 
           if (data) return resolve(data)
@@ -78,51 +78,6 @@ const useProcessStore = create<TProcessState>()((set, get) => {
 
       setTimeout(poll, retryTime)
     })
-  }
-
-  const handleResponse = (
-    data: TMitoticCountResponse,
-    processId: TProcess['id']
-  ) => {
-    const process = get().processes[processId]
-    if (!process) throw new Error('Process not found')
-
-    // TODO: use active anno
-    const anno = useAnnotoriousStore.getState().anno
-    const preview = useAnnotoriousStore.getState().preview
-    if (!anno || !preview) throw new Error('Annotorious not available')
-
-    const annotation = useImageStore
-      .getState()
-      .getAnnotation(process.annotationId)
-    if (!annotation) throw new Error('Annotation not found')
-
-    // TODO: unlock annotation
-    // TODO: process type
-
-    for (const item of data.mitosis) {
-      const newAnnotation = AnnotationUtils.createRectAnnotation(item.bbox, [
-        AnnotationUtils.createBody('TextualBody', 'tagging', item.label),
-        AnnotationUtils.createBody('TextualBody', 'status', 'generated'),
-        AnnotationUtils.createBody('TextualBody', 'parent', annotation.id),
-        AnnotationUtils.createBody('TextualBody', 'describing', item.confidence)
-      ])
-
-      const intersections: TAnnotationIntersection[] =
-        anno.getAnnotationsIntersecting(newAnnotation)
-      if (!intersections.length) continue
-
-      const isParent = intersections.find(
-        (item) => item.underlying.id === annotation.id
-      )
-      if (!isParent) continue
-
-      anno.addAnnotation(newAnnotation)
-      useImageStore.getState().saveAnnotation(newAnnotation)
-    }
-
-    useImageStore.getState().selectAnnotation(annotation.id)
-    AnnotoriousHandler.instance(preview).showPreview(annotation)
   }
 
   const addProcess: TProcessState['addProcess'] = (type, annotationId) => {
@@ -141,10 +96,13 @@ const useProcessStore = create<TProcessState>()((set, get) => {
     data[newProcess.id] = newProcess
     set({ processes: data })
 
-    // TODO: implement then and catch
-    // TODO: set annotation status and loading
+    // TODO: set status to generating
     handleProcess(newProcess.id, 2000)
-      .then((response) => handleResponse(response, newProcess.id))
+      .then((response) => {
+        const process = get().processes[newProcess.id]
+        return ProcessHandler.handle(process, response)
+      })
+      .then(() => console.log('OK'))
       .catch(console.error)
 
     return get().processes[newProcess.id]

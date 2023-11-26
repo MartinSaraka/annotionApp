@@ -31,6 +31,7 @@ import loci.formats.FormatTools;
 import loci.formats.MetadataTools;
 import loci.formats.in.CellSensReader;
 import loci.formats.meta.IMetadata;
+
 import ome.units.UNITS;
 import ome.units.quantity.Length;
 
@@ -159,7 +160,7 @@ class AnnotAid {
          * @param exchange HttpExchange object
          * @throws IOException
          */
-        public void process(HttpExchange exchange) throws IOException {
+        public synchronized void process(HttpExchange exchange) throws IOException {
             // Source path
             String srcPath;
 
@@ -183,6 +184,8 @@ class AnnotAid {
                 sendResponse(exchange, 404, exception.getMessage());
                 return;
             }
+
+            reader.setSeries(0);
 
             // Get metadata store
             IMetadata metadataStore = (IMetadata) reader.getMetadataStore();

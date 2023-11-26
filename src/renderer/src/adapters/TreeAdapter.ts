@@ -18,14 +18,15 @@ export type TNodeModel = NodeModel<TNodeData>
 
 class TreeAdapter {
   static fromAnnotationsToNodes(
-    annotations: TAnnotation[],
+    annotations: Record<TID, TAnnotation>,
     query: string | null
   ): TNodeModel[] {
     const nodes: TNodeModel[] = []
+    const list: TAnnotation[] = Object.values(annotations)
 
     const queryRegex = query ? new RegExp(query, 'gi') : null
 
-    for (const annotation of annotations) {
+    for (const annotation of list) {
       const data = AnnotationHandler.getBody(annotation, [
         'naming',
         'tagging',
@@ -51,7 +52,7 @@ class TreeAdapter {
       const newNode: TNodeModel = {
         id: annotation.id,
         text: data?.naming || '',
-        parent: data?.parent || '0',
+        parent: queryRegex ? '0' : data?.parent || '0',
         droppable: true,
         data: {
           tag: shape.tag,

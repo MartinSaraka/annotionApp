@@ -1,7 +1,7 @@
 import { memo, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Button, Chip, Icon, List, Popover } from '@renderer/ui'
+import { Box, Button, Chip, Icon, List, Popover, Text } from '@renderer/ui'
 import { SelectClassPopover } from '@renderer/popovers'
 
 import { useAnnotoriousStore, useImageStore } from '@renderer/store'
@@ -15,6 +15,8 @@ const Class = () => {
 
   const update = useAnnotoriousStore((state) => state.saveAndUpdateAnnotation)
   const annotation = useImageStore((state) => state.getSelectedAnnotation())
+
+  const annotationBody = AnnotationHandler.getBody(annotation, ['subtagging'])
   const currentClass = useImageStore((state) =>
     state.getSelectedAnnotationClass()
   )
@@ -30,14 +32,34 @@ const Class = () => {
   const handleRemoveClass = useCallback(() => {
     if (!annotation) return
 
-    const data = AnnotationHandler.upsertBody(
+    const withoutTagging = AnnotationHandler.upsertBody(
       annotation,
       'TextualBody',
       'tagging',
       ''
     )
 
-    update(data).catch(console.error)
+    const withoutSubtagging = AnnotationHandler.upsertBody(
+      withoutTagging,
+      'TextualBody',
+      'subtagging',
+      ''
+    )
+
+    update(withoutSubtagging).catch(console.error)
+  }, [annotation, update])
+
+  const handleRemoveSubTag = useCallback(() => {
+    if (!annotation) return
+
+    const withoutSubtagging = AnnotationHandler.upsertBody(
+      annotation,
+      'TextualBody',
+      'subtagging',
+      ''
+    )
+
+    update(withoutSubtagging).catch(console.error)
   }, [annotation, update])
 
   return (
@@ -58,7 +80,7 @@ const Class = () => {
           }
         >
           {currentClass && (
-            <List.Box>
+            <List.Box css={{ $$gap: 0 }}>
               <List.Item
                 css={{ $$firstWidth: 'auto' }}
                 hoverOutline
@@ -82,6 +104,46 @@ const Class = () => {
                   {currentClass.name}
                 </Chip>
               </List.Item>
+
+              {annotationBody.subtagging && (
+                <List.Item
+                  css={{ $$firstWidth: 'auto' }}
+                  actions={
+                    <Button ghost condensed onClick={handleRemoveSubTag}>
+                      <Icon
+                        name="MinusIcon"
+                        css={{ color: '$light' }}
+                        width={16}
+                        height={16}
+                      />
+                    </Button>
+                  }
+                >
+                  <Box
+                    css={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingLeft: '$2',
+                      gap: '$2'
+                    }}
+                  >
+                    <Box
+                      css={{
+                        width: 1,
+                        height: 15,
+                        background: '$dark3'
+                      }}
+                    />
+
+                    <Text css={{ color: '$dark4' }}>with confidence</Text>
+
+                    <Chip small css={{ gap: 2 }}>
+                      <Icon name="AiIcon" width={11} height={11} />
+                      {annotationBody.subtagging}
+                    </Chip>
+                  </Box>
+                </List.Item>
+              )}
             </List.Box>
           )}
         </List>

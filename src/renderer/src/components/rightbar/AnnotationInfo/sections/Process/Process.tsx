@@ -27,7 +27,7 @@ const Process = () => {
       <ProcessItem
         key={`${process.type}-${process.annotationId}`}
         type={process.type}
-        isActive={!['SUCCESS', 'FINISHED'].includes(process.status.type)}
+        status={process.status.type}
         title={t(`process:processes.${process.type}.title`)}
         description={process.status.message}
       />

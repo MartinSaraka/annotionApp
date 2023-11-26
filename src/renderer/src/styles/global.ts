@@ -164,11 +164,15 @@ export const globalStyles = globalCss({
       }
     },
 
-    'g[data-class-id="hard_negative_mitosis"] .a9s-shape-label': {
-      '&:before, &:after': {
-        content: 'var(--class-warning, "⚠ ") var(--class-name)'
-      }
-    },
+    // With icon
+    'g[data-class-id="hard_negative_mitosis"], g[data-class-id="undetermined"]':
+      {
+        '.a9s-shape-label': {
+          '&:before, &:after': {
+            content: 'var(--class-warning, "⚠ ") var(--class-name)'
+          }
+        }
+      },
 
     '.a9s-annotation:hover .a9s-shape-label, .a9s-annotation.selected .a9s-shape-label, .a9s-shape-label:hover':
       {
@@ -178,45 +182,86 @@ export const globalStyles = globalCss({
         }
       },
 
-    '.a9s-shape-label': {
-      padding: '$1',
+    // START LABELS
 
-      fontSize: '$4',
-      lineHeight: '92%',
-      fontWeight: 600,
+    '.a9s-shape-label-wrapper': {
+      display: 'flex',
+      gap: 2,
+
+      '&:hover': {
+        ':before, :after, span': {
+          transform: 'translateY(calc(-100% - $space$2)) translateX(-$space$1)'
+        }
+      }
+    },
+
+    '.a9s-shape-label, .a9s-shape-sublabel': {
+      display: 'flex',
 
       whiteSpace: 'nowrap',
+
+      paddingLeft: '$1',
+      paddingTop: '$1',
 
       '&:before, &:after': {
         maxWidth: '15ch',
         overflow: 'hidden',
-        textOverflow: 'ellipsis'
-      },
+        textOverflow: 'ellipsis',
 
-      '&:before': {
-        position: 'absolute',
-        borderRadius: '$4',
-
-        backgroundColor: 'rgb(var(--class-color, 12, 140, 233))',
-        filter: 'hue-rotate(-6deg) saturate(118%) brightness(22%)',
-
-        content: 'var(--class-name)',
-        color: 'rgb(var(--class-color, 12, 140, 233))',
-
-        paddingInline: 'calc($1 + 2px)',
-        paddingBlock: 'calc($1 + 1px)'
-      },
-
-      '&:after': {
-        position: 'absolute',
-        content: 'var(--class-name)',
-
+        flexShrink: 0,
         paddingInline: 'calc($1 + 2px)',
         paddingBlock: 'calc($1 + 1px)',
 
+        fontSize: '$4',
+        lineHeight: '92%',
+        fontWeight: 600,
+
+        borderRadius: '$4'
+      },
+
+      position: 'relative',
+
+      '&:after': {
+        position: 'absolute',
+        left: '$1',
+        top: '$1'
+      }
+    },
+
+    '.a9s-shape-label': {
+      '&:before': {
+        content: 'var(--class-name)',
+        backgroundColor: 'rgb(var(--class-color, 12, 140, 233))',
+        filter: 'hue-rotate(-6deg) saturate(118%) brightness(22%)',
+        color: 'rgb(var(--class-color, 12, 140, 233))'
+      },
+
+      '&:after': {
+        content: 'var(--class-name)',
         color: 'rgb(var(--class-color, 12, 140, 233))'
       }
     },
+
+    '.a9s-shape-sublabel': {
+      fontSize: '$4',
+      lineHeight: '92%',
+      fontWeight: 600,
+
+      paddingLeft: 0,
+
+      span: {
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+
+        paddingInline: 'calc($1 + 2px)',
+        paddingBlock: 'calc($1 + 1px)',
+        backgroundColor: '$blue2',
+        borderRadius: '$4'
+      }
+    },
+
+    // STOP LABELS
 
     '.a9s-selection ': {
       '.a9s-outer': {},

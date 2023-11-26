@@ -108,6 +108,7 @@ export type TImageState = {
   getAnnotations: () => Record<TID, TAnnotation> | null
 
   // Classes
+  checkClasses: () => void
   getClasses: () => TAnnotationClass[]
   upsertClass: (data: TAnnotationClass) => TAnnotationClass | null
   deleteClass: (data: TAnnotationClass) => TAnnotationClass | null
@@ -579,6 +580,19 @@ const useImageStore = create<TImageState>()(
       },
 
       // Classes
+      checkClasses: () => {
+        const image = get().getSelected()
+        if (!image) return
+
+        const classes = image.classes
+
+        for (const [id, cls] of Object.entries(DEFAULT_CLASSES)) {
+          if (!(id in classes)) {
+            image.classes[id] = cls
+          }
+        }
+      },
+
       getClasses: () => {
         const opened = get().opened
         const selected = get().selected

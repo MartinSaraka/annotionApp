@@ -45,14 +45,19 @@ const SelectClass = ({ selectedClass, onClose }: TSelectClassProps) => {
     (values) => {
       if (!values.annotation) return
 
-      const data = AnnotationHandler.upsertBody(
+      const withoutSubtagging = AnnotationHandler.deleteBody(
         values.annotation,
+        'subtagging'
+      )
+
+      const withTagging = AnnotationHandler.upsertBody(
+        withoutSubtagging,
         'TextualBody',
         'tagging',
         values.classId
       )
 
-      update(data).then(onClose).catch(console.error)
+      update(withTagging).then(onClose).catch(console.error)
     },
     [onClose, update]
   )
