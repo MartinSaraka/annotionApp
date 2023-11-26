@@ -1,13 +1,13 @@
+import { join } from 'path'
 import { toInteger } from 'lodash'
 
 import { useImageStore } from '@renderer/store'
-import { AnnotationUtils } from '@common/utils'
+import { ImageService } from '@renderer/services'
 import { OSDAdapter } from '@renderer/adapters'
 
+import { AnnotationUtils } from '@common/utils'
 import { BBoxOrigin } from '@common/types/aiService'
 import { TAnnotation } from '@common/types/annotation'
-
-import ImageService from './ImageService'
 import {
   InstantType,
   ProcessType,
@@ -17,6 +17,7 @@ import {
   TProcessStatus,
   TProcessTypeMap
 } from '@common/types/process'
+
 import { INSTANT_SETTINGS, PROCESS_SETTINGS } from '@common/constants/processes'
 
 class AiService {
@@ -73,14 +74,17 @@ class AiService {
       } as TInstantTypeMap[InstantType.NUCLICK]['body']
     }[instantType]
 
-    const response = await fetch(settings.predictURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        accept: 'application/json'
-      },
-      body: JSON.stringify(variables)
-    })
+    const response = await fetch(
+      join(import.meta.env.RENDERER_VITE_AI_URI, settings.predictURL),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          accept: 'application/json'
+        },
+        body: JSON.stringify(variables)
+      }
+    )
 
     if (!response || !response.ok) throw new Error('Failed to reach AI server')
 
@@ -189,14 +193,17 @@ class AiService {
       message: 'Sending to AI'
     })
 
-    const response = await fetch(settings.predictURL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        accept: 'application/json'
-      },
-      body: JSON.stringify(variables)
-    })
+    const response = await fetch(
+      join(import.meta.env.RENDERER_VITE_AI_URI, settings.predictURL),
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          accept: 'application/json'
+        },
+        body: JSON.stringify(variables)
+      }
+    )
 
     if (!response || !response.ok) throw new Error('Failed to reach AI server')
 
@@ -238,13 +245,15 @@ class AiService {
       message: 'Asking AI for result'
     })
 
-    console.log(resultURL)
-    const response = await fetch(resultURL, {
-      method: 'GET',
-      headers: {
-        accept: 'application/json'
+    const response = await fetch(
+      join(import.meta.env.RENDERER_VITE_AI_URI, resultURL),
+      {
+        method: 'GET',
+        headers: {
+          accept: 'application/json'
+        }
       }
-    })
+    )
 
     if (!response || !response.ok) throw new Error('Failed to reach AI server')
 

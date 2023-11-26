@@ -4,12 +4,10 @@ import { InstantType, ProcessType } from '@common/types/process'
 import { ETool } from '@common/constants/tools'
 import { BBoxOrigin } from '@common/types/aiService'
 
-const AI_URI = import.meta.env.RENDERER_VITE_AI_URI
-
-const constructPredictPath = (type: string) => join(AI_URI, 'models', type)
+const constructPredictPath = (type: string) => join('models', type)
 
 const constructResultPath = (processType: ProcessType) => (taskId: string) =>
-  join(AI_URI, 'models', `${processType}?task_id=${taskId}`)
+  join('models', `${processType}?task_id=${taskId}`)
 
 export const PROCESS_SETTINGS = {
   [ProcessType.MITOSIS_DETECTION]: {
