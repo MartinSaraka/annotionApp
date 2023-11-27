@@ -174,7 +174,7 @@ export const globalStyles = globalCss({
         }
       },
 
-    '.a9s-annotation:hover .a9s-shape-label, .a9s-annotation.selected .a9s-shape-label, .a9s-shape-label:hover':
+    '.a9s-annotation:hover .a9s-shape-label, .a9s-annotation.hover .a9s-shape-label, .a9s-annotation.selected .a9s-shape-label, .a9s-shape-label:hover':
       {
         '&:before, &:after': {
           maxWidth: 'initial',

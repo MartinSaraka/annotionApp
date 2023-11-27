@@ -19,6 +19,9 @@ export type TProcessState = {
   ) => TProcess
 
   getProcess: (id: TProcess['id']) => TProcess | null
+
+  stopProcess: (id: TProcess['id']) => void
+
   getAnnotationProcesses: (annotationId: TProcess['annotationId']) => TProcess[]
 }
 
@@ -39,6 +42,7 @@ const useProcessStore = create<TProcessState>()((set, get) => {
       const taskId = await AiService.predict(
         process.type,
         process.annotationId,
+        process.controller.signal,
         (status) => setProcessStatus(process.id, status)
       )
 
@@ -60,12 +64,20 @@ const useProcessStore = create<TProcessState>()((set, get) => {
     >((resolve, reject) => {
       if (!processes[process.id].taskId) return reject('Task ID not available')
 
+      if (processes[process.id].status.type === 'STOPPED')
+        throw new Error('Process stopped')
+
       const poll = async () => {
         try {
           if (!processes[process.id]) throw new Error('Process not found')
 
-          const data = await AiService.result(processes[process.id], (status) =>
-            setProcessStatus(process.id, status)
+          if (processes[process.id].status.type === 'STOPPED')
+            throw new Error('Process stopped')
+
+          const data = await AiService.result(
+            processes[process.id],
+            process.controller.signal,
+            (status) => setProcessStatus(process.id, status)
           )
 
           if (data) return resolve(data)
@@ -87,6 +99,7 @@ const useProcessStore = create<TProcessState>()((set, get) => {
       id: uuid(),
       type,
       annotationId,
+      controller: new AbortController(),
       status: {
         type: 'STARTED',
         message: 'Preparing'
@@ -108,7 +121,20 @@ const useProcessStore = create<TProcessState>()((set, get) => {
     return get().processes[newProcess.id]
   }
 
-  // TODO: stop process
+  const stopProcess: TProcessState['stopProcess'] = (id) => {
+    const data = get().processes
+
+    if (!(id in data)) return
+
+    const process = data[id]
+
+    process.controller.abort()
+
+    setProcessStatus(process.id, {
+      type: 'STOPPED',
+      message: 'Process stopped'
+    })
+  }
 
   const getProcess: TProcessState['getProcess'] = (id) => {
     const data = get().processes
@@ -130,7 +156,13 @@ const useProcessStore = create<TProcessState>()((set, get) => {
     return annotationProcesses
   }
 
-  return { processes, addProcess, getProcess, getAnnotationProcesses }
+  return {
+    processes,
+    addProcess,
+    getProcess,
+    stopProcess,
+    getAnnotationProcesses
+  }
 })
 
 export default useProcessStore

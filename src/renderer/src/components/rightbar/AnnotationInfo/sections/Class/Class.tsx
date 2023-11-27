@@ -1,7 +1,16 @@
 import { memo, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Box, Button, Chip, Icon, List, Popover, Text } from '@renderer/ui'
+import {
+  Box,
+  Button,
+  Chip,
+  Icon,
+  List,
+  Popover,
+  Text,
+  Tooltip
+} from '@renderer/ui'
 import { SelectClassPopover } from '@renderer/popovers'
 
 import { useAnnotoriousStore, useImageStore } from '@renderer/store'
@@ -69,11 +78,20 @@ const Class = () => {
           title={t('annotation:sections.class')}
           actions={
             <>
-              <Popover.Trigger asChild ref={triggerRef}>
-                <Button ghost condensed css={{ margin: '-$1' }}>
-                  <Icon name="TokensIcon" width={16} height={16} />
-                </Button>
-              </Popover.Trigger>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Popover.Trigger asChild ref={triggerRef}>
+                    <Button ghost condensed css={{ margin: '-$1' }}>
+                      <Icon name="TokensIcon" width={16} height={16} />
+                    </Button>
+                  </Popover.Trigger>
+                </Tooltip.Trigger>
+
+                <Tooltip.Content>
+                  <Text variant="base">Select class</Text>
+                  <Tooltip.Arrow />
+                </Tooltip.Content>
+              </Tooltip.Root>
 
               <Popover.Close ref={closeRef} css={{ display: 'none' }} />
             </>
@@ -85,14 +103,23 @@ const Class = () => {
                 css={{ $$firstWidth: 'auto' }}
                 hoverOutline
                 actions={
-                  <Button ghost condensed onClick={handleRemoveClass}>
-                    <Icon
-                      name="MinusIcon"
-                      css={{ color: '$light' }}
-                      width={16}
-                      height={16}
-                    />
-                  </Button>
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <Button ghost condensed onClick={handleRemoveClass}>
+                        <Icon
+                          name="MinusIcon"
+                          css={{ color: '$light' }}
+                          width={16}
+                          height={16}
+                        />
+                      </Button>
+                    </Tooltip.Trigger>
+
+                    <Tooltip.Content>
+                      <Text variant="base">Remove class</Text>
+                      <Tooltip.Arrow />
+                    </Tooltip.Content>
+                  </Tooltip.Root>
                 }
               >
                 <Chip
@@ -109,14 +136,23 @@ const Class = () => {
                 <List.Item
                   css={{ $$firstWidth: 'auto' }}
                   actions={
-                    <Button ghost condensed onClick={handleRemoveSubTag}>
-                      <Icon
-                        name="MinusIcon"
-                        css={{ color: '$light' }}
-                        width={16}
-                        height={16}
-                      />
-                    </Button>
+                    <Tooltip.Root>
+                      <Tooltip.Trigger asChild>
+                        <Button ghost condensed onClick={handleRemoveSubTag}>
+                          <Icon
+                            name="MinusIcon"
+                            css={{ color: '$light' }}
+                            width={16}
+                            height={16}
+                          />
+                        </Button>
+                      </Tooltip.Trigger>
+
+                      <Tooltip.Content>
+                        <Text variant="base">Remove tag</Text>
+                        <Tooltip.Arrow />
+                      </Tooltip.Content>
+                    </Tooltip.Root>
                   }
                 >
                   <Box

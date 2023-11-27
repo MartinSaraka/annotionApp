@@ -26,6 +26,7 @@ export type TProcess = {
   type: ProcessType
   annotationId: TID
   status: TProcessStatus
+  controller: AbortController
 }
 
 export type TProcessTypeMap = {

@@ -1,4 +1,4 @@
-import { join } from 'path'
+import ky from 'ky'
 import { toInteger } from 'lodash'
 
 import { useImageStore } from '@renderer/store'
@@ -74,17 +74,11 @@ class AiService {
       } as TInstantTypeMap[InstantType.NUCLICK]['body']
     }[instantType]
 
-    const response = await fetch(
-      join(import.meta.env.RENDERER_VITE_AI_URI, settings.predictURL),
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          accept: 'application/json'
-        },
-        body: JSON.stringify(variables)
-      }
-    )
+    const response = await ky.post(settings.predictURL, {
+      prefixUrl: import.meta.env.RENDERER_VITE_AI_URI,
+      timeout: false,
+      json: variables
+    })
 
     if (!response || !response.ok) throw new Error('Failed to reach AI server')
 
@@ -114,11 +108,13 @@ class AiService {
    * @param processType Type of process to run
    * @param annotationId ID of the annotation to process
    * @param setStatus Function to set the status of the process
+   * @param abortSignal Abort signal to cancel the process
    * @returns Task ID of the process
    */
   static predict = async (
     processType: ProcessType,
     annotationId: TID,
+    abortSignal: AbortSignal,
     setStatus: (status: TProcessStatus) => void
   ): Promise<TID> => {
     const settings = PROCESS_SETTINGS[processType]
@@ -193,17 +189,12 @@ class AiService {
       message: 'Sending to AI'
     })
 
-    const response = await fetch(
-      join(import.meta.env.RENDERER_VITE_AI_URI, settings.predictURL),
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          accept: 'application/json'
-        },
-        body: JSON.stringify(variables)
-      }
-    )
+    const response = await ky.post(settings.predictURL, {
+      prefixUrl: import.meta.env.RENDERER_VITE_AI_URI,
+      json: variables,
+      signal: abortSignal,
+      timeout: false
+    })
 
     if (!response || !response.ok) throw new Error('Failed to reach AI server')
 
@@ -222,11 +213,13 @@ class AiService {
    * Generic result process
    *
    * @param process Process to get the result of
+   * @param abortSignal Abort signal to cancel the process
    * @param setStatus Function to set the status of the process
    * @returns Result of the process or null if the process is still running
    */
   static result = async (
     process: TProcess,
+    abortSignal: AbortSignal,
     setStatus: (status: TProcessStatus) => void
   ): Promise<TProcessTypeMap[TProcess['type']]['response'] | null> => {
     if (!process.taskId) throw new Error('Task ID not available')
@@ -245,15 +238,11 @@ class AiService {
       message: 'Asking AI for result'
     })
 
-    const response = await fetch(
-      join(import.meta.env.RENDERER_VITE_AI_URI, resultURL),
-      {
-        method: 'GET',
-        headers: {
-          accept: 'application/json'
-        }
-      }
-    )
+    const response = await ky.get(resultURL, {
+      prefixUrl: import.meta.env.RENDERER_VITE_AI_URI,
+      signal: abortSignal,
+      timeout: false
+    })
 
     if (!response || !response.ok) throw new Error('Failed to reach AI server')
 
@@ -270,7 +259,9 @@ class AiService {
 
       return null
     } else if (response.status === 200) {
-      const data = await response.json()
+      const data: TProcessTypeMap[TProcess['type']]['response'] =
+        await response.json()
+
       if (!data) throw new Error('AI failed to process image')
 
       setStatus({

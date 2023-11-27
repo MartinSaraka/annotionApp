@@ -84,11 +84,63 @@ const Separator = forwardRef(function Separator(
   )
 })
 
+type TSubBaseProps = {
+  children: React.ReactNode
+}
+
+type TSubProps = ComponentProps<typeof S.Sub> & TSubBaseProps
+
+const Sub = ({ children, ...rest }: TSubProps) => {
+  return <S.Sub {...rest}>{children}</S.Sub>
+}
+
+type TSubTriggerBaseProps = {
+  children: React.ReactNode
+}
+
+type TSubTriggerProps = ComponentProps<typeof S.SubTrigger> &
+  TSubTriggerBaseProps
+
+const SubTrigger = forwardRef(function SubTrigger(
+  { children, ...rest }: TSubTriggerProps,
+  forwardedRef: React.ForwardedRef<HTMLDivElement>
+) {
+  return (
+    <S.SubTrigger ref={forwardedRef} {...rest}>
+      {children}
+    </S.SubTrigger>
+  )
+})
+
+type TSubContentBaseProps = {
+  children: React.ReactNode
+}
+
+type TSubContentProps = ComponentProps<typeof S.SubContent> &
+  TSubContentBaseProps
+
+const SubContent = forwardRef(function SubContent(
+  { children, ...rest }: TSubContentProps,
+  forwardedRef: React.ForwardedRef<HTMLDivElement>
+) {
+  return (
+    <Primitive.Portal>
+      <S.SubContent ref={forwardedRef} {...rest}>
+        {children}
+      </S.SubContent>
+    </Primitive.Portal>
+  )
+})
+
 const ContextMenu = () => <React.Fragment />
 ContextMenu.Root = memo(Root) as typeof Root
 ContextMenu.Trigger = memo(Trigger) as typeof Trigger
 ContextMenu.Content = memo(Content) as typeof Content
 ContextMenu.Item = memo(Item) as typeof Item
 ContextMenu.Separator = memo(Separator) as typeof Separator
+
+ContextMenu.Sub = memo(Sub) as typeof Sub
+ContextMenu.SubTrigger = memo(SubTrigger) as typeof SubTrigger
+ContextMenu.SubContent = memo(SubContent) as typeof SubContent
 
 export default ContextMenu

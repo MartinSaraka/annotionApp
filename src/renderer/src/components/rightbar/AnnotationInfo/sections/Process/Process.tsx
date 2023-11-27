@@ -1,7 +1,7 @@
 import { memo, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Box, Button, Icon, List, Popover } from '@renderer/ui'
+import { Box, Button, Icon, List, Popover, Text, Tooltip } from '@renderer/ui'
 import { ProcessItem } from '@renderer/components'
 import { SelectProcessPopover } from '@renderer/popovers'
 
@@ -14,6 +14,7 @@ const Process = () => {
   const closeRef = useRef<HTMLButtonElement | null>(null)
 
   const annotation = useImageStore((state) => state.getSelectedAnnotation())
+  const stopProcess = useProcessStore((state) => state.stopProcess)
   const activeProcesses = useProcessStore((state) =>
     annotation ? state.getAnnotationProcesses(annotation.id) : []
   )
@@ -25,14 +26,15 @@ const Process = () => {
   const renderActiveProcess = useCallback(
     (process: TProcess) => (
       <ProcessItem
-        key={`${process.type}-${process.annotationId}`}
+        key={`${process.type}-${process.id}`}
         type={process.type}
         status={process.status.type}
         title={t(`process:processes.${process.type}.title`)}
         description={process.status.message}
+        onStop={() => stopProcess(process.id)}
       />
     ),
-    [t]
+    [t, stopProcess]
   )
 
   return (
@@ -60,11 +62,20 @@ const Process = () => {
           }
           actions={
             <>
-              <Popover.Trigger asChild>
-                <Button ghost condensed css={{ margin: '-$1' }}>
-                  <Icon name="TokensIcon" width={16} height={16} />
-                </Button>
-              </Popover.Trigger>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Popover.Trigger asChild>
+                    <Button ghost condensed css={{ margin: '-$1' }}>
+                      <Icon name="TokensIcon" width={16} height={16} />
+                    </Button>
+                  </Popover.Trigger>
+                </Tooltip.Trigger>
+
+                <Tooltip.Content>
+                  <Text variant="base">Select process</Text>
+                  <Tooltip.Arrow />
+                </Tooltip.Content>
+              </Tooltip.Root>
 
               <Popover.Close ref={closeRef} css={{ display: 'none' }} />
             </>

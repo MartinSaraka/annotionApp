@@ -79,7 +79,7 @@ const ProcessItem = ({
           css={{
             color:
               status === 'SUCCESS'
-                ? '$blue2'
+                ? '$green9'
                 : status === 'FAILURE'
                 ? '$crimson4'
                 : '$dark4'
@@ -95,7 +95,7 @@ const ProcessItem = ({
             name={
               status === 'SUCCESS' ? 'CheckCircledIcon' : 'CrossCircledIcon'
             }
-            css={{ color: status === 'SUCCESS' ? '$blue2' : '$crimson4' }}
+            css={{ color: status === 'SUCCESS' ? '$green9' : '$crimson4' }}
             width={13}
             height={13}
           />

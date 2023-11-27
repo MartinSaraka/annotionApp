@@ -1,12 +1,13 @@
 import { memo, useMemo } from 'react'
 import { ComponentProps } from '@stitches/react'
+import { AnimatePresence } from 'framer-motion'
+import { Trans } from 'react-i18next'
 
 import { Kbd, Text } from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
 import { ETool, EToolType } from '@common/constants/tools'
 
 import * as S from './styled'
-import { AnimatePresence } from 'framer-motion'
 
 type THintsProps = ComponentProps<typeof S.Root>
 
@@ -17,15 +18,15 @@ const Hints = (props: THintsProps) => {
     switch (true) {
       case activeTool.value === ETool.ZOOM_IN:
         return (
-          <>
-            Hold <Kbd keys={['shift']} /> to zoom out
-          </>
+          <Trans ns="hints" i18nKey={ETool.ZOOM_IN}>
+            <Kbd keys={['shift']} />
+          </Trans>
         )
       case activeTool.type === EToolType.ANNOTATION:
         return (
-          <>
-            Hold <Kbd keys={['shift']} /> to pan
-          </>
+          <Trans ns="hints" i18nKey={EToolType.ANNOTATION}>
+            <Kbd keys={['shift']} />
+          </Trans>
         )
       default:
         return null

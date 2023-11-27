@@ -1,14 +1,17 @@
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
-
-import { Button, Chip, Icon, List, Popover, Text } from '@renderer/ui'
-import { useImageStore } from '@renderer/store'
-import { UpsertClassPopover } from '@renderer/popovers'
-import { TAnnotationClass } from '@common/types/annotation'
-import { ClassHandler } from '@renderer/handlers'
-import { isDefaultClass } from '@common/utils/classes'
-import { useToggle } from '@renderer/hooks'
-import { DEFAULT_CLASSES } from '@common/constants/classes'
 import { AnimatePresence } from 'framer-motion'
+
+import { Button, Chip, Icon, List, Popover, Text, Tooltip } from '@renderer/ui'
+import { UpsertClassPopover } from '@renderer/popovers'
+import { useToggle } from '@renderer/hooks'
+
+import { useImageStore } from '@renderer/store'
+import { ClassHandler } from '@renderer/handlers'
+
+import { isDefaultClass } from '@common/utils/classes'
+import { TAnnotationClass } from '@common/types/annotation'
+
+import { DEFAULT_CLASSES } from '@common/constants/classes'
 
 const Classes = () => {
   const triggerRef = useRef<HTMLButtonElement | null>(null)
@@ -65,24 +68,42 @@ const Classes = () => {
           hoverOutline
           actions={
             <>
-              <Button ghost condensed onClick={handleSelectClass(item)}>
-                <Icon
-                  name="MixerVerticalIcon"
-                  css={{ color: '$light' }}
-                  width={16}
-                  height={16}
-                />
-              </Button>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Button ghost condensed onClick={handleSelectClass(item)}>
+                    <Icon
+                      name="MixerVerticalIcon"
+                      css={{ color: '$light' }}
+                      width={16}
+                      height={16}
+                    />
+                  </Button>
+                </Tooltip.Trigger>
+
+                <Tooltip.Content>
+                  <Text variant="base">Edit class</Text>
+                  <Tooltip.Arrow />
+                </Tooltip.Content>
+              </Tooltip.Root>
 
               {!isSystemClass && (
-                <Button ghost condensed onClick={handleDeleteClass(item)}>
-                  <Icon
-                    name="TrashIcon"
-                    css={{ color: '$crimson4' }}
-                    width={16}
-                    height={16}
-                  />
-                </Button>
+                <Tooltip.Root>
+                  <Tooltip.Trigger asChild>
+                    <Button ghost condensed onClick={handleDeleteClass(item)}>
+                      <Icon
+                        name="TrashIcon"
+                        css={{ color: '$crimson4' }}
+                        width={16}
+                        height={16}
+                      />
+                    </Button>
+                  </Tooltip.Trigger>
+
+                  <Tooltip.Content>
+                    <Text variant="base">Delete class</Text>
+                    <Tooltip.Arrow />
+                  </Tooltip.Content>
+                </Tooltip.Root>
               )}
             </>
           }
@@ -108,18 +129,27 @@ const Classes = () => {
         <List
           title="Classes"
           actions={
-            <Popover.Trigger asChild ref={triggerRef}>
-              {classes.length ? (
-                <Button ghost condensed css={{ margin: '-$1' }}>
-                  <Icon name="PlusIcon" width={16} height={16} />
-                </Button>
-              ) : (
-                <Button slim outlined css={{ marginBlock: '-$1' }}>
-                  <Icon name="PlusIcon" width={12} height={12} />
-                  Create first class
-                </Button>
-              )}
-            </Popover.Trigger>
+            <Tooltip.Root>
+              <Tooltip.Trigger asChild>
+                <Popover.Trigger asChild ref={triggerRef}>
+                  {classes.length ? (
+                    <Button ghost condensed css={{ margin: '-$1' }}>
+                      <Icon name="PlusIcon" width={16} height={16} />
+                    </Button>
+                  ) : (
+                    <Button slim outlined css={{ marginBlock: '-$1' }}>
+                      <Icon name="PlusIcon" width={12} height={12} />
+                      Create first class
+                    </Button>
+                  )}
+                </Popover.Trigger>
+              </Tooltip.Trigger>
+
+              <Tooltip.Content>
+                <Text variant="base">Create new class</Text>
+                <Tooltip.Arrow />
+              </Tooltip.Content>
+            </Tooltip.Root>
           }
         >
           {!systemClasses && !areOnlySystemClasses && (

@@ -3,6 +3,8 @@ import { ComponentProps } from '@stitches/react'
 import { motion } from 'framer-motion'
 
 import { Box, ContextMenu } from '@renderer/ui'
+import { ViewerContextMenu } from '@renderer/menus'
+
 import { OPEN_SEADRAGON_ID } from '@common/constants/viewer'
 
 type TOpenSeadragonMainProps = ComponentProps<typeof Box> &
@@ -14,12 +16,8 @@ type TContextMenuData = {
   id?: TID
 }
 
-// TODO: move to component and to viewer
 const OpenSeadragonMain = ({ css, ...rest }: TOpenSeadragonMainProps) => {
-  const [data, setData] = useState<TContextMenuData>({
-    x: 0,
-    y: 0
-  })
+  const [data, setData] = useState<TContextMenuData>({ x: 0, y: 0 })
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -31,7 +29,7 @@ const OpenSeadragonMain = ({ css, ...rest }: TOpenSeadragonMainProps) => {
         return setData({ x: e.clientX, y: e.clientY })
       }
 
-      const closest = element.closest('.a9s-annotation')
+      const closest = element.closest('.a9s-annotation.hover')
       if (!closest) return
 
       const annotationId = closest.getAttribute('data-id')
@@ -40,7 +38,7 @@ const OpenSeadragonMain = ({ css, ...rest }: TOpenSeadragonMainProps) => {
       // Annotation context menu
       return setData({ x: e.clientX, y: e.clientY, id: annotationId })
     },
-    []
+    [setData]
   )
 
   return (
@@ -68,7 +66,9 @@ const OpenSeadragonMain = ({ css, ...rest }: TOpenSeadragonMainProps) => {
         />
       </ContextMenu.Trigger>
 
-      <ContextMenu.Content>{data?.id}</ContextMenu.Content>
+      <ContextMenu.Content>
+        <ViewerContextMenu annotationId={data.id} />
+      </ContextMenu.Content>
     </ContextMenu.Root>
   )
 }
