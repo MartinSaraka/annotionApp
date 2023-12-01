@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 import { useTranslation } from 'react-i18next'
 
 import { Box, Icon, Kbd, Text, Toolbar, Tooltip } from '@renderer/ui'
@@ -16,6 +16,8 @@ import { HOTKEYS } from '@common/constants/hotkeys'
 
 type TToolIcon = ComponentProps<typeof Icon>['name']
 type TTopBarMiddleProps = ComponentProps<typeof Box>
+
+const GROUP = 'tools'
 
 const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
   const { t } = useTranslation('common')
@@ -47,6 +49,10 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
 
     if (activeTool.type === EToolType.VIEWER) {
       return setViewerTool(activeTool.value)
+    }
+
+    if (activeTool.type === EToolType.SEGMENTATION) {
+      return setAnnotoriousTool(activeTool.value)
     }
   }, [activeTool.value, annotorious])
 
@@ -133,7 +139,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
           </Tooltip.Trigger>
 
           <Tooltip.Content side="bottom" align="center">
-            <Text variant="base">{t('tooltips.fitToScreen')}</Text>
+            <Text>{t('tooltips.fitToScreen')}</Text>
             <Kbd keys={HOTKEYS.fitToScreen} css={{ color: '$dark4' }} />
             <Tooltip.Arrow />
           </Tooltip.Content>
@@ -150,7 +156,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <Toolbar.Toggle
-                group="tools"
+                group={GROUP}
                 value={ETool.HAND}
                 aria-label={ETool.HAND}
                 aria-labelledby={EToolType.VIEWER}
@@ -165,7 +171,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">{t(`tooltips.tools.${ETool.HAND}`)}</Text>
+              <Text>{t(`tooltips.tools.${ETool.HAND}`)}</Text>
               <Kbd keys={HOTKEYS.tools[ETool.HAND]} css={{ color: '$dark4' }} />
               <Tooltip.Arrow />
             </Tooltip.Content>
@@ -174,7 +180,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <Toolbar.Toggle
-                group="tools"
+                group={GROUP}
                 value={ETool.ZOOM_IN}
                 aria-label={ETool.ZOOM_IN}
                 aria-labelledby={EToolType.VIEWER}
@@ -189,7 +195,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">{t(`tooltips.tools.${ETool.ZOOM_IN}`)}</Text>
+              <Text>{t(`tooltips.tools.${ETool.ZOOM_IN}`)}</Text>
               <Kbd
                 keys={HOTKEYS.tools[ETool.ZOOM_IN]}
                 css={{ color: '$dark4' }}
@@ -203,7 +209,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <Toolbar.Toggle
-                group="tools"
+                group={GROUP}
                 value={annotationTool.value}
                 aria-label={annotationTool.value}
                 aria-labelledby={EToolType.ANNOTATION}
@@ -231,7 +237,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">{t(`tooltips.tools.annotation`)}</Text>
+              <Text>{t(`tooltips.tools.annotation`)}</Text>
               <Kbd
                 keys={HOTKEYS.tools[ETool.RECTANGLE]}
                 css={{ color: '$dark4' }}
@@ -239,154 +245,6 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
-
-          {/*<Select.Root
-            value={annotationTool.value}
-            onValueChange={toggleAnnotationTool}
-          >
-            <Box>
-              <Select.Value asChild>
-                <Toolbar.Toggle
-                  group="tools"
-                  value={annotationTool.value}
-                  aria-label={annotationTool.value}
-                  aria-labelledby={EToolType.ANNOTATION}
-                  isActive={activeTool.value === annotationTool.value}
-                  css={{ pointerEvents: 'all !important' }}
-                >
-                  <Icon
-                    name={TOOL_ICON_MAP[annotationTool.value] as TToolIcon}
-                    width={18}
-                    height={18}
-                  />
-                </Toolbar.Toggle>
-              </Select.Value>
-
-              <Select.Trigger
-                css={{
-                  position: 'absolute',
-                  pointerEvents: 'all !important',
-                  inset: 0
-                }}
-              >
-                <Select.Icon>
-                  <Icon
-                    name="TriangleRightIcon"
-                    css={{ transform: 'rotate(45deg)' }}
-                    width={10}
-                    height={10}
-                  />
-                </Select.Icon>
-              </Select.Trigger>
-            </Box>
-
-            <Select.Content>
-              <Select.Item value={ETool.RECTANGLE}>
-                <Toolbar.Toggle
-                  group="tools-select"
-                  value={ETool.RECTANGLE}
-                  aria-label={ETool.RECTANGLE}
-                  aria-labelledby={EToolType.ANNOTATION}
-                >
-                  <Icon
-                    name={TOOL_ICON_MAP[ETool.RECTANGLE] as TToolIcon}
-                    width={18}
-                    height={18}
-                  />
-                </Toolbar.Toggle>
-              </Select.Item>
-
-              <Select.Item value={ETool.CIRCLE}>
-                <Toolbar.Toggle
-                  group="tools-select"
-                  value={ETool.CIRCLE}
-                  aria-label={ETool.CIRCLE}
-                  aria-labelledby={EToolType.ANNOTATION}
-                >
-                  <Icon
-                    name={TOOL_ICON_MAP[ETool.CIRCLE] as TToolIcon}
-                    width={18}
-                    height={18}
-                  />
-                </Toolbar.Toggle>
-              </Select.Item>
-
-              <Select.Item value={ETool.ELLIPSE}>
-                <Toolbar.Toggle
-                  group="tools-select"
-                  value={ETool.ELLIPSE}
-                  aria-label={ETool.ELLIPSE}
-                  aria-labelledby={EToolType.ANNOTATION}
-                >
-                  <Icon
-                    name={TOOL_ICON_MAP[ETool.ELLIPSE] as TToolIcon}
-                    width={18}
-                    height={18}
-                  />
-                </Toolbar.Toggle>
-              </Select.Item>
-
-              <Select.Item value={ETool.POLYGON}>
-                <Toolbar.Toggle
-                  group="tools-select"
-                  value={ETool.POLYGON}
-                  aria-label={ETool.POLYGON}
-                  aria-labelledby={EToolType.ANNOTATION}
-                >
-                  <Icon
-                    name={TOOL_ICON_MAP[ETool.POLYGON] as TToolIcon}
-                    width={18}
-                    height={18}
-                  />
-                </Toolbar.Toggle>
-              </Select.Item>
-
-              <Select.Item value={ETool.POINT}>
-                <Toolbar.Toggle
-                  group="tools-select"
-                  value={ETool.POINT}
-                  aria-label={ETool.POINT}
-                  aria-labelledby={EToolType.ANNOTATION}
-                >
-                  <Icon
-                    name={TOOL_ICON_MAP[ETool.POINT] as TToolIcon}
-                    width={18}
-                    height={18}
-                  />
-                </Toolbar.Toggle>
-              </Select.Item>
-
-              <Select.Item value={ETool.FREEHAND}>
-                <Toolbar.Toggle
-                  group="tools-select"
-                  value={ETool.FREEHAND}
-                  aria-label={ETool.FREEHAND}
-                  aria-labelledby={EToolType.ANNOTATION}
-                >
-                  <Icon
-                    name={TOOL_ICON_MAP[ETool.FREEHAND] as TToolIcon}
-                    width={18}
-                    height={18}
-                  />
-                </Toolbar.Toggle>
-              </Select.Item>
-
-              <Select.Item value={ETool.NUCLICK_POINT}>
-                <Toolbar.Toggle
-                  group="tools-select"
-                  value={ETool.NUCLICK_POINT}
-                  aria-label={ETool.NUCLICK_POINT}
-                  aria-labelledby={EToolType.ANNOTATION}
-                >
-                  <Icon
-                    name={TOOL_ICON_MAP[ETool.NUCLICK_POINT] as TToolIcon}
-                    width={18}
-                    height={18}
-                  />
-                </Toolbar.Toggle>
-              </Select.Item>
-            </Select.Content>
-              </Select.Root>*/}
         </Toolbar.Group>
       </Toolbar.Root>
     </Box>

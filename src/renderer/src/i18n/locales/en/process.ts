@@ -13,6 +13,10 @@ export default {
     [ProcessType.NUCLICK_BBOX_DENSE]: {
       title: 'Segment Nuclei',
       description: 'Segment nuclei from ROI'
+    },
+    [ProcessType.SAM_EMBEDDINGS]: {
+      title: 'Segment anything',
+      description: 'Segment anything from ROI'
     }
   }
 } as const

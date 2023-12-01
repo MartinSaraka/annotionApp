@@ -9,3 +9,4 @@ export { default as useToastStore } from './toast'
 export { default as useSettingsStore } from './settings'
 
 export { default as useProcessStore } from './process'
+export { default as useSegmentStore } from './segment'

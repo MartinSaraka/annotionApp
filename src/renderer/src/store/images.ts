@@ -8,7 +8,11 @@ import { TImageInfo } from '@common/types/image'
 import { TAnnotation, TAnnotationClass } from '@common/types/annotation'
 import { TTool } from '@common/types/tool'
 
-import { ETool, TOOLS } from '@common/constants/tools'
+import {
+  DEFAULT_SEGMENTATION_TOOL,
+  ETool,
+  TOOLS
+} from '@common/constants/tools'
 import { IMAGES_STORAGE_NAME } from '@common/constants/storage'
 import {
   DEFAULT_ACTIVE_TOOL,
@@ -24,6 +28,7 @@ export type TOpenedImageState = {
   data: Partial<TImageInfo>
   activeTool: TTool
   annotationTool: TTool
+  segmentationTool: TTool | null
   selectedAnnotation: TID | null
   annotations: Record<TID, TAnnotation>
   classes: Record<TAnnotationClass['id'], TAnnotationClass>
@@ -50,6 +55,7 @@ export type TImageState = {
    */
   activeTool: () => TTool
   annotationTool: () => TTool
+  segmentationTool: () => TTool | null
   /**
    * Toggle active tool of selected image
    * @param tool - tool to toggle
@@ -57,6 +63,7 @@ export type TImageState = {
    */
   toggleActiveTool: (tool: ETool) => TTool
   toggleAnnotationTool: (tool: ETool) => TTool
+  toggleSegmentationTool: (tool: ETool) => TTool
 
   // Tabs
   tabs: (TPath | string)[]
@@ -168,6 +175,7 @@ const useImageStore = create<TImageState>()(
               data: {},
               activeTool: DEFAULT_ACTIVE_TOOL,
               annotationTool: DEFAULT_ANNOTATION_TOOL,
+              segmentationTool: null,
               selectedAnnotation: null,
               annotations: {},
               classes: DEFAULT_CLASSES || {},
@@ -316,6 +324,13 @@ const useImageStore = create<TImageState>()(
         return DEFAULT_ANNOTATION_TOOL
       },
 
+      segmentationTool: () => {
+        const selectedImage = get().getSelected()
+        if (!selectedImage) return null
+
+        return selectedImage.segmentationTool || null
+      },
+
       toggleActiveTool: (tool) => {
         const opened = get().opened
         const selected = get().selected
@@ -332,6 +347,7 @@ const useImageStore = create<TImageState>()(
             [selected]: {
               ...info,
               activeClass: null,
+              segmentationTool: null,
               activeTool
             }
           }
@@ -356,12 +372,36 @@ const useImageStore = create<TImageState>()(
             [selected]: {
               ...info,
               activeTool: annotationTool,
+              segmentationTool: null,
               annotationTool
             }
           }
         })
 
         return opened[selected].annotationTool
+      },
+
+      toggleSegmentationTool: (tool) => {
+        const selectedImage = get().getSelected()
+        if (!selectedImage) return DEFAULT_SEGMENTATION_TOOL
+
+        const segmentationTool = TOOLS?.[tool] || DEFAULT_SEGMENTATION_TOOL
+        const imageId = selectedImage.image.path
+
+        set({
+          opened: {
+            ...get().opened,
+            [imageId]: {
+              ...selectedImage,
+              activeTool: segmentationTool,
+              segmentationTool
+            }
+          }
+        })
+
+        const selectedTool = get().opened[imageId].segmentationTool
+
+        return selectedTool || DEFAULT_SEGMENTATION_TOOL
       },
 
       // Tabs
@@ -390,30 +430,24 @@ const useImageStore = create<TImageState>()(
       // Annotations
 
       selectAnnotation: (id) => {
-        const opened = get().opened
-        const selected = get().selected
+        const selectedImage = get().getSelected()
+        if (!selectedImage) return null
 
-        if (!selected || !(selected in opened)) {
-          return null
-        }
-
-        const info = opened[selected]
-
-        if (!(id in info.annotations)) {
-          return null
-        }
+        if (!(id in selectedImage.annotations)) return null
+        const path = selectedImage.image.path
 
         set({
           opened: {
-            ...opened,
-            [selected]: {
-              ...info,
-              selectedAnnotation: id
+            ...get().opened,
+            [path]: {
+              ...selectedImage,
+              selectedAnnotation: id,
+              segmentationTool: null
             }
           }
         })
 
-        return get().opened[selected].annotations[id]
+        return get().opened[path].annotations[id]
       },
 
       deselectAnnotations: () => {

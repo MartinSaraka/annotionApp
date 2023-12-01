@@ -17,7 +17,7 @@ import { useAnnotoriousStore, useImageStore } from '@renderer/store'
 import { AnnotationHandler } from '@renderer/handlers'
 
 const Class = () => {
-  const { t } = useTranslation(['annotation'])
+  const { t } = useTranslation(['common', 'annotation'])
 
   const triggerRef = useRef<HTMLButtonElement | null>(null)
   const closeRef = useRef<HTMLButtonElement | null>(null)
@@ -41,34 +41,18 @@ const Class = () => {
   const handleRemoveClass = useCallback(() => {
     if (!annotation) return
 
-    const withoutTagging = AnnotationHandler.upsertBody(
-      annotation,
-      'TextualBody',
-      'tagging',
-      ''
-    )
+    const withoutTagging = AnnotationHandler.deleteBody(annotation, 'tagging')
+    const data = AnnotationHandler.deleteBody(withoutTagging, 'subtagging')
 
-    const withoutSubtagging = AnnotationHandler.upsertBody(
-      withoutTagging,
-      'TextualBody',
-      'subtagging',
-      ''
-    )
-
-    update(withoutSubtagging).catch(console.error)
+    update(data).catch(console.error)
   }, [annotation, update])
 
   const handleRemoveSubTag = useCallback(() => {
     if (!annotation) return
 
-    const withoutSubtagging = AnnotationHandler.upsertBody(
-      annotation,
-      'TextualBody',
-      'subtagging',
-      ''
-    )
+    const data = AnnotationHandler.deleteBody(annotation, 'subtagging')
 
-    update(withoutSubtagging).catch(console.error)
+    update(data).catch(console.error)
   }, [annotation, update])
 
   return (
@@ -88,7 +72,7 @@ const Class = () => {
                 </Tooltip.Trigger>
 
                 <Tooltip.Content>
-                  <Text variant="base">Select class</Text>
+                  <Text>{t('tooltips.class.select')}</Text>
                   <Tooltip.Arrow />
                 </Tooltip.Content>
               </Tooltip.Root>
@@ -116,7 +100,7 @@ const Class = () => {
                     </Tooltip.Trigger>
 
                     <Tooltip.Content>
-                      <Text variant="base">Remove class</Text>
+                      <Text>{t('tooltips.class.remove')}</Text>
                       <Tooltip.Arrow />
                     </Tooltip.Content>
                   </Tooltip.Root>
@@ -149,7 +133,7 @@ const Class = () => {
                       </Tooltip.Trigger>
 
                       <Tooltip.Content>
-                        <Text variant="base">Remove tag</Text>
+                        <Text>{t('tooltips.tag.remove')}</Text>
                         <Tooltip.Arrow />
                       </Tooltip.Content>
                     </Tooltip.Root>
@@ -171,7 +155,9 @@ const Class = () => {
                       }}
                     />
 
-                    <Text css={{ color: '$dark4' }}>with confidence</Text>
+                    <Text css={{ color: '$dark4' }}>
+                      {t('annotation:properties.tag.confidence')}
+                    </Text>
 
                     <Chip small css={{ gap: 2 }}>
                       <Icon name="AiIcon" width={11} height={11} />

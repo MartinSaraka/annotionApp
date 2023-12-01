@@ -31,3 +31,6 @@ export { default as Tooltip } from './Tooltip'
 
 export { default as DropdownMenu } from './DropdownMenu'
 export { default as ContextMenu } from './ContextMenu'
+
+export { default as Dialog } from './Dialog'
+export { default as Alert } from './Alert'

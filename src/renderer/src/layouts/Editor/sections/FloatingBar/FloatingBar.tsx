@@ -1,10 +1,13 @@
 import { memo } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
+
+import {
+  FloatingBarAnnotationTools,
+  FloatingBarSegmentationTools
+} from '@renderer/components/floatingbar'
 
 import { useImageStore } from '@renderer/store'
 import { EToolType } from '@common/constants/tools'
-
-import { FloatingBarAnnotationTools } from '@renderer/components/floatingbar'
 
 import * as S from './styled'
 
@@ -15,12 +18,20 @@ const FloatingBar = (props: TFloatingBarProps) => {
     (state) => state.activeTool().type === EToolType.ANNOTATION
   )
 
-  if (!isAnnotationToolSelected) return null
+  const isAnnotationSelected = useImageStore(
+    (state) => !isAnnotationToolSelected && !!state.getSelectedAnnotation()
+  )
+
+  if (!(isAnnotationToolSelected || isAnnotationSelected)) return null
 
   return (
     <S.Root {...props}>
       <S.Content>
-        {isAnnotationToolSelected ? <FloatingBarAnnotationTools /> : null}
+        {isAnnotationSelected ? (
+          <FloatingBarSegmentationTools />
+        ) : isAnnotationToolSelected ? (
+          <FloatingBarAnnotationTools />
+        ) : null}
       </S.Content>
     </S.Root>
   )

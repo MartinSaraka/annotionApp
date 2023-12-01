@@ -1,5 +1,6 @@
 import { memo, useCallback, useMemo } from 'react'
 import { Form, Formik, FormikConfig } from 'formik'
+import { useTranslation } from 'react-i18next'
 
 import {
   Box,
@@ -10,13 +11,19 @@ import {
   List,
   Popover,
   RadioGroup,
-  ScrollArea
+  ScrollArea,
+  Text,
+  Tooltip
 } from '@renderer/ui'
 import { UpsertClassPopover } from '@renderer/popovers'
 
-import { TAnnotation, TAnnotationClass } from '@common/types/annotation'
 import { useAnnotoriousStore, useImageStore } from '@renderer/store'
 import { AnnotationHandler } from '@renderer/handlers'
+
+import {
+  type TAnnotation,
+  type TAnnotationClass
+} from '@common/types/annotation'
 
 type TSelectClassProps = {
   selectedClass: TAnnotationClass | null
@@ -29,6 +36,8 @@ type TFormValues = {
 }
 
 const SelectClass = ({ selectedClass, onClose }: TSelectClassProps) => {
+  const { t } = useTranslation(['common', 'annotation'])
+
   const classes = useImageStore((state) => state.getClasses())
   const update = useAnnotoriousStore((state) => state.saveAndUpdateAnnotation)
   const annotation = useImageStore((state) => state.getSelectedAnnotation())
@@ -50,14 +59,14 @@ const SelectClass = ({ selectedClass, onClose }: TSelectClassProps) => {
         'subtagging'
       )
 
-      const withTagging = AnnotationHandler.upsertBody(
+      const data = AnnotationHandler.upsertBody(
         withoutSubtagging,
         'TextualBody',
         'tagging',
         values.classId
       )
 
-      update(withTagging).then(onClose).catch(console.error)
+      update(data).then(onClose).catch(console.error)
     },
     [onClose, update]
   )
@@ -87,14 +96,23 @@ const SelectClass = ({ selectedClass, onClose }: TSelectClassProps) => {
           <Popover.Anchor>
             <List
               as={Form}
-              title="Class list"
+              title={t('annotation:popovers.selectClass')}
               actions={
                 <Box css={{ flexDirection: 'row', gap: '$4' }}>
-                  <Popover.Trigger asChild>
-                    <Button ghost condensed css={{ margin: '-$1' }}>
-                      <Icon name="PlusIcon" width={16} height={16} />
-                    </Button>
-                  </Popover.Trigger>
+                  <Tooltip.Root>
+                    <Tooltip.Trigger asChild>
+                      <Popover.Trigger asChild>
+                        <Button ghost condensed css={{ margin: '-$1' }}>
+                          <Icon name="PlusIcon" width={16} height={16} />
+                        </Button>
+                      </Popover.Trigger>
+                    </Tooltip.Trigger>
+
+                    <Tooltip.Content side="top" align="center">
+                      <Text>{t('tooltips.class.createNew')}</Text>
+                      <Tooltip.Arrow />
+                    </Tooltip.Content>
+                  </Tooltip.Root>
 
                   <Button
                     ghost
@@ -157,7 +175,7 @@ const SelectClass = ({ selectedClass, onClose }: TSelectClassProps) => {
                   <Popover.Trigger asChild>
                     <Button slim outlined css={{ marginBlock: '-$1' }}>
                       <Icon name="PlusIcon" width={12} height={12} />
-                      Create first class
+                      {t('tooltips.class.createFirst')}
                     </Button>
                   </Popover.Trigger>
                 </List.Box>

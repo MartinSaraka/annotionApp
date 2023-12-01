@@ -1,11 +1,5 @@
 import { globalCss, keyframes } from './theme'
 
-/*const rotatingKeyframes = keyframes({
-  '100%': {
-    transform: 'rotate(-360deg)'
-  }
-})*/
-
 const pulseKeyframes = keyframes({
   '0%': {
     boxShadow: 'rgb(12, 140, 233) 0 0 0 0'
@@ -309,70 +303,6 @@ export const globalStyles = globalCss({
         animation: `${pulseKeyframes} 1500ms infinite`
       }
     },
-
-    /*'.a9s-point[data-status="generating"]': {
-      position: 'relative !important',
-      borderRadius: '50%',
-
-      circle: {
-        fill: 'transparent',
-        stroke: 'transparent'
-      },
-
-      '.a9s-formatter-el': {
-        display: 'block',
-        pointerEvents: 'none',
-        position: 'absolute',
-        borderRadius: '50%',
-        inset: 0,
-        width: '100% !important',
-        height: '100% !important',
-
-        foreignobject: {
-          width: '100%',
-          height: '100%',
-          borderRadius: '50%'
-        },
-
-        '.a9s-generating-wrapper': {
-          border: '1px solid rgb(12, 140, 233)',
-          boxShadow:
-            '0 0 2px rgb(12, 140, 233), 0 0 15px rgba(12, 140, 233, 0.75)',
-
-          borderRadius: '50%',
-          position: 'relative',
-          width: '100%',
-          height: '100%',
-          backgroundImage:
-            'conic-gradient(rgb(12, 140, 233) 3%, rgba(12, 140, 233, 0.75) 8%, transparent 35%)',
-          animation: rotatingKeyframes 3s linear infinite
-        },
-
-        '.a9s-generating': {
-          position: 'absolute',
-          inset: 0,
-          backgroundImage: 'conic-gradient(#77B9E9 2%, transparent 4%)'
-        },
-
-        g: {
-          transform: 'scale(1) !important',
-          inset: 0
-        }
-      },
-
-      '.a9s-outer': {
-        backgroundImage: 'conic-gradient(red 100%, blue 100%, transparent 35%)',
-        //animation: 'rotate 3s linear infinite',
-
-        '&:after': {
-          position: 'absolute !important',
-          inset: 0,
-          borderRadius: 'inherit',
-          content: '""',
-          background: 'conic-gradient(orange 2%,transparent 4%)'
-        }
-      }
-    },*/
 
     '.a9s-annotation': {
       '.a9s-outer': {

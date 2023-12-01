@@ -5,15 +5,18 @@ import { Box, Chip, DropdownMenu, Icon, Text } from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
 
 import logo from '../../../../../../resources/logo-icon.svg'
+import { useTranslation } from 'react-i18next'
 
 type TTopBarLeftSideProps = ComponentProps<typeof Box>
 
 const LeftSide = ({ css, ...rest }: TTopBarLeftSideProps) => {
+  const { t } = useTranslation('common')
+
   const data = useImageStore((state) => state.getData())
 
   return (
     <Box
-      aria-describedby="image-info"
+      aria-description={t('aria.description.imageInfo')}
       css={{ flexDirection: 'row', alignItems: 'center', gap: '$3', ...css }}
       {...rest}
     >
@@ -53,7 +56,9 @@ const LeftSide = ({ css, ...rest }: TTopBarLeftSideProps) => {
           />
         </DropdownMenu.Trigger>
 
-        <DropdownMenu.Content>TODO</DropdownMenu.Content>
+        <DropdownMenu.Content>
+          <DropdownMenu.Item>Import annotations</DropdownMenu.Item>
+        </DropdownMenu.Content>
       </DropdownMenu.Root>
 
       <Box css={{ flexDirection: 'row', gap: '$1' }}>

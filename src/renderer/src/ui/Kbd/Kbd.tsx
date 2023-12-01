@@ -1,5 +1,5 @@
 import { forwardRef, memo } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 
 import * as S from './styled'
 
@@ -19,7 +19,7 @@ const Kbd = forwardRef(function Kbd(
   // TODO: control
   const text = keys
     .join('+')
-    .replace(/cmd|ctrl/gi, platform === 'mac' ? '⌘' : 'ctrl')
+    .replace(/meta|ctrl/gi, platform === 'mac' ? '⌘' : 'ctrl')
     .replace(/opt|alt/gi, platform === 'mac' ? '⌥' : 'alt')
     .replace(/shift/gi, platform === 'mac' ? '⇧' : 'shift')
     .replace(/backspace/gi, platform === 'mac' ? '⌫' : 'backspace')

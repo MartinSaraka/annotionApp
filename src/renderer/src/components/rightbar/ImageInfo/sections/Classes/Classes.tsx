@@ -1,5 +1,6 @@
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 
 import { Button, Chip, Icon, List, Popover, Text, Tooltip } from '@renderer/ui'
 import { UpsertClassPopover } from '@renderer/popovers'
@@ -9,11 +10,12 @@ import { useImageStore } from '@renderer/store'
 import { ClassHandler } from '@renderer/handlers'
 
 import { isDefaultClass } from '@common/utils/classes'
-import { TAnnotationClass } from '@common/types/annotation'
+import { type TAnnotationClass } from '@common/types/annotation'
 
 import { DEFAULT_CLASSES } from '@common/constants/classes'
 
 const Classes = () => {
+  const { t } = useTranslation(['common', 'image'])
   const triggerRef = useRef<HTMLButtonElement | null>(null)
 
   const { visible: systemClasses, show: showSystemClasses } = useToggle()
@@ -80,8 +82,8 @@ const Classes = () => {
                   </Button>
                 </Tooltip.Trigger>
 
-                <Tooltip.Content>
-                  <Text variant="base">Edit class</Text>
+                <Tooltip.Content side="top" align="end">
+                  <Text>{t('tooltips.class.edit')}</Text>
                   <Tooltip.Arrow />
                 </Tooltip.Content>
               </Tooltip.Root>
@@ -99,8 +101,8 @@ const Classes = () => {
                     </Button>
                   </Tooltip.Trigger>
 
-                  <Tooltip.Content>
-                    <Text variant="base">Delete class</Text>
+                  <Tooltip.Content side="top" align="end">
+                    <Text>{t('tooltips.class.delete')}</Text>
                     <Tooltip.Arrow />
                   </Tooltip.Content>
                 </Tooltip.Root>
@@ -127,7 +129,7 @@ const Classes = () => {
     <Popover.Root onOpenChange={handleUnselectClass}>
       <Popover.Anchor>
         <List
-          title="Classes"
+          title={t('image:sections.classes')}
           actions={
             <Tooltip.Root>
               <Tooltip.Trigger asChild>
@@ -139,14 +141,14 @@ const Classes = () => {
                   ) : (
                     <Button slim outlined css={{ marginBlock: '-$1' }}>
                       <Icon name="PlusIcon" width={12} height={12} />
-                      Create first class
+                      {t('tooltips.class.createFirst')}
                     </Button>
                   )}
                 </Popover.Trigger>
               </Tooltip.Trigger>
 
               <Tooltip.Content>
-                <Text variant="base">Create new class</Text>
+                <Text>{t('tooltips.class.createNew')}</Text>
                 <Tooltip.Arrow />
               </Tooltip.Content>
             </Tooltip.Root>
@@ -158,7 +160,9 @@ const Classes = () => {
               css={{ color: '$dark4', textAlign: 'left', fontWeight: 500 }}
               onClick={showSystemClasses}
             >
-              Show system classes (+{Object.keys(DEFAULT_CLASSES).length})
+              {t('actions.class.showSystem', {
+                count: Object.keys(DEFAULT_CLASSES).length
+              })}
             </Text>
           )}
 

@@ -1,8 +1,9 @@
 import { memo, useCallback, useEffect, useMemo } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 import { useTranslation } from 'react-i18next'
 
 import { Box, Button, Icon, Kbd, Text, Toggle, Tooltip } from '@renderer/ui'
+
 import {
   useAnnotoriousStore,
   useHotkeysStore,
@@ -10,8 +11,9 @@ import {
 } from '@renderer/store'
 import { AnnotationHandler } from '@renderer/handlers'
 
+import { type TAnnotation } from '@common/types/annotation'
+
 import { AnnotationUtils } from '@common/utils'
-import { TAnnotation } from '@common/types/annotation'
 import {
   getAnnotationEditabilityIcon,
   getAnnotationVisibilityIcon,
@@ -19,17 +21,17 @@ import {
   isAnnotationVisible
 } from '@common/utils/annotation'
 
-import * as S from './styled'
 import { HOTKEYS } from '@common/constants/hotkeys'
+
+import * as S from './styled'
 
 type TIcon = ComponentProps<typeof Icon>['name']
 
 const Preview = () => {
-  const { t } = useTranslation(['annotation'])
+  const { t } = useTranslation(['common', 'annotation'])
 
   const { addShortcut, removeShortcut } = useHotkeysStore()
 
-  // ANNOTATION
   const annotation = useImageStore((state) => state.getSelectedAnnotation())
   const annotationBody = AnnotationHandler.getBody(annotation, [
     'editability',
@@ -42,7 +44,6 @@ const Preview = () => {
     return { value: utils.type, icon: utils.icon as TIcon } as const
   }, [annotation])
 
-  // REMOVE ANNOTATION
   const removeAnnotationFromAnnotorious = useAnnotoriousStore(
     (state) => state.removeAnnotation
   )
@@ -53,12 +54,10 @@ const Preview = () => {
     }
   )
 
-  // SAVE ANNOTATION
   const cancelSelected = useAnnotoriousStore((state) => state.cancelIfSelected)
   const saveAnnotation = useImageStore((state) => state.saveAnnotation)
   const update = useAnnotoriousStore((state) => state.saveAndUpdateAnnotation)
 
-  // ANNOTATION HANDLERS
   const handleToggleEditable = useCallback(
     async (pressed: boolean) => {
       if (!annotation) return
@@ -174,12 +173,14 @@ const Preview = () => {
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">
-                {isAnnotationEditable(annotationBody.editability)
-                  ? 'Lock annotation'
-                  : 'Unlock annotation'}
+              <Text>
+                {t(
+                  `actions.editability.${isAnnotationEditable(
+                    annotationBody.editability
+                  )}`
+                )}
               </Text>
-              <Kbd keys={['Ctrl+L']} css={{ color: '$dark4' }} />
+              <Kbd keys={HOTKEYS.editability} css={{ color: '$dark4' }} />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -204,12 +205,14 @@ const Preview = () => {
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">
-                {isAnnotationVisible(annotationBody.visibility)
-                  ? 'Hide annotation'
-                  : 'Show annotation'}
+              <Text>
+                {t(
+                  `actions.visibility.${isAnnotationVisible(
+                    annotationBody.visibility
+                  )}`
+                )}
               </Text>
-              <Kbd keys={['Ctrl+H']} css={{ color: '$dark4' }} />
+              <Kbd keys={HOTKEYS.visibility} css={{ color: '$dark4' }} />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>
@@ -222,8 +225,8 @@ const Preview = () => {
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">Delete annotation</Text>
-              <Kbd keys={['Backspace']} css={{ color: '$dark4' }} />
+              <Text>{t('actions.deleteAnnotation')}</Text>
+              <Kbd keys={HOTKEYS.delete} css={{ color: '$dark4' }} />
               <Tooltip.Arrow />
             </Tooltip.Content>
           </Tooltip.Root>

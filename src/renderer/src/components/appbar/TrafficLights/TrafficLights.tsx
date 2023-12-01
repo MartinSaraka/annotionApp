@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react'
 import { ComponentProps } from '@stitches/react'
+import { useTranslation } from 'react-i18next'
 import SVG from 'react-inlinesvg'
 
 import { Box } from '@renderer/ui'
@@ -12,13 +13,15 @@ import trafficLightGreen from '../../../../../../resources/icons/traffic-lights/
 type TAppBarTrafficLightsProps = ComponentProps<typeof Box>
 
 const TrafficLights = ({ css, ...rest }: TAppBarTrafficLightsProps) => {
+  const { t } = useTranslation('common')
+
   const isDarwin = window.electron.process.platform === 'darwin'
 
   /* Reserved space for window controls on MacOS */
   if (isDarwin)
     return (
       <Box
-        aria-label="traffic-lights"
+        aria-label={t('aria.label.trafficLights')}
         css={{ width: 54, height: 12, _appRegion: 'no-drag' }}
       />
     )
@@ -32,7 +35,7 @@ const TrafficLights = ({ css, ...rest }: TAppBarTrafficLightsProps) => {
 
   return (
     <Box
-      aria-label="traffic-lights"
+      aria-label={t('aria.label.trafficLights')}
       css={{
         width: 54,
         height: 12,
@@ -57,10 +60,10 @@ const TrafficLights = ({ css, ...rest }: TAppBarTrafficLightsProps) => {
         as={SVG}
         src={trafficLightRed}
         role="button"
-        aria-label="Close window"
+        aria-label={t('tooltips.window.close')}
         width={12}
         height={12}
-        title="Close window"
+        title={t('tooltips.window.close')}
         css={{ _appRegion: 'no-drag' }}
         onClick={handleAction('close')}
       />
@@ -69,10 +72,10 @@ const TrafficLights = ({ css, ...rest }: TAppBarTrafficLightsProps) => {
         as={SVG}
         src={trafficLightOrange}
         role="button"
-        aria-label="Minimize window"
+        aria-label={t('tooltips.window.minimize')}
         width={12}
         height={12}
-        title="Minimize window"
+        title={t('tooltips.window.minimize')}
         css={{ _appRegion: 'no-drag' }}
         onClick={handleAction('minimize')}
       />
@@ -81,10 +84,10 @@ const TrafficLights = ({ css, ...rest }: TAppBarTrafficLightsProps) => {
         as={SVG}
         src={trafficLightGreen}
         role="button"
-        aria-label="Maximize window"
+        aria-label={t('tooltips.window.maximize')}
         width={12}
         height={12}
-        title="Maximize window"
+        title={t('tooltips.window.maximize')}
         css={{ _appRegion: 'no-drag' }}
         onClick={handleAction('maximize')}
       />

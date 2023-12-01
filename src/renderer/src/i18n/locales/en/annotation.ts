@@ -4,10 +4,12 @@ export default {
   sections: {
     parameters: 'parameters',
     measurements: 'measurements',
-    class: 'class'
+    class: 'class',
+    processes: 'processes'
   },
   popovers: {
-    selectClass: 'class list'
+    selectClass: 'class list',
+    selectProcess: 'process list'
   },
   properties: {
     type: {
@@ -33,7 +35,9 @@ export default {
       label: 'description'
     },
     class: {
-      label: 'class'
+      label: 'class',
+      placeholder: 'default class',
+      empty: 'no class'
     },
     color: {
       label: 'color'
@@ -49,6 +53,9 @@ export default {
     },
     perimeter: {
       label: 'perimeter'
+    },
+    tag: {
+      confidence: 'with confidence'
     }
   }
 } as const

@@ -1,7 +1,7 @@
 export default {
   fields: {
     search: {
-      placeholder: 'search annotations'
+      placeholder: 'Search annotations'
     },
     page: {
       label: 'page'

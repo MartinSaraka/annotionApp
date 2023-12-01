@@ -10,15 +10,18 @@ import {
   isAnnotationVisible
 } from '@common/utils/annotation'
 
-import { TAnnotation, TAnnotationClass } from '@common/types/annotation'
 import { EToolType } from '@common/constants/tools'
+import {
+  type TAnnotation,
+  type TAnnotationClass
+} from '@common/types/annotation'
 
 type TViewerProps = {
   annotationId?: TID
 }
 
 const Viewer = ({ annotationId }: TViewerProps) => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation(['common', 'annotation'])
 
   const annotorious = useAnnotoriousStore((state) => state.anno)
   const cancelSelected = useAnnotoriousStore((state) => state.cancelIfSelected)
@@ -134,7 +137,7 @@ const Viewer = ({ annotationId }: TViewerProps) => {
         <Box css={{ flexDirection: 'row', alignItems: 'center', gap: '$2' }}>
           <Icon name="ZoomInIcon" width={12} height={12} />
 
-          <Text>Zoom in</Text>
+          <Text>{t('actions.zoomIn')}</Text>
         </Box>
       </ContextMenu.Item>
 
@@ -142,7 +145,7 @@ const Viewer = ({ annotationId }: TViewerProps) => {
         <Box css={{ flexDirection: 'row', alignItems: 'center', gap: '$2' }}>
           <Icon name="ZoomOutIcon" width={12} height={12} />
 
-          <Text>Zoom out</Text>
+          <Text>{t('actions.zoomOut')}</Text>
         </Box>
       </ContextMenu.Item>
 
@@ -152,12 +155,12 @@ const Viewer = ({ annotationId }: TViewerProps) => {
 
           <ContextMenu.Sub>
             <ContextMenu.SubTrigger>
-              <Text>Select class</Text>
+              <Text>{t('tooltips.class.select')}</Text>
             </ContextMenu.SubTrigger>
 
             <ContextMenu.SubContent sideOffset={2} alignOffset={-5}>
               <ContextMenu.Item onSelect={handleActiveClass('-')}>
-                <Text>no class</Text>
+                <Text>{t('annotation:properties.class.empty')}</Text>
               </ContextMenu.Item>
 
               {classes.map(renderClass)}
@@ -172,15 +175,15 @@ const Viewer = ({ annotationId }: TViewerProps) => {
 
           <ContextMenu.Item onSelect={handleToggleEditable}>
             <Text>
-              {isAnnotationEditable(body.editability) ? 'Lock' : 'Unlock'}{' '}
-              annotation
+              {t(
+                `actions.editability.${isAnnotationEditable(body.editability)}`
+              )}
             </Text>
           </ContextMenu.Item>
 
           <ContextMenu.Item onSelect={handleToggleVisibility}>
             <Text>
-              {isAnnotationVisible(body?.visibility) ? 'Hide' : 'Show'}{' '}
-              annotation
+              {t(`actions.visibility.${isAnnotationVisible(body.visibility)}`)}
             </Text>
           </ContextMenu.Item>
 
@@ -195,7 +198,7 @@ const Viewer = ({ annotationId }: TViewerProps) => {
             >
               <Icon name="TrashIcon" width={12} height={12} />
 
-              <Text>Delete annotation</Text>
+              <Text>{t('actions.deleteAnnotation')}</Text>
             </Box>
           </ContextMenu.Item>
         </>

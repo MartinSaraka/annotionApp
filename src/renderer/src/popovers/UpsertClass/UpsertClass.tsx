@@ -26,6 +26,8 @@ type TUpsertClassProps = {
 
 type TFormValues = NonNullable<TUpsertClassProps['data']>
 
+// TODO: refactor
+
 const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
   const operation = !data ? 'Create' : 'Update'
 

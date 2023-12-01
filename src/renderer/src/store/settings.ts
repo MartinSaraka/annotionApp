@@ -14,6 +14,8 @@ export type TSettingsState = {
 
 export const DEFAULT_PAGE_COLOR = theme.palette.dark2.value
 
+// TODO: implement
+
 const useSettingsStore = create<TSettingsState>()(
   persist(
     (set /*, get */) => ({

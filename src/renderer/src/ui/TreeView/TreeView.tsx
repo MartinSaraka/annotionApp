@@ -1,5 +1,5 @@
 import React, { forwardRef, memo, useCallback } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 import {
   DndProvider,
   DragPreviewRender,
@@ -14,11 +14,12 @@ import {
 } from '@minoru/react-dnd-treeview'
 import { noop } from 'lodash'
 
+import { type TNodeData, type TNodeModel } from '@renderer/adapters/TreeAdapter'
 import { preventAllDefaults, preventAndStop } from '@common/utils/global'
-import { TNodeData, TNodeModel } from '@renderer/adapters/TreeAdapter'
+
+import Icon from '../Icon'
 
 import * as S from './styled'
-import Icon from '../Icon'
 
 type TRootBaseProps = {
   nodes: TNodeModel[]

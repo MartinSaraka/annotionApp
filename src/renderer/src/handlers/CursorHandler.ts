@@ -14,7 +14,15 @@ import freehand from '../../../../resources/icons/cursors/freehand-crosshair.svg
 import nuclick from '../../../../resources/icons/cursors/nuclick-crosshair.svg'
 
 const cursors: Record<
-  Exclude<ETool, 'hand' | 'zoom-in' | 'zoom-out'>,
+  Exclude<
+    ETool,
+    | 'hand'
+    | 'zoom-in'
+    | 'zoom-out'
+    | 'sam-foreground'
+    | 'sam-background'
+    | 'sam-bbox'
+  >,
   string
 > = {
   [ETool.RECTANGLE]: rect,

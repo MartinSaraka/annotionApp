@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 
 import { ScrollArea } from '@renderer/ui'
 import { OpenSeadragonPreview } from '@renderer/ui/openseadragon'

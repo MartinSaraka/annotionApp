@@ -17,7 +17,7 @@ type TSelectProcessProps = {
 const processTypes = Object.keys(ProcessType) as (keyof typeof ProcessType)[]
 
 const SelectProcess = ({ onClose }: TSelectProcessProps) => {
-  const { t } = useTranslation(['process'])
+  const { t } = useTranslation(['process', 'annotation'])
 
   const addProcess = useProcessStore((state) => state.addProcess)
   const annotation = useImageStore((state) => state.getSelectedAnnotation())
@@ -57,7 +57,7 @@ const SelectProcess = ({ onClose }: TSelectProcessProps) => {
 
   return (
     <List
-      title="Process list"
+      title={t('annotation:popovers.selectProcess')}
       actions={
         <Button ghost condensed css={{ margin: '-$1' }} onClick={onClose}>
           <Icon name="Cross2Icon" width={16} height={16} />

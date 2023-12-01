@@ -5,9 +5,10 @@ import { useTranslation } from 'react-i18next'
 import { Button, Input, Label, List } from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
 
+import { type TAnnotation } from '@common/types/annotation'
+
 import { MeasurementUtils } from '@common/utils'
 import { roundNumber } from '@common/utils/numbers'
-import { TAnnotation } from '@common/types/annotation'
 
 type TFormValues = {
   annotation: TAnnotation | null

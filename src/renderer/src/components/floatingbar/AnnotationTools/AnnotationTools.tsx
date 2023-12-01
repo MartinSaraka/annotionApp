@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
+import { useTranslation } from 'react-i18next'
 
 import {
   Box,
@@ -13,22 +14,23 @@ import {
 } from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
 
+import { type TAnnotationClass } from '@common/types/annotation'
+
 import { ETool, EToolType, TOOL_ICON_MAP } from '@common/constants/tools'
-import { useTranslation } from 'react-i18next'
 import { HOTKEYS } from '@common/constants/hotkeys'
-import { TAnnotationClass } from '@common/types/annotation'
 
 type TToolIcon = ComponentProps<typeof Icon>['name']
 type TFloatingBarAnnotationToolsProps = ComponentProps<typeof Box>
+
+const GROUP = 'annotation-tools'
 
 const AnnotationTools = ({
   css,
   ...rest
 }: TFloatingBarAnnotationToolsProps) => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation(['common', 'annotation'])
 
   const classes = useImageStore((state) => state.getClasses())
-
   const activeClass = useImageStore((state) => state.getActiveClass())
   const setActiveClass = useImageStore((state) => state.setActiveClass)
   const resetActiveClass = useImageStore((state) => state.resetActiveClass)
@@ -59,7 +61,7 @@ const AnnotationTools = ({
 
   return (
     <Box
-      aria-describedby={t('aria.description.annotationTools')}
+      aria-description={t('aria.description.annotationTools')}
       css={{
         flexDirection: 'row',
         paddingRight: '$1',
@@ -77,7 +79,7 @@ const AnnotationTools = ({
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <Toolbar.Toggle
-                group="annotation-tools"
+                group={GROUP}
                 value={ETool.RECTANGLE}
                 aria-label={ETool.RECTANGLE}
                 aria-labelledby={EToolType.ANNOTATION}
@@ -92,9 +94,7 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">
-                {t(`tooltips.tools.${ETool.RECTANGLE}`)}
-              </Text>
+              <Text>{t(`tooltips.tools.${ETool.RECTANGLE}`)}</Text>
               <Kbd
                 keys={HOTKEYS.tools[ETool.RECTANGLE]}
                 css={{ color: '$dark4' }}
@@ -106,7 +106,7 @@ const AnnotationTools = ({
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <Toolbar.Toggle
-                group="annotation-tools"
+                group={GROUP}
                 value={ETool.CIRCLE}
                 aria-label={ETool.CIRCLE}
                 aria-labelledby={EToolType.ANNOTATION}
@@ -121,7 +121,7 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">{t(`tooltips.tools.${ETool.CIRCLE}`)}</Text>
+              <Text>{t(`tooltips.tools.${ETool.CIRCLE}`)}</Text>
               <Kbd
                 keys={HOTKEYS.tools[ETool.CIRCLE]}
                 css={{ color: '$dark4' }}
@@ -133,7 +133,7 @@ const AnnotationTools = ({
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <Toolbar.Toggle
-                group="annotation-tools"
+                group={GROUP}
                 value={ETool.ELLIPSE}
                 aria-label={ETool.ELLIPSE}
                 aria-labelledby={EToolType.ANNOTATION}
@@ -148,7 +148,7 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">{t(`tooltips.tools.${ETool.ELLIPSE}`)}</Text>
+              <Text>{t(`tooltips.tools.${ETool.ELLIPSE}`)}</Text>
               <Kbd
                 keys={HOTKEYS.tools[ETool.ELLIPSE]}
                 css={{ color: '$dark4' }}
@@ -160,7 +160,7 @@ const AnnotationTools = ({
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <Toolbar.Toggle
-                group="annotation-tools"
+                group={GROUP}
                 value={ETool.POLYGON}
                 aria-label={ETool.POLYGON}
                 aria-labelledby={EToolType.ANNOTATION}
@@ -175,7 +175,7 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">{t(`tooltips.tools.${ETool.POLYGON}`)}</Text>
+              <Text>{t(`tooltips.tools.${ETool.POLYGON}`)}</Text>
               <Kbd
                 keys={HOTKEYS.tools[ETool.POLYGON]}
                 css={{ color: '$dark4' }}
@@ -187,7 +187,7 @@ const AnnotationTools = ({
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <Toolbar.Toggle
-                group="annotation-tools"
+                group={GROUP}
                 value={ETool.POINT}
                 aria-label={ETool.POINT}
                 aria-labelledby={EToolType.ANNOTATION}
@@ -202,7 +202,7 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">{t(`tooltips.tools.${ETool.POINT}`)}</Text>
+              <Text>{t(`tooltips.tools.${ETool.POINT}`)}</Text>
               <Kbd
                 keys={HOTKEYS.tools[ETool.POINT]}
                 css={{ color: '$dark4' }}
@@ -214,7 +214,7 @@ const AnnotationTools = ({
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <Toolbar.Toggle
-                group="annotation-tools"
+                group={GROUP}
                 value={ETool.FREEHAND}
                 aria-label={ETool.FREEHAND}
                 aria-labelledby={EToolType.ANNOTATION}
@@ -229,9 +229,7 @@ const AnnotationTools = ({
             </Tooltip.Trigger>
 
             <Tooltip.Content side="bottom" align="center">
-              <Text variant="base">
-                {t(`tooltips.tools.${ETool.FREEHAND}`)}
-              </Text>
+              <Text>{t(`tooltips.tools.${ETool.FREEHAND}`)}</Text>
               <Kbd
                 keys={HOTKEYS.tools[ETool.FREEHAND]}
                 css={{ color: '$dark4' }}
@@ -243,7 +241,7 @@ const AnnotationTools = ({
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <Toolbar.Toggle
-                group="annotation-tools"
+                group={GROUP}
                 value={ETool.NUCLICK_POINT}
                 aria-label={ETool.NUCLICK_POINT}
                 aria-labelledby={EToolType.ANNOTATION}
@@ -259,7 +257,11 @@ const AnnotationTools = ({
 
             <Tooltip.Content side="bottom" align="center">
               <Box
-                css={{ flexDirection: 'row', alignItems: 'center', gap: '$1' }}
+                css={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: '$1'
+                }}
               >
                 <Icon
                   name="AiIcon"
@@ -267,9 +269,7 @@ const AnnotationTools = ({
                   height={12}
                   css={{ color: '$blue2' }}
                 />
-                <Text variant="base">
-                  {t(`tooltips.tools.${ETool.NUCLICK_POINT}`)}
-                </Text>
+                <Text>{t(`tooltips.tools.${ETool.NUCLICK_POINT}`)}</Text>
               </Box>
               <Kbd
                 keys={HOTKEYS.tools[ETool.NUCLICK_POINT]}
@@ -287,7 +287,9 @@ const AnnotationTools = ({
           onValueChange={handleActiveClass}
         >
           <Select.Trigger>
-            <Select.Value placeholder="Default class" />
+            <Select.Value
+              placeholder={t('annotation:properties.class.placeholder')}
+            />
           </Select.Trigger>
 
           <Select.Content
@@ -307,7 +309,10 @@ const AnnotationTools = ({
               }
             }}
           >
-            <Select.Item value="-">no class</Select.Item>
+            <Select.Item value="-">
+              {t('annotation:properties.class.empty')}
+            </Select.Item>
+
             {classes.map(renderClass)}
           </Select.Content>
         </Select.Root>

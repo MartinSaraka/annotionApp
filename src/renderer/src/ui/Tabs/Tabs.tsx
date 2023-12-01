@@ -1,5 +1,5 @@
 import { forwardRef, memo } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import Box from '../Box'

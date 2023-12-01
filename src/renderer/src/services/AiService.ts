@@ -1,7 +1,7 @@
 import ky from 'ky'
 import { toInteger } from 'lodash'
 
-import { useImageStore } from '@renderer/store'
+import { useImageStore, useSegmentStore } from '@renderer/store'
 import { ImageService } from '@renderer/services'
 import { OSDAdapter } from '@renderer/adapters'
 
@@ -19,10 +19,98 @@ import {
 } from '@common/types/process'
 
 import { INSTANT_SETTINGS, PROCESS_SETTINGS } from '@common/constants/processes'
+import { ETool } from '@common/constants/tools'
 
 class AiService {
   private constructor() {
     throw new Error('`AiService` should not be instantiated')
+  }
+
+  /**
+   * Segment predict instant
+   *
+   * @param selectedAnnotation Annotation to process
+   * @param annotation Annotation to process
+   * @returns Response of the segment
+   */
+  static segment = async (
+    selectedAnnotation: TAnnotation,
+    annotation: TAnnotation,
+    tool: ETool
+  ) => {
+    const settings = INSTANT_SETTINGS[InstantType.SAM]
+
+    const imageData = useImageStore.getState().getData()
+    if (!imageData) throw new Error('Image data is not available')
+
+    const selectedBBox = AnnotationUtils.from(selectedAnnotation).bbox
+    if (!selectedBBox) throw new Error('Could not create bbox')
+
+    const annoBbox = AnnotationUtils.from(annotation).bbox
+    if (!annoBbox) throw new Error('Could not create bbox')
+
+    const embedding = useSegmentStore
+      .getState()
+      .getEmbedding(selectedAnnotation.id)
+    if (!embedding) throw new Error('Failed to get segmentation embedding')
+
+    const keypoints: TInstantTypeMap[InstantType.SAM]['body']['keypoints'] = [
+      ...embedding.keypoints,
+      ...([ETool.SAM_FOREGROUND, ETool.SAM_BACKGROUND].includes(tool)
+        ? [
+            {
+              keypoint: {
+                x: annoBbox.x - selectedBBox.x,
+                y: annoBbox.y - selectedBBox.y
+              },
+              label: (tool === ETool.SAM_FOREGROUND
+                ? 'foreground'
+                : 'background') as 'foreground' | 'background'
+            }
+          ]
+        : [])
+    ]
+
+    const bbox: TInstantTypeMap[InstantType.SAM]['body']['bbox'] =
+      tool === ETool.SAM_BBOX
+        ? {
+            x: annoBbox.x - selectedBBox.x,
+            y: annoBbox.y - selectedBBox.y,
+            width: annoBbox.width,
+            height: annoBbox.height
+          }
+        : embedding.bboxes?.[embedding.bboxes.length - 1] || undefined
+
+    const variables: TInstantTypeMap[InstantType.SAM]['body'] = {
+      embeddings_task_id: embedding.taskId,
+      previous_predict_task_id: embedding.prevTaskId,
+      keypoints: keypoints.length ? keypoints : undefined,
+      bbox,
+      offset: {
+        x: selectedBBox.x,
+        y: selectedBBox.y
+      }
+    }
+
+    const response = await ky.post(settings.predictURL, {
+      prefixUrl: import.meta.env.RENDERER_VITE_AI_URI,
+      timeout: false,
+      json: variables
+    })
+
+    if (!response || !response.ok) throw new Error('Failed to reach AI server')
+
+    const data: TInstantTypeMap[keyof TInstantTypeMap]['response'] =
+      await response.json()
+    if (!data) throw new Error('AI failed to process image')
+
+    useSegmentStore.getState().updateEmbedding(selectedAnnotation.id, {
+      keypoints,
+      bboxes: [...embedding.bboxes, bbox],
+      annotations: [...embedding.annotations, annotation.id]
+    })
+
+    return data
   }
 
   /**
@@ -36,6 +124,8 @@ class AiService {
     instantType: InstantType,
     annotation: TAnnotation
   ) => {
+    if (instantType !== InstantType.NUCLICK) throw new Error('Invalid type')
+
     const settings = INSTANT_SETTINGS[instantType]
 
     const imageData = useImageStore.getState().getData()
@@ -181,7 +271,11 @@ class AiService {
             height: croppedImage.height
           }
         ]
-      } as TProcessTypeMap[ProcessType.NUCLICK_BBOX_DENSE]['body']
+      } as TProcessTypeMap[ProcessType.NUCLICK_BBOX_DENSE]['body'],
+
+      [ProcessType.SAM_EMBEDDINGS]: {
+        image: croppedImage.base64Image
+      } as TProcessTypeMap[ProcessType.SAM_EMBEDDINGS]['body']
     }[processType]
 
     setStatus({

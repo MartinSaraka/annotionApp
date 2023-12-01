@@ -4,14 +4,6 @@
 
 An Electron application with React and TypeScript.
 
-## TODO
-
-- [ ] REPORT Z TESTOVANIA
-- [ ] Action hints
-- [ ] Annotation process loading
-- [ ] Annotation context menu
-- [ ] Floating bar for annotation
-
 ## Project Setup
 
 ### Install

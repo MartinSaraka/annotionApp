@@ -1,5 +1,9 @@
-import { useAnnotoriousStore, useImageStore } from '@renderer/store'
 import { AnnotoriousHandler, AnnotationHandler } from '@renderer/handlers'
+import {
+  useAnnotoriousStore,
+  useImageStore,
+  useSegmentStore
+} from '@renderer/store'
 
 import { TAnnotation, TAnnotationIntersection } from '@common/types/annotation'
 import {
@@ -40,6 +44,11 @@ class ProcessHandler {
           data as TProcessTypeMap[ProcessType.NUCLICK_BBOX_DENSE]['response'],
           process
         )
+      case ProcessType.SAM_EMBEDDINGS:
+        return ProcessHandler.#handleSAM(
+          data as TProcessTypeMap[ProcessType.SAM_EMBEDDINGS]['response'],
+          process
+        )
       default:
         throw new Error('Process type not found')
     }
@@ -56,9 +65,65 @@ class ProcessHandler {
           data as TInstantTypeMap[InstantType.NUCLICK]['response'],
           annotation
         )
+      case InstantType.SAM:
+        return ProcessHandler.#handleSegment(
+          data as TInstantTypeMap[InstantType.SAM]['response'],
+          annotation
+        )
       default:
         throw new Error('Instant type not found')
     }
+  }
+
+  static #handleSegment = async (
+    data: TInstantTypeMap[InstantType.SAM]['response'],
+    annotation: TAnnotation
+  ) => {
+    const anno = useAnnotoriousStore.getState().anno
+    const preview = useAnnotoriousStore.getState().preview
+    if (!anno || !preview) throw new Error('Annotorious not available')
+
+    const embedding = useSegmentStore.getState().getEmbedding(annotation.id)
+    if (!embedding) throw new Error('Embedding not found')
+
+    for (const preview of embedding.previews) {
+      anno.removeAnnotation(preview.id)
+    }
+
+    embedding.previews = []
+
+    const objects = data.segmented_objects
+
+    for (const points of objects) {
+      const newAnnotation = AnnotationUtils.createAnnotation(points, [
+        AnnotationUtils.createBody('TextualBody', 'status', 'generated'),
+        AnnotationUtils.createBody('TextualBody', 'parent', annotation.id),
+        AnnotationUtils.createBody('TextualBody', 'tagging', 'preview')
+      ])
+
+      anno.addAnnotation(newAnnotation)
+      embedding.previews.push(newAnnotation)
+      anno.addAnnotation(newAnnotation)
+    }
+
+    embedding.prevTaskId = data.previous_predict_task_id
+
+    useSegmentStore.getState().updateEmbedding(annotation.id, embedding)
+  }
+
+  static #handleSAM = async (
+    data: TProcessTypeMap[ProcessType.SAM_EMBEDDINGS]['response'],
+    process: TProcess
+  ) => {
+    const anno = useAnnotoriousStore.getState().anno
+    const preview = useAnnotoriousStore.getState().preview
+    if (!anno || !preview) throw new Error('Annotorious not available')
+
+    const annotationId = process.annotationId
+    const annotation = useImageStore.getState().getAnnotation(annotationId)
+    if (!annotation) throw new Error('Annotation not found')
+
+    useSegmentStore.getState().addEmbedding(annotation.id, data.task_id)
   }
 
   static #handleNC = async (
@@ -71,8 +136,13 @@ class ProcessHandler {
 
     const points = data.segmented_nuclei[0]
 
+    const activeClass = useImageStore.getState().getActiveClass()
+
     let newAnnotation = AnnotationUtils.createAnnotation(points, [
-      AnnotationUtils.createBody('TextualBody', 'status', 'generated')
+      AnnotationUtils.createBody('TextualBody', 'status', 'generated'),
+      ...(activeClass
+        ? [AnnotationUtils.createBody('TextualBody', 'tagging', activeClass.id)]
+        : [])
     ])
 
     const intersections: TAnnotationIntersection[] =

@@ -1,5 +1,5 @@
 import React, { forwardRef, memo } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 import * as Primitive from '@radix-ui/react-context-menu'
 
 import * as S from './styled'

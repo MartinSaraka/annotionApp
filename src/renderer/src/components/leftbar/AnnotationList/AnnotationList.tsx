@@ -1,12 +1,14 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ComponentProps } from '@stitches/react'
-import {
-  DropOptions,
-  NodeModel,
-  NodeRender,
-  TreeMethods
-} from '@minoru/react-dnd-treeview'
+import { type ComponentProps } from '@stitches/react'
 import { debounce, noop } from 'lodash'
+import {
+  DragPreviewRender,
+  type DropOptions,
+  type NodeModel,
+  type NodeRender,
+  type TreeMethods
+} from '@minoru/react-dnd-treeview'
+import { useTranslation } from 'react-i18next'
 
 import {
   Box,
@@ -19,31 +21,34 @@ import {
 } from '@renderer/ui'
 import { AnnotationItem } from '@renderer/components'
 
-import { TreeAdapter } from '@renderer/adapters'
-import { TNodeData } from '@renderer/adapters/TreeAdapter'
-
 import {
   useAnnotoriousStore,
   useHotkeysStore,
   useImageStore
 } from '@renderer/store'
+import { TreeAdapter } from '@renderer/adapters'
 import { AnnotationHandler, AnnotoriousHandler } from '@renderer/handlers'
+import { type TNodeData } from '@renderer/adapters/TreeAdapter'
 
 import {
   isAnnotationEditable,
   isAnnotationGenerating,
   isAnnotationVisible
 } from '@common/utils/annotation'
+
 import { HOTKEYS } from '@common/constants/hotkeys'
 
 type TLeftBarAnnotationListProps = ComponentProps<typeof Box>
 
 const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
-  const { addShortcut, removeShortcut } = useHotkeysStore()
+  const { t } = useTranslation(['common', 'editor'])
+
   const searchRef = useRef<HTMLInputElement | null>(null)
   const treeRef = useRef<TreeMethods | null>(null)
 
   const [searchQuery, setSearchQuery] = useState<string | null>(null)
+
+  const { addShortcut, removeShortcut } = useHotkeysStore()
 
   const preview = useAnnotoriousStore((state) => state.preview)
   const annotations = useImageStore((state) => state.getAnnotations() || {})
@@ -162,6 +167,19 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
     [selectedNodeId, handleSelectNode]
   )
 
+  const renderDragPreview: DragPreviewRender<TNodeData> = useCallback(
+    (monitorProps) => (
+      <AnnotationItem
+        node={monitorProps.item}
+        depth={0}
+        isSelected={true}
+        onSelect={noop}
+        css={{ width: 'max-content' }}
+      />
+    ),
+    []
+  )
+
   return (
     <Box css={{ height: '100%', ...css }} {...rest}>
       <Box css={{ paddingInline: '$3', paddingTop: '$4' }}>
@@ -175,14 +193,14 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
           <Input.Field
             ref={searchRef}
             role="search"
-            placeholder="Search annotations"
-            aria-labelledby="Annotations search"
+            placeholder={t('editor:fields.search.placeholder')}
+            aria-description={t('aria.description.annotationSearch')}
             id="annotation-search"
             onChange={handleSearch}
           />
 
           <Input.Element>
-            <Kbd keys={['cmd', 'f']} solid />
+            <Kbd keys={HOTKEYS.search} solid />
           </Input.Element>
         </Input>
       </Box>
@@ -198,7 +216,7 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
       >
         <Box
           role="listbox"
-          aria-labelledby="image-annotations"
+          aria-description={t('aria.description.annotationList')}
           css={{
             alignItems: 'scretch',
             marginBlock: '$4',
@@ -211,15 +229,7 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
             nodes={nodes}
             render={renderNode}
             onDrop={handleDrop}
-            dragPreviewRender={(monitorProps) => (
-              <AnnotationItem
-                node={monitorProps.item}
-                depth={0}
-                isSelected={true}
-                onSelect={noop}
-                css={{ width: 'max-content' }}
-              />
-            )}
+            dragPreviewRender={renderDragPreview}
           />
         </Box>
       </ScrollArea>

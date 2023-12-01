@@ -1,13 +1,16 @@
-import { TBoundingBox, TKeypoint, TOffset } from './aiService'
+import { TBoundingBox, TKeypoint, TOffset } from './global'
+import { TEmbedding } from './segment'
 
 export enum ProcessType {
   MITOSIS_DETECTION = 'mc',
   NUCLEAR_PLEOMORPHISM = 'np',
-  NUCLICK_BBOX_DENSE = 'nuclick/bbox-dense'
+  NUCLICK_BBOX_DENSE = 'nuclick/bbox-dense',
+  SAM_EMBEDDINGS = 'sam/embeddings'
 }
 
 export enum InstantType {
-  NUCLICK = 'nuclick'
+  NUCLICK = 'nuclick',
+  SAM = 'sam'
 }
 
 export type TProcessStatus = {
@@ -63,6 +66,13 @@ export type TProcessTypeMap = {
       segmented_nuclei: TKeypoint[][]
     }
   }
+
+  [ProcessType.SAM_EMBEDDINGS]: {
+    body: {
+      image: string
+    }
+    response: TProcessResponse
+  }
 }
 
 export type TInstantTypeMap = {
@@ -74,6 +84,20 @@ export type TInstantTypeMap = {
     }
     response: {
       segmented_nuclei: TKeypoint[][]
+    }
+  }
+
+  [InstantType.SAM]: {
+    body: {
+      embeddings_task_id: TID
+      previous_predict_task_id?: TID
+      bbox?: TEmbedding['bboxes'][number]
+      keypoints?: TEmbedding['keypoints']
+      offset: TOffset
+    }
+    response: {
+      previous_predict_task_id: TID
+      segmented_objects: TKeypoint[][]
     }
   }
 }

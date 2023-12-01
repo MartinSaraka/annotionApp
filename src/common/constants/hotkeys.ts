@@ -16,5 +16,6 @@ export const HOTKEYS = {
   search: ['Meta', 'F'],
   editability: ['Ctrl', 'L'],
   visibility: ['Ctrl', 'H'],
-  delete: ['Backspace']
+  delete: ['Backspace'],
+  viewer: ['Shift']
 } as const

@@ -3,7 +3,9 @@ import { Field, Form, Formik, FormikConfig } from 'formik'
 
 import { Button, Input, Label, List } from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
+
 import { convertBytes, roundNumber } from '@common/utils/numbers'
+import { useTranslation } from 'react-i18next'
 
 type TFormValues = {
   filename: string
@@ -23,6 +25,8 @@ type TFormValues = {
 }
 
 const Parameters = () => {
+  const { t } = useTranslation(['common', 'image'])
+
   const data = useImageStore((state) => state.getData())
   const setData = useImageStore((state) => state.setData)
 
@@ -67,12 +71,19 @@ const Parameters = () => {
       initialValues={initialValues}
     >
       {({ handleSubmit }) => (
-        <List as={Form} title="Parameters" collapsible borderTop>
+        <List
+          as={Form}
+          title={t('image:sections.parameters')}
+          collapsible
+          borderTop
+        >
           <input type="submit" hidden />
 
           <List.Box>
             <List.Item>
-              <Label htmlFor="parameters-filename">Name</Label>
+              <Label htmlFor="parameters-filename">
+                {t('image:properties.name.label')}
+              </Label>
 
               <Input>
                 <Field
@@ -87,7 +98,9 @@ const Parameters = () => {
             </List.Item>
 
             <List.Item>
-              <Label htmlFor="parameters-uri">URI</Label>
+              <Label htmlFor="parameters-uri">
+                {t('image:properties.uri.label')}
+              </Label>
 
               <Input>
                 <Field
@@ -103,7 +116,9 @@ const Parameters = () => {
             </List.Item>
 
             <List.Item>
-              <Label htmlFor="parameters-format">Format</Label>
+              <Label htmlFor="parameters-format">
+                {t('image:properties.format.label')}
+              </Label>
 
               <Input>
                 <Field
@@ -119,12 +134,14 @@ const Parameters = () => {
             </List.Item>
 
             <List.Item>
-              <Label htmlFor="parameters-disk-uncompressed">Disk</Label>
+              <Label htmlFor="parameters-disk-uncompressed">
+                {t('image:properties.disk.label')}
+              </Label>
 
               <Input>
                 <Input.Element>
                   <Label small htmlFor="parameters-disk-uncompressed">
-                    Unc.
+                    {t('compression.uncompressed')}
                   </Label>
                 </Input.Element>
 
@@ -148,7 +165,7 @@ const Parameters = () => {
               <Input>
                 <Input.Element>
                   <Label small htmlFor="parameters-disk-compressed">
-                    Com.
+                    {t('compression.compressed')}
                   </Label>
                 </Input.Element>
 
@@ -173,12 +190,14 @@ const Parameters = () => {
 
           <List.Box>
             <List.Item>
-              <Label htmlFor="parameters-size-width">Size</Label>
+              <Label htmlFor="parameters-size-width">
+                {t('image:properties.size.label')}
+              </Label>
 
               <Input>
                 <Input.Element>
                   <Label small htmlFor="parameters-size-width">
-                    W
+                    {t('dimensions.width')}
                   </Label>
                 </Input.Element>
 
@@ -202,7 +221,7 @@ const Parameters = () => {
               <Input>
                 <Input.Element>
                   <Label small htmlFor="parameters-size-height">
-                    H
+                    {t('dimensions.height')}
                   </Label>
                 </Input.Element>
 
@@ -225,7 +244,9 @@ const Parameters = () => {
             </List.Item>
 
             <List.Item>
-              <Label htmlFor="parameters-zoom">Zoom</Label>
+              <Label htmlFor="parameters-zoom">
+                {t('image:properties.zoom.label')}
+              </Label>
 
               <Input>
                 <Field
@@ -246,7 +267,9 @@ const Parameters = () => {
             </List.Item>
 
             <List.Item>
-              <Label htmlFor="parameters-dimensions-c">Dim.</Label>
+              <Label htmlFor="parameters-dimensions-c">
+                {t('image:properties.dimensions.label')}
+              </Label>
 
               <Input>
                 <Input.Element>
@@ -301,7 +324,9 @@ const Parameters = () => {
             </List.Item>
 
             <List.Item>
-              <Label htmlFor="parameters-pyramid">Pyramid</Label>
+              <Label htmlFor="parameters-pyramid">
+                {t('image:properties.pyramid.label')}
+              </Label>
 
               <Input>
                 <Field
@@ -316,14 +341,16 @@ const Parameters = () => {
             </List.Item>
           </List.Box>
 
-          <List.Box title="pixel">
+          <List.Box title={t('image:properties.pixel.label')}>
             <List.Item>
-              <Label htmlFor="parameters-pixel-size-w">Size</Label>
+              <Label htmlFor="parameters-pixel-size-w">
+                {t('image:properties.pixel.size.label')}
+              </Label>
 
               <Input>
                 <Input.Element>
                   <Label small htmlFor="parameters-pixel-size-w">
-                    W
+                    {t('dimensions.width')}
                   </Label>
                 </Input.Element>
 
@@ -347,7 +374,7 @@ const Parameters = () => {
               <Input>
                 <Input.Element>
                   <Label small htmlFor="parameters-pixel-size-h">
-                    H
+                    {t('dimensions.height')}
                   </Label>
                 </Input.Element>
 
@@ -370,7 +397,9 @@ const Parameters = () => {
             </List.Item>
 
             <List.Item>
-              <Label htmlFor="parameters-pixel-type">Type</Label>
+              <Label htmlFor="parameters-pixel-type">
+                {t('image:properties.pixel.type.label')}
+              </Label>
 
               <Input>
                 <Field

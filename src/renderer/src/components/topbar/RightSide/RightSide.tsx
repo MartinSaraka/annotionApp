@@ -1,34 +1,67 @@
 import { memo } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
+import { useTranslation } from 'react-i18next'
 
-import { Box, Button, Icon } from '@renderer/ui'
+import { Box, Button, Dialog, Icon, Text } from '@renderer/ui'
 
 type TTopBarRightSideProps = ComponentProps<typeof Box>
 
-const RightSide = ({ css, ...rest }: TTopBarRightSideProps) => (
-  <Box
-    aria-describedby="image-actions"
-    css={{ flexDirection: 'row', alignItems: 'center', gap: '$4', ...css }}
-    {...rest}
-  >
-    <Button outlined aria-label="Share with others">
-      <Icon name="Share2Icon" width={14} height={14} />
-      Share
-    </Button>
+const RightSide = ({ css, ...rest }: TTopBarRightSideProps) => {
+  const { t } = useTranslation('common')
 
-    <Button aria-label="Export image">
-      <Icon name="DownloadIcon" width={14} height={14} />
-      Export
-    </Button>
+  return (
+    <Box
+      aria-description={t('aria.description.imageActions')}
+      css={{ flexDirection: 'row', alignItems: 'center', gap: '$4', ...css }}
+      {...rest}
+    >
+      <Button outlined>
+        <Icon name="Share2Icon" width={14} height={14} />
+        {t('actions.share')}
+      </Button>
 
-    <Button ghost aria-label="Notifications">
-      <Icon name="BellIcon" width={18} height={18} />
-    </Button>
+      <Dialog.Root>
+        <Dialog.Trigger asChild>
+          <Button>
+            <Icon name="DownloadIcon" width={14} height={14} />
+            {t('actions.export')}
+          </Button>
+        </Dialog.Trigger>
 
-    <Button ghost aria-label="Settings">
-      <Icon name="GearIcon" width={18} height={18} />
-    </Button>
-  </Box>
-)
+        <Dialog.Content>
+          <Dialog.Header>
+            <Dialog.Title asChild>
+              <Text variant="lg" css={{ fontWeight: 500 }}>
+                Export annotations
+              </Text>
+            </Dialog.Title>
+          </Dialog.Header>
+
+          <Box css={{ padding: '$4' }}>
+            <Box
+              css={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end'
+              }}
+            >
+              <Button>
+                <Icon name="DownloadIcon" width={14} height={14} />
+                Save and Export
+              </Button>
+            </Box>
+          </Box>
+        </Dialog.Content>
+      </Dialog.Root>
+
+      <Button ghost aria-label={t('aria.label.notifications')}>
+        <Icon name="BellIcon" width={18} height={18} />
+      </Button>
+
+      <Button ghost aria-label={t('aria.label.settings')}>
+        <Icon name="GearIcon" width={18} height={18} />
+      </Button>
+    </Box>
+  )
+}
 
 export default memo(RightSide) as typeof RightSide

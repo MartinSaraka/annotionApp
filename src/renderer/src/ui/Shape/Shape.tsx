@@ -1,5 +1,5 @@
 import { forwardRef, memo, useEffect, useRef } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 
 import { useForwardRef } from '@renderer/hooks'
 

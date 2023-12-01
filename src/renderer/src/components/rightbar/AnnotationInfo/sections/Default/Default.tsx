@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo } from 'react'
 import { Field, Form, Formik, FormikConfig } from 'formik'
 import { useTranslation } from 'react-i18next'
 
-import { Button, Icon, Input, Label, List } from '@renderer/ui'
+import { Button, Icon, Input, Label, List, Text, Tooltip } from '@renderer/ui'
 import { copyToClipboard } from '@common/utils/global'
 
 import { useAnnotoriousStore, useImageStore } from '@renderer/store'
@@ -13,10 +13,10 @@ type TFormValues = {
   parent: TID
 }
 
-// TODO: change parent to name ?
+// TODO: change parent to name
 
 const Default = () => {
-  const { t } = useTranslation(['annotation'])
+  const { t } = useTranslation(['common', 'annotation'])
 
   const anno = useAnnotoriousStore((state) => state.anno)
   const annotation = useImageStore((state) => state.getSelectedAnnotation())
@@ -83,9 +83,18 @@ const Default = () => {
 
                 {values.id && (
                   <Input.Element>
-                    <Button input onClick={copyText(values.id)}>
-                      <Icon name="CopyIcon" width={14} height={14} />
-                    </Button>
+                    <Tooltip.Root>
+                      <Tooltip.Trigger asChild>
+                        <Button input onClick={copyText(values.id)}>
+                          <Icon name="CopyIcon" width={14} height={14} />
+                        </Button>
+                      </Tooltip.Trigger>
+
+                      <Tooltip.Content side="left" align="center">
+                        <Text>{t('tooltips.copyAnnotationId')}</Text>
+                        <Tooltip.Arrow />
+                      </Tooltip.Content>
+                    </Tooltip.Root>
                   </Input.Element>
                 )}
               </Input>
@@ -108,9 +117,21 @@ const Default = () => {
 
                 {values.parent && (
                   <Input.Element>
-                    <Button input onClick={handleZoomToParent(values.parent)}>
-                      <Icon name="Crosshair2Icon" width={14} height={14} />
-                    </Button>
+                    <Tooltip.Root>
+                      <Tooltip.Trigger asChild>
+                        <Button
+                          input
+                          onClick={handleZoomToParent(values.parent)}
+                        >
+                          <Icon name="Crosshair2Icon" width={14} height={14} />
+                        </Button>
+                      </Tooltip.Trigger>
+
+                      <Tooltip.Content side="left" align="center">
+                        <Text>{t('tooltips.zoomToParentAnnotation')}</Text>
+                        <Tooltip.Arrow />
+                      </Tooltip.Content>
+                    </Tooltip.Root>
                   </Input.Element>
                 )}
               </Input>

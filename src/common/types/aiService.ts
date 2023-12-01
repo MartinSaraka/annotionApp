@@ -1,23 +1,8 @@
+import { TKeypoint, TOffset } from './global'
+
 export enum BBoxOrigin {
   TOP_LEFT = 0,
   CENTER_CENTER = 1
-}
-
-export type TKeypoint = {
-  x: number
-  y: number
-}
-
-export type TBoundingBox = {
-  x: number
-  y: number
-  width: number
-  height: number
-}
-
-export type TOffset = {
-  x: number
-  y: number
 }
 
 // NC

@@ -1,5 +1,5 @@
 import { forwardRef, memo, useMemo } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 import { Property } from '@stitches/react/types/css'
 
 import * as S from './styled'

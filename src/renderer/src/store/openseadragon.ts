@@ -25,13 +25,6 @@ export type TOpenSeadragonState = {
   resetTool: () => void
 }
 
-/*const setZoomOutCursor = setHotkeyViewerCursor('zoom-out', 'Shift')
-const setZoomInCursor = setHotkeyViewerCursor('zoom-in', 'Shift')
-
-const setZoomCursor = () => setViewerCursor('zoom-in')
-const setGrabCursor = () => setViewerCursor('grab')
-const setGrabbingCursor = () => setViewerCursor('grabbing')*/
-
 const useOpenSeadragonStore = create<TOpenSeadragonState>()((set, get) => ({
   osd: null,
   preview: null,
@@ -66,23 +59,10 @@ const useOpenSeadragonStore = create<TOpenSeadragonState>()((set, get) => ({
     if (tool === ETool.ZOOM_IN) {
       CursorHandler.setZoomCursor(openseadragon)
       openseadragon.gestureSettingsMouse.clickToZoom = true
-
-      /*window.addEventListener('keydown', setZoomOutCursor)
-      window.addEventListener('keyup', setZoomInCursor)
-
-      openseadragon.addHandler('canvas-drag', setGrabbingCursor)
-      openseadragon.addHandler('canvas-drag-end', setZoomCursor)
-
-      openseadragon.gestureSettingsMouse.clickToZoom = true
-      setZoomCursor()*/
     }
 
     if (tool === ETool.HAND) {
       CursorHandler.setPanCursor(openseadragon)
-      /*openseadragon.addHandler('canvas-press', setGrabbingCursor)
-      openseadragon.addHandler('canvas-release', setGrabCursor)
-
-      setGrabCursor()*/
     }
   },
 
@@ -92,19 +72,6 @@ const useOpenSeadragonStore = create<TOpenSeadragonState>()((set, get) => ({
 
     CursorHandler.resetAll(openseadragon)
     openseadragon.gestureSettingsMouse.clickToZoom = false
-
-    /*window.removeEventListener('keydown', setZoomOutCursor)
-    window.removeEventListener('keyup', setZoomInCursor)
-
-    openseadragon.removeHandler('canvas-drag', setGrabbingCursor)
-    openseadragon.removeHandler('canvas-drag-end', setZoomCursor)
-
-    openseadragon.removeHandler('canvas-press', setGrabbingCursor)
-    openseadragon.removeHandler('canvas-release', setGrabCursor)
-
-    openseadragon.gestureSettingsMouse.clickToZoom = false
-
-    setGrabCursor()*/
   }
 }))
 

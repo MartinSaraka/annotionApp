@@ -3,7 +3,8 @@ import { Field, Form, Formik, FormikConfig } from 'formik'
 import { useTranslation } from 'react-i18next'
 
 import { Input, Label, List } from '@renderer/ui'
-import { TAnnotation } from '@common/types/annotation'
+
+import { type TAnnotation } from '@common/types/annotation'
 
 import { useAnnotoriousStore, useImageStore } from '@renderer/store'
 import { AnnotationHandler } from '@renderer/handlers'

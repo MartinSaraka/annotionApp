@@ -12,6 +12,7 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -58,6 +59,7 @@ class AnnotAid {
     private static Map<String, CellSensReader> cache = new ConcurrentHashMap<>();
     private static int MIN_CACHE_SIZE = 10;
 
+    private static ExecutorService executor = Executors.newCachedThreadPool();
     private static Logger logger = Logger.getLogger(AnnotAid.class.getName());
 
     public static void main(String[] args) throws IOException {
@@ -114,7 +116,11 @@ class AnnotAid {
         server.createContext("/metadata", new MetadataHandler());
         server.createContext("/crop", new CropHandler());
         server.createContext("/stop", new StopHandler());
-        server.setExecutor(Executors.newCachedThreadPool());
+
+        server.setExecutor(executor);
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            executor.shutdownNow();
+        }));
 
         server.start();
         System.out.println("Server started on port: " + port);
@@ -630,6 +636,7 @@ class AnnotAid {
          */
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            executor.shutdownNow();
             server.stop(0);
             System.out.println("Server stopped");
         }

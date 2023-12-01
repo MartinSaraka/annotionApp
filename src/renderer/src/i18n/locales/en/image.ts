@@ -5,6 +5,9 @@ export default {
     colors: 'colors'
   },
   properties: {
+    page: {
+      label: 'page'
+    },
     name: {
       label: 'name'
     },
@@ -20,16 +23,17 @@ export default {
     size: {
       label: 'size'
     },
-    magnification: {
-      label: 'magnification'
+    zoom: {
+      label: 'zoom'
     },
     dimensions: {
-      label: 'dimensions'
+      label: 'dim.'
     },
     pyramid: {
       label: 'pyramid'
     },
     pixel: {
+      label: 'pixel',
       size: {
         label: 'size'
       },

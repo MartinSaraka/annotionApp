@@ -1,6 +1,7 @@
 import { ComponentProps, memo, useCallback, useMemo, useRef } from 'react'
-import { NodeModel } from '@minoru/react-dnd-treeview'
 import { Field, Form, Formik, FormikConfig } from 'formik'
+import { useTranslation } from 'react-i18next'
+import { type NodeModel } from '@minoru/react-dnd-treeview'
 
 import {
   Box,
@@ -8,22 +9,26 @@ import {
   Chip,
   ContextMenu,
   Icon,
-  Kbd,
   Shape,
   Text,
   Toggle,
+  Tooltip,
   TreeView
 } from '@renderer/ui'
+import { NodeContextMenu } from '@renderer/menus'
 
-import { TNodeData } from '@renderer/adapters/TreeAdapter'
-import { AnnotationHandler, AnnotoriousHandler } from '@renderer/handlers'
 import { useAnnotoriousStore, useImageStore } from '@renderer/store'
+import { AnnotationHandler, AnnotoriousHandler } from '@renderer/handlers'
+import { type TNodeData } from '@renderer/adapters/TreeAdapter'
 
+import {
+  isAnnotationEditable,
+  isAnnotationVisible
+} from '@common/utils/annotation'
 import {
   ANNOTATION_EDITABILITY_ICON_MAP,
   ANNOTATION_VISIBILITY_ICON_MAP
 } from '@common/constants/annotation'
-import { TAnnotation } from '@common/types/annotation'
 
 type TFormValues = {
   name: string
@@ -42,6 +47,7 @@ const AnnotationItem = ({
   isSelected,
   ...rest
 }: TAnnotationItemProps) => {
+  const { t } = useTranslation('common')
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const id = node.id as TID
@@ -56,17 +62,6 @@ const AnnotationItem = ({
   const annotation = useImageStore((state) => state.getAnnotation(id))
   const saveAnnotation = useImageStore((state) => state.saveAnnotation)
   const update = useAnnotoriousStore((state) => state.saveAndUpdateAnnotation)
-
-  // REMOVE ANNOTATION
-  const removeAnnotationFromAnnotorious = useAnnotoriousStore(
-    (state) => state.removeAnnotation
-  )
-  const removeAnnotationFromStore = useImageStore(
-    (state) => (annotation: TAnnotation) => {
-      state.deselectAnnotations()
-      state.removeAnnotation(annotation.id)
-    }
-  )
 
   const handleToggleEditable = useCallback(
     async (pressed: boolean) => {
@@ -104,12 +99,6 @@ const AnnotationItem = ({
     if (!annotation) return
     annotoriousHandler.highlightAnnotation(annotation, 'off')
   }, [annotation, annotoriousHandler])
-
-  const handleDelete = useCallback(() => {
-    if (!annotation) return
-    removeAnnotationFromStore(annotation)
-    removeAnnotationFromAnnotorious(annotation)
-  }, [annotation])
 
   const handleSetEditable = useCallback(
     (e: React.MouseEvent<HTMLFormElement>) => {
@@ -162,7 +151,7 @@ const AnnotationItem = ({
           actions={
             <>
               <Toggle
-                pressed={editability === 'locked'}
+                pressed={!isAnnotationEditable(editability)}
                 onPressedChange={handleToggleEditable}
               >
                 <Button ghost condensed>
@@ -176,7 +165,7 @@ const AnnotationItem = ({
               </Toggle>
 
               <Toggle
-                pressed={visibility === 'hidden'}
+                pressed={!isAnnotationVisible(visibility)}
                 onPressedChange={handleToggleVisibility}
               >
                 <Button ghost condensed>
@@ -192,9 +181,18 @@ const AnnotationItem = ({
           }
           {...rest}
         >
-          <Button ghost condensed onDoubleClick={handleZoomToAnnotation}>
-            <Shape tag={tag} props={node.data?.shape || {}} />
-          </Button>
+          <Tooltip.Root>
+            <Tooltip.Trigger asChild>
+              <Button ghost condensed onDoubleClick={handleZoomToAnnotation}>
+                <Shape tag={tag} props={node.data?.shape || {}} />
+              </Button>
+            </Tooltip.Trigger>
+
+            <Tooltip.Content side="right" align="center">
+              <Text>{t('tooltips.dblZoomToAnnotation')}</Text>
+              <Tooltip.Arrow />
+            </Tooltip.Content>
+          </Tooltip.Root>
 
           <Formik<TFormValues>
             validateOnChange
@@ -203,42 +201,51 @@ const AnnotationItem = ({
             initialValues={initialValues}
           >
             {({ handleSubmit }) => (
-              <Box
-                as={Form}
-                css={{ display: 'inline', width: '100%' }}
-                onDoubleClick={handleSetEditable}
-              >
-                <input type="submit" hidden />
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Box
+                    as={Form}
+                    css={{ display: 'inline', width: '100%' }}
+                    onDoubleClick={handleSetEditable}
+                  >
+                    <input type="submit" hidden />
 
-                <Field name="name">
-                  {({ field }) => (
-                    <Text
-                      ref={inputRef}
-                      as="input"
-                      variant="md"
-                      disabled
-                      required
-                      css={{
-                        color: '$light',
-                        width: '100%',
-                        cursor: 'text',
+                    <Field name="name">
+                      {({ field }) => (
+                        <Text
+                          ref={inputRef}
+                          as="input"
+                          variant="md"
+                          disabled
+                          required
+                          css={{
+                            color: '$light',
+                            width: '100%',
+                            cursor: 'text',
 
-                        outlineColor: '$blue2',
-                        outlineOffset: 2,
-                        outlineStyle: 'solid',
-                        outlineWidth: 1,
+                            outlineColor: '$blue2',
+                            outlineOffset: 2,
+                            outlineStyle: 'solid',
+                            outlineWidth: 1,
 
-                        '&:disabled': {
-                          outline: 'none',
-                          cursor: 'pointer'
-                        }
-                      }}
-                      {...field}
-                      onBlur={handleSubmit}
-                    />
-                  )}
-                </Field>
-              </Box>
+                            '&:disabled': {
+                              outline: 'none',
+                              cursor: 'pointer'
+                            }
+                          }}
+                          {...field}
+                          onBlur={handleSubmit}
+                        />
+                      )}
+                    </Field>
+                  </Box>
+                </Tooltip.Trigger>
+
+                <Tooltip.Content side="top" align="start">
+                  <Text>{t('tooltips.dblEditAnnotationName')}</Text>
+                  <Tooltip.Arrow />
+                </Tooltip.Content>
+              </Tooltip.Root>
             )}
           </Formik>
 
@@ -247,42 +254,7 @@ const AnnotationItem = ({
       </ContextMenu.Trigger>
 
       <ContextMenu.Content>
-        <ContextMenu.Item onSelect={handleZoomToAnnotation}>
-          <Text>Zoom to annotation</Text>
-        </ContextMenu.Item>
-
-        <ContextMenu.Separator />
-
-        <ContextMenu.Item
-          onSelect={() => handleToggleEditable(editability !== 'locked')}
-        >
-          <Text>{editability === 'locked' ? 'Unlock' : 'Lock'} annotation</Text>
-
-          <Kbd keys={['Ctrl+L']} />
-        </ContextMenu.Item>
-
-        <ContextMenu.Item
-          onSelect={() => handleToggleVisibility(visibility !== 'hidden')}
-        >
-          <Text>{visibility === 'hidden' ? 'Show' : 'Hide'} annotation</Text>
-
-          <Kbd keys={['Ctrl+H']} />
-        </ContextMenu.Item>
-
-        <ContextMenu.Separator />
-
-        <ContextMenu.Item
-          css={{ $$bg: '$colors$crimson1', $$fg: '$colors$crimson4' }}
-          onSelect={handleDelete}
-        >
-          <Box css={{ flexDirection: 'row', alignItems: 'center', gap: '$2' }}>
-            <Icon name="TrashIcon" width={12} height={12} />
-
-            <Text>Delete annotation</Text>
-          </Box>
-
-          <Kbd keys={['Backspace']} />
-        </ContextMenu.Item>
+        <NodeContextMenu node={node} />
       </ContextMenu.Content>
     </ContextMenu.Root>
   )

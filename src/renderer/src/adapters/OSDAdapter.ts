@@ -33,6 +33,7 @@ class OSDAdapter {
     origin: BBoxOrigin = BBoxOrigin.CENTER_CENTER,
     magnification = 40
   ): string {
+    // TODO: implement magnification
     console.log('IMPLEMENT magnification: ', magnification)
 
     const path = `${metadata.directory}/${metadata.filename}`

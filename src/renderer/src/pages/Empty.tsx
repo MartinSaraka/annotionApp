@@ -1,7 +1,9 @@
 import { memo } from 'react'
 
-import { FileOpener } from '@renderer/components'
 import { Box } from '@renderer/ui'
+import { FileOpener } from '@renderer/components'
+
+// TODO: Implement Empty
 
 const Empty = () => (
   <Box

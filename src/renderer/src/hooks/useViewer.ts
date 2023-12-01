@@ -20,13 +20,14 @@ import { OSDAdapter } from '@renderer/adapters'
 import {
   useAnnotoriousStore,
   useImageStore,
-  useOpenSeadragonStore
+  useOpenSeadragonStore,
+  useSegmentStore
 } from '@renderer/store'
 
 import { TImageInfo } from '@common/types/image'
 import { TAnnotation, TAnnotationBody } from '@common/types/annotation'
 
-import { ETool } from '@common/constants/tools'
+import { ETool, EToolType } from '@common/constants/tools'
 import {
   OPEN_SEADRAGON_PREVIEW_OPTIONS,
   OPEN_SEADRAGON_DEFAULT_OPTIONS
@@ -215,6 +216,26 @@ const useViewer = (source: TImageInfo): TUseViewer => {
        * Cancel selected locked or not visible annotation
        */
       main.addHandler('canvas-click', () => {
+        const selectedAnnotation = getSelectedAnnotation()
+        if (selectedAnnotation) {
+          const embedding = useSegmentStore
+            .getState()
+            .getEmbedding(selectedAnnotation.id)
+
+          if (embedding?.previews.length || embedding?.annotations.length) {
+            for (const preview of [
+              ...embedding.previews,
+              ...embedding.annotations
+            ]) {
+              mainAnnotorious.removeAnnotation(preview)
+            }
+          }
+
+          if (embedding) {
+            useSegmentStore.getState().deleteEmbedding(selectedAnnotation.id)
+          }
+        }
+
         const isSelected = !!mainAnnotorious.getSelected()
         if (!isSelected && !!getSelectedAnnotation()) {
           deselectAnnotations()
@@ -285,6 +306,24 @@ const useViewer = (source: TImageInfo): TUseViewer => {
         // Active Tool
         const activeTool = getActiveTool()
 
+        if (activeTool.type === EToolType.SEGMENTATION) {
+          const selectedAnnotation = getSelectedAnnotation()
+          if (!selectedAnnotation) return
+
+          AiService.segment(selectedAnnotation, annotation, activeTool.value)
+            .then((response) => {
+              return ProcessHandler.handleInstant(
+                InstantType.SAM,
+                selectedAnnotation,
+                response
+              )
+            })
+            .then(() => console.log('OK'))
+            .catch(console.error)
+
+          return
+        }
+
         const intersections =
           (anno.getAnnotationsIntersecting(annotation) as [
             { underlying: TAnnotation }
@@ -321,11 +360,17 @@ const useViewer = (source: TImageInfo): TUseViewer => {
         console.log('updateAnnotation')
         saveAnnotation(annotation)
         AnnotoriousHandler.instance(preview).showPreview(annotation)
+
+        const embedding = useSegmentStore.getState().getEmbedding(annotation.id)
+        if (embedding) useSegmentStore.getState().deleteEmbedding(annotation.id)
       })
 
       anno.on('deleteAnnotation', (annotation: TAnnotation) => {
         console.log('deleteAnnotation')
         removeAnnotation(annotation.id)
+
+        const embedding = useSegmentStore.getState().getEmbedding(annotation.id)
+        if (embedding) useSegmentStore.getState().deleteEmbedding(annotation.id)
       })
 
       anno.on('selectAnnotation', (annotation: TAnnotation) => {

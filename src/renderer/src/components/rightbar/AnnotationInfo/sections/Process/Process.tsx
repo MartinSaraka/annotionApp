@@ -9,7 +9,7 @@ import { useImageStore, useProcessStore } from '@renderer/store'
 import { TProcess } from '@common/types/process'
 
 const Process = () => {
-  const { t } = useTranslation(['process'])
+  const { t } = useTranslation(['common', 'annotation', 'process'])
 
   const closeRef = useRef<HTMLButtonElement | null>(null)
 
@@ -57,7 +57,14 @@ const Process = () => {
                 css={{ color: '$blue2' }}
               />
 
-              <span>Processes</span>
+              <Text
+                as="span"
+                variant="md"
+                capital
+                css={{ flex: 1, fontWeight: 600 }}
+              >
+                {t('annotation:sections.processes')}
+              </Text>
             </Box>
           }
           actions={
@@ -71,8 +78,8 @@ const Process = () => {
                   </Popover.Trigger>
                 </Tooltip.Trigger>
 
-                <Tooltip.Content>
-                  <Text variant="base">Select process</Text>
+                <Tooltip.Content side="top" align="end">
+                  <Text>{t('tooltips.process.select')}</Text>
                   <Tooltip.Arrow />
                 </Tooltip.Content>
               </Tooltip.Root>

@@ -41,12 +41,25 @@ export enum ETool {
   /**
    * Custom plugin
    */
-  NUCLICK_POINT = 'nuclick'
+  NUCLICK_POINT = 'nuclick',
+  /**
+   * Custom plugin
+   */
+  SAM_FOREGROUND = 'sam-foreground',
+  /**
+   * Custom plugin
+   */
+  SAM_BACKGROUND = 'sam-background',
+  /**
+   * Custom plugin
+   */
+  SAM_BBOX = 'sam-bbox'
 }
 
 export enum EToolType {
   VIEWER = 'VIEWER',
-  ANNOTATION = 'ANNOTATION'
+  ANNOTATION = 'ANNOTATION',
+  SEGMENTATION = 'SEGMENTATION'
 }
 
 export const TOOLS = {
@@ -89,11 +102,30 @@ export const TOOLS = {
   [ETool.NUCLICK_POINT]: {
     type: EToolType.ANNOTATION,
     value: ETool.NUCLICK_POINT
+  },
+  [ETool.SAM_FOREGROUND]: {
+    type: EToolType.SEGMENTATION,
+    value: ETool.SAM_FOREGROUND
+  },
+  [ETool.SAM_BACKGROUND]: {
+    type: EToolType.SEGMENTATION,
+    value: ETool.SAM_BACKGROUND
+  },
+  [ETool.SAM_BBOX]: {
+    type: EToolType.SEGMENTATION,
+    value: ETool.SAM_BBOX
   }
 } as const
 
 export const DEFAULT_ACTIVE_TOOL: TTool = TOOLS[ETool.HAND]
 export const DEFAULT_ANNOTATION_TOOL: TTool = TOOLS[ETool.RECTANGLE]
+export const DEFAULT_SEGMENTATION_TOOL: TTool = TOOLS[ETool.RECTANGLE]
+
+export const TOOLS_MAP: Partial<Record<ETool, ETool>> = {
+  [ETool.SAM_FOREGROUND]: ETool.POINT,
+  [ETool.SAM_BACKGROUND]: ETool.POINT,
+  [ETool.SAM_BBOX]: ETool.RECTANGLE
+}
 
 export const TOOL_ICON_MAP: Record<ETool, string> = {
   [ETool.POINT]: 'PointToolIcon', // 'DotFilledIcon',
@@ -105,5 +137,8 @@ export const TOOL_ICON_MAP: Record<ETool, string> = {
   [ETool.FREEHAND]: 'FreehandToolIcon', // 'Pencil1Icon',
   [ETool.HAND]: 'HandIcon',
   [ETool.ZOOM_IN]: 'ZoomInIcon',
-  [ETool.ZOOM_OUT]: 'ZoomOutIcon'
+  [ETool.ZOOM_OUT]: 'ZoomOutIcon',
+  [ETool.SAM_FOREGROUND]: 'PlusCircledIcon',
+  [ETool.SAM_BACKGROUND]: 'MinusCircledIcon',
+  [ETool.SAM_BBOX]: 'BoxIcon'
 }

@@ -1,9 +1,10 @@
 import { MouseEventHandler, memo, useCallback } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 
 import { Box, Button, Icon, Text } from '@renderer/ui'
 
-import { ProcessType, TProcessStatus } from '@common/types/process'
+import { ProcessType, type TProcessStatus } from '@common/types/process'
+
 import { PROCESS_ICON_MAP } from '@common/constants/processes'
 
 import * as S from './styled'

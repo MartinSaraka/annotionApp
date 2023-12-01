@@ -1,6 +1,7 @@
 import { forwardRef, memo } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 import { motion } from 'framer-motion'
+
 import * as Collapsible from '@radix-ui/react-collapsible'
 
 import Text from '../Text'

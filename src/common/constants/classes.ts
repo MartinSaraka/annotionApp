@@ -30,5 +30,10 @@ export const DEFAULT_CLASSES: Record<TID, TAnnotationClass> = {
     id: 'score_3',
     name: 'NP Score 3',
     color: '#FF546C'
+  },
+  preview: {
+    id: 'preview',
+    name: 'Preview',
+    color: '#7A40ED'
   }
 }

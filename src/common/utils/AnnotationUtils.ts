@@ -4,7 +4,7 @@ import { toInteger } from 'lodash'
 import { TAnnotation, TAnnotationBody } from '@common/types/annotation'
 import { arrayToObject } from '@common/utils/global'
 import { ETool } from '@common/constants/tools'
-import { TBoundingBox } from '@common/types/aiService'
+import { TBoundingBox } from '@common/types/global'
 
 import { TOOL_ICON_MAP } from '@common/constants/tools'
 import { ANNOTATION_TYPE_REGEX } from '@common/constants/regex'
@@ -101,6 +101,13 @@ class AnnotationUtils {
           y: toInteger(shape.props['y']),
           width: toInteger(shape.props['width']),
           height: toInteger(shape.props['height'])
+        }
+      case ETool.POINT:
+        return {
+          x: toInteger(shape.props['cx']),
+          y: toInteger(shape.props['cy']),
+          width: 0,
+          height: 0
         }
       case ETool.CIRCLE: {
         const cx = toInteger(shape.props['cx'])

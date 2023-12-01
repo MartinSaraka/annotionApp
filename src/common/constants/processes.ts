@@ -41,6 +41,17 @@ export const PROCESS_SETTINGS = {
       width: 128,
       height: 128
     }
+  },
+
+  [ProcessType.SAM_EMBEDDINGS]: {
+    predictURL: constructPredictPath(ProcessType.SAM_EMBEDDINGS),
+    resultURL: constructResultPath(ProcessType.SAM_EMBEDDINGS),
+    origin: BBoxOrigin.TOP_LEFT,
+    magnification: 40,
+    minSize: {
+      width: 64,
+      height: 64
+    }
   }
 } as const
 
@@ -53,13 +64,17 @@ export const INSTANT_SETTINGS = {
       width: 128,
       height: 128
     }
+  },
+  [InstantType.SAM]: {
+    predictURL: constructPredictPath(InstantType.SAM)
   }
 } as const
 
 export const PROCESS_ICON_MAP: Record<ProcessType, string> = {
   [ProcessType.MITOSIS_DETECTION]: 'RocketIcon',
   [ProcessType.NUCLEAR_PLEOMORPHISM]: 'RocketIcon',
-  [ProcessType.NUCLICK_BBOX_DENSE]: 'RocketIcon'
+  [ProcessType.NUCLICK_BBOX_DENSE]: 'RocketIcon',
+  [ProcessType.SAM_EMBEDDINGS]: 'RocketIcon'
 }
 
 export const PROCESS_ALLOWED_TYPES: Record<ProcessType, ETool[]> = {
@@ -80,5 +95,6 @@ export const PROCESS_ALLOWED_TYPES: Record<ProcessType, ETool[]> = {
     ETool.CIRCLE,
     ETool.ELLIPSE,
     ETool.POLYGON
-  ]
+  ],
+  [ProcessType.SAM_EMBEDDINGS]: [ETool.RECTANGLE]
 }

@@ -1,7 +1,7 @@
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
 import { MouseEventHandler } from 'react'
 
-import { TImageInfo } from '@common/types/image'
+import { type TImageInfo } from '@common/types/image'
 
 import Text from '../Text'
 import Chip from '../Chip'
@@ -41,7 +41,7 @@ const FileTab = ({
         {format && <Chip css={{ textTransform: 'uppercase' }}>{format}</Chip>}
 
         {name !== 'dashboard' && (
-          <Text variant="base" css={{ fontWeight: isActive ? 600 : 500 }}>
+          <Text css={{ fontWeight: isActive ? 600 : 500 }}>
             {data?.filename || 'New image'}
           </Text>
         )}

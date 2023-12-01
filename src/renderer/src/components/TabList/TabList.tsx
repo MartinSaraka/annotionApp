@@ -1,16 +1,27 @@
 import { memo, MouseEvent, useCallback } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
+import { useTranslation } from 'react-i18next'
 
-import { Box, Button, FileTab, ScrollArea } from '@renderer/ui'
+import {
+  Box,
+  Button,
+  FileTab,
+  Icon,
+  ScrollArea,
+  Text,
+  Tooltip
+} from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
+
 import { onNextTick } from '@common/utils/global'
 
 import * as S from './styled'
-import { PlusIcon } from '@radix-ui/react-icons'
 
 type TTabListProps = ComponentProps<typeof S.Root>
 
 const TabList = ({ css, ...rest }: TTabListProps) => {
+  const { t } = useTranslation('common')
+
   const { tabs, getData, selected, select, close, addEmptyTab } =
     useImageStore()
 
@@ -32,7 +43,7 @@ const TabList = ({ css, ...rest }: TTabListProps) => {
     [select]
   )
 
-  const renderItems = useCallback(
+  const renderTab = useCallback(
     (tab: (typeof tabs)[number]) => (
       <FileTab
         key={`app-bar-tab-${tab}`}
@@ -50,18 +61,31 @@ const TabList = ({ css, ...rest }: TTabListProps) => {
     <S.Root css={{ _appRegion: 'no-drag', ...css }} {...rest}>
       <ScrollArea orientation="horizontal">
         <Box css={{ flexDirection: 'row', alignItems: 'scretch' }}>
-          {tabs.map(renderItems)}
+          {tabs.map(renderTab)}
 
           {!tabs.includes('empty') && (
             <Box css={{ paddingInline: '$1', justifyContent: 'center' }}>
-              <Button ghost aria-label="empty-tab" onClick={addEmptyTab}>
-                <Box
-                  as={PlusIcon}
-                  width={14}
-                  height={14}
-                  css={{ display: 'block', color: '$dark4' }}
-                />
-              </Button>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Button
+                    ghost
+                    aria-label={t('tooltips.tabs.add')}
+                    onClick={addEmptyTab}
+                  >
+                    <Icon
+                      name="PlusIcon"
+                      width={14}
+                      height={14}
+                      css={{ color: '$dark4' }}
+                    />
+                  </Button>
+                </Tooltip.Trigger>
+
+                <Tooltip.Content side="right" align="center">
+                  <Text>{t('tooltips.tabs.add')}</Text>
+                  <Tooltip.Arrow />
+                </Tooltip.Content>
+              </Tooltip.Root>
             </Box>
           )}
         </Box>
