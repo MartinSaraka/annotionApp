@@ -16,10 +16,10 @@ const Kbd = forwardRef(function Kbd(
   const platform =
     window.electron.process.platform === 'darwin' ? 'mac' : 'windows'
 
-  // TODO: control
   const text = keys
     .join('+')
-    .replace(/meta|ctrl/gi, platform === 'mac' ? '⌘' : 'ctrl')
+    .replace(/meta/gi, platform === 'mac' ? '⌘' : 'ctrl')
+    .replace(/ctrl/gi, platform === 'mac' ? '⌃' : 'ctrl')
     .replace(/opt|alt/gi, platform === 'mac' ? '⌥' : 'alt')
     .replace(/shift/gi, platform === 'mac' ? '⇧' : 'shift')
     .replace(/backspace/gi, platform === 'mac' ? '⌫' : 'backspace')
@@ -27,8 +27,7 @@ const Kbd = forwardRef(function Kbd(
 
   const title = keys
     .join('+')
-    .replace(/cmd|ctrl/gi, platform === 'mac' ? 'cmd' : 'ctrl')
-    .replace(/opt|alt/gi, platform === 'mac' ? 'alt' : 'alt')
+    .replace(/meta/gi, platform === 'mac' ? 'cmd' : 'ctrl')
 
   return (
     <S.Root ref={forwardedRef} title={title} aria-label="shortcut" {...rest}>

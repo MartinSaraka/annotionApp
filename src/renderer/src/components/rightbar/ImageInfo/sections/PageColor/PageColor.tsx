@@ -50,26 +50,17 @@ const PageColor = () => {
                 {t('image:properties.page.label')}
               </Label>
 
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <Input square>
-                    <Field
-                      required
-                      type="color"
-                      id="pageColor"
-                      name="pageColor"
-                      as={Input.Field}
-                      onBlur={handleSubmit}
-                      onChangeCapture={onChange}
-                    />
-                  </Input>
-                </Tooltip.Trigger>
-
-                <Tooltip.Content side="top" align="center">
-                  <Text>{t('tooltips.page.colorPicker')}</Text>
-                  <Tooltip.Arrow />
-                </Tooltip.Content>
-              </Tooltip.Root>
+              <Input square>
+                <Field
+                  required
+                  type="color"
+                  id="pageColor"
+                  name="pageColor"
+                  as={Input.Field}
+                  onBlur={handleSubmit}
+                  onChangeCapture={onChange}
+                />
+              </Input>
 
               <Input>
                 <Input.Element>

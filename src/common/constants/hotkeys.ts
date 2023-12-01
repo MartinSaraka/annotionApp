@@ -1,5 +1,7 @@
 import { ETool } from './tools'
 
+// Meta key is mapped to Command on Mac and to Ctrl on Windows
+
 export const HOTKEYS = {
   fitToScreen: ['0'],
   tools: {

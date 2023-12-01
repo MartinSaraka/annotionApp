@@ -148,16 +148,24 @@ class ProcessHandler {
     const intersections: TAnnotationIntersection[] =
       anno.getAnnotationsIntersecting(newAnnotation)
 
-    if (intersections.length) {
-      const parent = intersections[intersections.length - 1]
+    const filteredIntersections = intersections.filter(
+      (item) => item.underlying.id !== annotation.id
+    )
 
-      newAnnotation = AnnotationHandler.upsertBody(
-        newAnnotation,
-        'TextualBody',
-        'parent',
-        parent.underlying.id
-      )
+    if (intersections.length) {
+      const parent = filteredIntersections[filteredIntersections.length - 1]
+
+      if (parent) {
+        newAnnotation = AnnotationHandler.upsertBody(
+          newAnnotation,
+          'TextualBody',
+          'parent',
+          parent.underlying.id
+        )
+      }
     }
+
+    console.log(newAnnotation)
 
     anno.addAnnotation(newAnnotation)
     useImageStore.getState().saveAnnotation(newAnnotation)

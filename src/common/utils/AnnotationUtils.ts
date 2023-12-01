@@ -190,14 +190,7 @@ class AnnotationUtils {
       id: `#${uuid()}`,
       type: 'Annotation',
       motivation: 'generated',
-      body: [
-        {
-          purpose: 'naming',
-          type: 'TextualBody',
-          value: 'Annotation 4'
-        },
-        ...body
-      ],
+      body: [...body],
       target: {
         selector: {
           type: 'SvgSelector',
@@ -216,14 +209,7 @@ class AnnotationUtils {
       id: `#${uuid()}`,
       type: 'Annotation',
       motivation: 'generated',
-      body: [
-        {
-          purpose: 'naming',
-          type: 'TextualBody',
-          value: 'Annotation 4'
-        },
-        ...body
-      ],
+      body: [...body],
       target: {
         selector: {
           conformsTo: 'http://www.w3.org/TR/media-frags/',

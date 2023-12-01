@@ -22,6 +22,7 @@ export default {
     compressed: 'Com.'
   },
   actions: {
+    openNewImage: 'Open new image',
     zoomToAnnotation: 'Zoom to annotation',
     zoomIn: 'Zoom in',
     zoomOut: 'Zoom out',
