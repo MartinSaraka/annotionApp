@@ -3,11 +3,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import java.net.InetSocketAddress;
-
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -196,11 +197,25 @@ class AnnotAid {
             // Get metadata store
             IMetadata metadataStore = (IMetadata) reader.getMetadataStore();
 
+            // Generate hash
+            String globalMetadata = reader.getGlobalMetadata().toString();
+            String base64Hash = null;
+
+            try {
+                base64Hash = getHash(globalMetadata);
+            } catch (NoSuchAlgorithmException exception) {
+                logger.severe(exception.getMessage());
+                exception.printStackTrace();
+                sendResponse(exchange, 500, exception.getMessage());
+                return;
+            }
+
             // START Metadata
             JSONObject metadata = new JSONObject();
             String magnification = reader.getGlobalMetadata().get("Magnification").toString();
 
             metadata.put("path", srcPath);
+            metadata.put("hash", base64Hash);
             metadata.put("domains", reader.getDomains());
             metadata.put("format", reader.getFormat());
             metadata.put("resolution", reader.getResolution());
@@ -757,6 +772,20 @@ class AnnotAid {
     private static String getSourcePath(String path, String regex) {
         String srcPath = path.replaceAll(regex, ".");
         return srcPath;
+    }
+
+    /**
+     * Get hash
+     *
+     * @param data Data to hash
+     * @return Hash string in base64
+     * @throws NoSuchAlgorithmException
+     */
+    private static String getHash(String data) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = md.digest(data.getBytes(StandardCharsets.UTF_8));
+        String base64Hash = Base64.getEncoder().encodeToString(hashBytes);
+        return base64Hash;
     }
 
     /**

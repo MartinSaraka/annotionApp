@@ -1,4 +1,11 @@
-import { ComponentProps, memo, useCallback, useMemo, useRef } from 'react'
+import {
+  ComponentProps,
+  MouseEventHandler,
+  memo,
+  useCallback,
+  useMemo,
+  useRef
+} from 'react'
 import { Field, Form, Formik, FormikConfig } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { type NodeModel } from '@minoru/react-dnd-treeview'
@@ -9,6 +16,7 @@ import {
   Chip,
   ContextMenu,
   Icon,
+  Kbd,
   Shape,
   Text,
   Toggle,
@@ -29,6 +37,7 @@ import {
   ANNOTATION_EDITABILITY_ICON_MAP,
   ANNOTATION_VISIBILITY_ICON_MAP
 } from '@common/constants/annotation'
+import { HOTKEYS } from '@common/constants/hotkeys'
 
 type TFormValues = {
   name: string
@@ -45,6 +54,7 @@ type TAnnotationItemProps = TStyledProps & TBaseProps
 const AnnotationItem = ({
   node,
   isSelected,
+  onSelect,
   ...rest
 }: TAnnotationItemProps) => {
   const { t } = useTranslation('common')
@@ -85,10 +95,16 @@ const AnnotationItem = ({
     [annotation, isSelected]
   )
 
-  const handleZoomToAnnotation = useCallback(() => {
-    if (!annotation) return
-    annotoriousHandler.zoomToAnnotation(annotation)
-  }, [annotation, annotoriousHandler])
+  const handleZoomToAnnotation: MouseEventHandler<HTMLButtonElement> =
+    useCallback(
+      (e) => {
+        e.stopPropagation()
+        if (!annotation) return
+        annotoriousHandler.zoomToAnnotation(annotation)
+        onSelect()
+      },
+      [annotation, annotoriousHandler, onSelect]
+    )
 
   const handleMouseEnter = useCallback(() => {
     if (!annotation) return
@@ -138,7 +154,7 @@ const AnnotationItem = ({
   return (
     <ContextMenu.Root
       onOpenChange={(open) => {
-        if (open) rest.onSelect()
+        if (open) onSelect()
       }}
     >
       <ContextMenu.Trigger asChild>
@@ -146,37 +162,66 @@ const AnnotationItem = ({
           node={node}
           data-node-id={node.id}
           isSelected={isSelected}
+          onSelect={onSelect}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           actions={
             <>
-              <Toggle
-                pressed={!isAnnotationEditable(editability)}
-                onPressedChange={handleToggleEditable}
-              >
-                <Button ghost condensed>
-                  <Icon
-                    name={ANNOTATION_EDITABILITY_ICON_MAP[editability]}
-                    width={12}
-                    height={12}
-                    css={{ color: '$dark4' }}
-                  />
-                </Button>
-              </Toggle>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Toggle
+                    pressed={!isAnnotationEditable(editability)}
+                    onPressedChange={handleToggleEditable}
+                  >
+                    <Button ghost condensed>
+                      <Icon
+                        name={ANNOTATION_EDITABILITY_ICON_MAP[editability]}
+                        width={12}
+                        height={12}
+                        css={{ color: '$dark4' }}
+                      />
+                    </Button>
+                  </Toggle>
+                </Tooltip.Trigger>
 
-              <Toggle
-                pressed={!isAnnotationVisible(visibility)}
-                onPressedChange={handleToggleVisibility}
-              >
-                <Button ghost condensed>
-                  <Icon
-                    name={ANNOTATION_VISIBILITY_ICON_MAP[visibility]}
-                    width={12}
-                    height={12}
-                    css={{ color: '$dark4' }}
-                  />
-                </Button>
-              </Toggle>
+                <Tooltip.Content side="bottom" align="center">
+                  <Text>
+                    {t(
+                      `actions.editability.${isAnnotationEditable(editability)}`
+                    )}
+                  </Text>
+
+                  <Kbd keys={HOTKEYS.editability} css={{ color: '$dark4' }} />
+                  <Tooltip.Arrow />
+                </Tooltip.Content>
+              </Tooltip.Root>
+
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <Toggle
+                    pressed={!isAnnotationVisible(visibility)}
+                    onPressedChange={handleToggleVisibility}
+                  >
+                    <Button ghost condensed>
+                      <Icon
+                        name={ANNOTATION_VISIBILITY_ICON_MAP[visibility]}
+                        width={12}
+                        height={12}
+                        css={{ color: '$dark4' }}
+                      />
+                    </Button>
+                  </Toggle>
+                </Tooltip.Trigger>
+
+                <Tooltip.Content side="bottom" align="center">
+                  <Text>
+                    {t(`actions.visibility.${isAnnotationVisible(visibility)}`)}
+                  </Text>
+
+                  <Kbd keys={HOTKEYS.visibility} css={{ color: '$dark4' }} />
+                  <Tooltip.Arrow />
+                </Tooltip.Content>
+              </Tooltip.Root>
             </>
           }
           {...rest}

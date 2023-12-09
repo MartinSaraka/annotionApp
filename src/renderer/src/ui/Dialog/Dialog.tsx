@@ -71,8 +71,8 @@ const Header = forwardRef(function Header(
       {children}
 
       <Primitive.Close asChild>
-        <Button ghost condensed css={{ color: '$dark4' }}>
-          <Icon name="Cross1Icon" width={14} height={14} />
+        <Button ghost condensed hover css={{ color: '$dark4' }}>
+          <Icon name="Cross2Icon" width={14} height={14} />
         </Button>
       </Primitive.Close>
     </S.Header>

@@ -1,5 +1,6 @@
 export type TFileInfo = {
   path: string
+  hash: string
   directory: string
   filename: string
   extension: string

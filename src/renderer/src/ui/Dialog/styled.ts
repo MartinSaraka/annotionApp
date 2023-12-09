@@ -10,6 +10,7 @@ export const Trigger = styled(Dialog.Trigger, {})
 
 export const Overlay = styled(Dialog.Overlay, {
   _bgAlpha: ['$dark1', '80'],
+  backdropFilter: 'blur(8px)',
   position: 'fixed',
   inset: 0
 })

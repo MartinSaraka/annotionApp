@@ -36,6 +36,7 @@ class AnnotoriousHandler {
 
     anno.cancelSelected()
     anno.selectAnnotation(annotation)
+
     anno.fitBoundsWithConstraints(annotation)
   }
 

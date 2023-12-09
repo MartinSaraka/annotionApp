@@ -6,6 +6,7 @@ export type TImageMetadataVariables = {
 
 export type TImageMetadata = {
   path: TPath
+  hash: string
   fillColor: number
   pixelsPerMeter: {
     x: number
@@ -58,6 +59,7 @@ export default gql`
     metadata: getImageMetadata(path: $path)
       @rest(type: "TImageMetadata", path: "/metadata/{args.path}") {
       path
+      hash
       fillColor
       pixelsPerMeter {
         x

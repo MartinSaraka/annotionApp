@@ -95,6 +95,16 @@ export const ButtonRoot = styled(motion.button, {
         padding: '$1'
       }
     },
+    hover: {
+      true: {
+        $$bgColor: '$colors$light',
+
+        '&:hover': {
+          color: '$light',
+          _bgAlpha: ['$$bgColor', '80']
+        }
+      }
+    },
     toggle: {
       true: {
         $$color: '$colors$dark2',

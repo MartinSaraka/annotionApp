@@ -2,7 +2,8 @@ import { memo } from 'react'
 import { type ComponentProps } from '@stitches/react'
 import { useTranslation } from 'react-i18next'
 
-import { Box, Button, Dialog, Icon, Text } from '@renderer/ui'
+import { Box, Button, Dialog, Icon } from '@renderer/ui'
+import { ExportAnnotationsDialog } from '@renderer/dialogs'
 
 type TTopBarRightSideProps = ComponentProps<typeof Box>
 
@@ -29,27 +30,7 @@ const RightSide = ({ css, ...rest }: TTopBarRightSideProps) => {
         </Dialog.Trigger>
 
         <Dialog.Content>
-          <Dialog.Header>
-            <Dialog.Title asChild>
-              <Text variant="lg" css={{ fontWeight: 500 }}>
-                Export annotations
-              </Text>
-            </Dialog.Title>
-          </Dialog.Header>
-
-          <Box css={{ padding: '$4' }}>
-            <Box
-              css={{
-                flexDirection: 'row',
-                justifyContent: 'flex-end'
-              }}
-            >
-              <Button>
-                <Icon name="DownloadIcon" width={14} height={14} />
-                Save and Export
-              </Button>
-            </Box>
-          </Box>
+          <ExportAnnotationsDialog />
         </Dialog.Content>
       </Dialog.Root>
 
