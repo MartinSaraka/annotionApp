@@ -111,6 +111,10 @@ export const ButtonRoot = styled(motion.button, {
 
         '&[data-state="on"]': {
           backgroundColor: '$$color'
+        },
+
+        '&[data-state="open"]': {
+          backgroundColor: '$$color'
         }
       }
     }

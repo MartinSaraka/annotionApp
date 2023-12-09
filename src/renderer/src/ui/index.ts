@@ -11,6 +11,7 @@ export { default as Input } from './Input'
 export { default as Select } from './Select'
 export { default as Label } from './Label'
 export { default as RadioGroup } from './RadioGroup'
+export { default as Switch } from './Switch'
 
 export { default as List } from './List'
 export { default as Popover } from './Popover'

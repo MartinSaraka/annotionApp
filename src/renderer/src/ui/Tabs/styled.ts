@@ -1,66 +1,50 @@
-import * as Tabs from '@radix-ui/react-tabs'
-
 import { styled } from '@renderer/styles'
 import { motion } from 'framer-motion'
 
-export const TabsRoot = styled(Tabs.Root, {
+import * as Tabs from '@radix-ui/react-tabs'
+
+export const Root = styled(Tabs.Root, {})
+
+export const List = styled(Tabs.List, {
+  position: 'relative',
+
   display: 'flex',
-  flexDirection: 'column',
-  width: '100%',
-  gap: '$2'
+  padding: '$1',
+
+  backgroundColor: '$dark2',
+  borderRadius: '$3',
+
+  borderWidth: '$1',
+  borderStyle: '$solid',
+  borderColor: '$dark3'
 })
 
-export const TabsList = styled(Tabs.List, {
-  display: 'flex',
-  width: '100%',
+export const Trigger = styled(Tabs.Trigger, {
+  position: 'relative',
+  zIndex: '$up',
 
-  '&[data-orientation="vertical"]': {
-    flexDirection: 'column',
-    gap: '$4'
-  }
-})
+  outline: 'none !important',
 
-export const TabsTrigger = styled(Tabs.Trigger, {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-
-  position: 'relative',
   flex: 1,
 
-  textAlign: 'center',
-  fontSize: '$3',
-  lineHeight: '$3',
-  fontWeight: 500,
-
-  '&[aria-selected="true"]': {
-    color: '$light'
-  },
-
-  paddingBlock: '$2',
-  paddingInline: '$2',
-
-  svg: {
-    width: '100%',
-    height: '100%'
-  },
-
-  '&[data-orientation="vertical"]': {
-    aspectRatio: 1
-  }
+  paddingInline: '$3',
+  paddingBlock: '$2'
 })
 
-export const TabsContent = styled(Tabs.Content, {})
+export const Content = styled(Tabs.Content, {})
 
 export const TabsTriggerActive = styled(motion.div, {
   position: 'absolute',
-  bottom: 0,
-  left: 0,
-  right: 0,
+  inset: 0,
+  zIndex: '$down',
 
-  height: 2,
-  zIndex: '$base',
+  backgroundColor: '$dark1',
+  borderRadius: '$2',
 
-  backgroundColor: '$purple11',
-  borderRadius: '$pill'
+  borderWidth: '$1',
+  borderStyle: '$solid',
+  borderColor: '$dark3'
 })

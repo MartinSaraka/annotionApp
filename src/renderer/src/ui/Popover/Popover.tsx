@@ -71,12 +71,13 @@ const Close = forwardRef(function Close(
 
 type TContentBaseProps = {
   children: React.ReactNode
+  closeOnClickOutside?: boolean
 }
 
 type TContentProps = ComponentProps<typeof S.Content> & TContentBaseProps
 
 const Content = forwardRef(function Content(
-  { children, ...rest }: TContentProps,
+  { children, closeOnClickOutside, ...rest }: TContentProps,
   forwardedRef: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
@@ -85,7 +86,9 @@ const Content = forwardRef(function Content(
         ref={forwardedRef}
         side="left"
         align="start"
-        onInteractOutside={(e) => e.preventDefault()}
+        onInteractOutside={
+          closeOnClickOutside ? undefined : (e) => e.preventDefault()
+        }
         {...rest}
       >
         {children}

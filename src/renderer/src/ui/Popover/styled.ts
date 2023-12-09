@@ -22,5 +22,13 @@ export const Content = styled(Popover.Content, {
   borderBottomLeftRadius: '$2',
 
   $$width: '280px',
-  minWidth: '$$width'
+  minWidth: '$$width',
+
+  variants: {
+    dialog: {
+      true: {
+        borderRadius: '$4'
+      }
+    }
+  }
 })

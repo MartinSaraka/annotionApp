@@ -1,4 +1,4 @@
-import { forwardRef, memo } from 'react'
+import React, { forwardRef, memo } from 'react'
 import { type ComponentProps } from '@stitches/react'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -10,11 +10,11 @@ type TRootBaseProps = {
   children: React.ReactNode
 }
 
-type TTabsProps = ComponentProps<typeof S.TabsRoot> & TRootBaseProps
+type TRootProps = ComponentProps<typeof S.Root> & TRootBaseProps
 
-const Tabs = ({ children, ...rest }: TTabsProps) => (
+const Root = ({ children, ...rest }: TRootProps) => (
   <AnimatePresence initial={false} mode="wait" key="tabs">
-    <S.TabsRoot {...rest}>{children}</S.TabsRoot>
+    <S.Root {...rest}>{children}</S.Root>
   </AnimatePresence>
 )
 
@@ -22,16 +22,16 @@ type TListBaseProps = {
   children: React.ReactNode
 }
 
-type TListProps = ComponentProps<typeof S.TabsList> & TListBaseProps
+type TListProps = ComponentProps<typeof S.List> & TListBaseProps
 
 const List = forwardRef(function List(
   { children, ...rest }: TListProps,
   forwardedRef: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
-    <S.TabsList ref={forwardedRef} {...rest}>
+    <S.List ref={forwardedRef} {...rest}>
       {children}
-    </S.TabsList>
+    </S.List>
   )
 })
 
@@ -41,14 +41,18 @@ type TTriggerBaseProps = {
   children: React.ReactNode
 }
 
-type TTriggerProps = ComponentProps<typeof S.TabsTrigger> & TTriggerBaseProps
+type TTriggerProps = ComponentProps<typeof S.Trigger> & TTriggerBaseProps
 
 const Trigger = forwardRef(function Trigger(
-  { children, isActive, group, ...rest }: TTriggerProps,
+  { children, isActive, group, css, ...rest }: TTriggerProps,
   forwardedRef: React.ForwardedRef<HTMLButtonElement>
 ) {
   return (
-    <S.TabsTrigger ref={forwardedRef} {...rest}>
+    <S.Trigger
+      ref={forwardedRef}
+      css={{ color: isActive ? '$light' : '$dark4', ...css }}
+      {...rest}
+    >
       {children}
 
       {isActive && (
@@ -57,7 +61,7 @@ const Trigger = forwardRef(function Trigger(
           transition={{ layout: { duration: 0.2, ease: 'easeOut' } }}
         />
       )}
-    </S.TabsTrigger>
+    </S.Trigger>
   )
 })
 
@@ -65,14 +69,14 @@ type TContentBaseProps = {
   children: React.ReactNode
 }
 
-type TContentProps = ComponentProps<typeof S.TabsContent> & TContentBaseProps
+type TContentProps = ComponentProps<typeof S.Content> & TContentBaseProps
 
 const Content = forwardRef(function Content(
   { children, ...rest }: TContentProps,
   forwardedRef: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
-    <S.TabsContent ref={forwardedRef} {...rest} asChild>
+    <S.Content ref={forwardedRef} {...rest} asChild>
       <Box
         as={motion.section}
         key={`tabs-content-${rest.value}`}
@@ -83,10 +87,12 @@ const Content = forwardRef(function Content(
       >
         {children}
       </Box>
-    </S.TabsContent>
+    </S.Content>
   )
 })
 
+const Tabs = () => <React.Fragment />
+Tabs.Root = memo(Root) as typeof Root
 Tabs.List = memo(List) as typeof List
 Tabs.Trigger = memo(Trigger) as typeof Trigger
 Tabs.Content = memo(Content) as typeof Content
