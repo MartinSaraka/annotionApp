@@ -73,24 +73,28 @@ const List = ({
 
 type TListBoxProps = ComponentProps<typeof S.Box> & TBaseProps
 
-const ListBox = forwardRef(function Box(
-  { children, title, ...rest }: TListBoxProps,
+const ListBox = forwardRef(function ListBox(
+  { children, title, actions, ...rest }: TListBoxProps,
   forwardedRef: React.ForwardedRef<HTMLDivElement>
 ) {
   return (
     <S.Box role="listbox" ref={forwardedRef} {...rest}>
       {title && (
-        <Text
-          variant="md"
-          css={{
-            flex: 1,
-            fontWeight: 600,
-            textTransform: 'uppercase',
-            color: '$dark4'
-          }}
-        >
-          {title}
-        </Text>
+        <Box css={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Text
+            variant="md"
+            css={{
+              flex: 1,
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              color: '$dark4'
+            }}
+          >
+            {title}
+          </Text>
+
+          {actions && <Box>{actions}</Box>}
+        </Box>
       )}
 
       {children}

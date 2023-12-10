@@ -3,20 +3,14 @@ import { motion } from 'framer-motion'
 
 import * as Tabs from '@radix-ui/react-tabs'
 
-export const Root = styled(Tabs.Root, {})
+export const Root = styled(Tabs.Root, {
+  overflow: 'hidden'
+})
 
 export const List = styled(Tabs.List, {
   position: 'relative',
 
-  display: 'flex',
-  padding: '$1',
-
-  backgroundColor: '$dark2',
-  borderRadius: '$3',
-
-  borderWidth: '$1',
-  borderStyle: '$solid',
-  borderColor: '$dark3'
+  display: 'flex'
 })
 
 export const Trigger = styled(Tabs.Trigger, {
@@ -31,7 +25,13 @@ export const Trigger = styled(Tabs.Trigger, {
   flex: 1,
 
   paddingInline: '$3',
-  paddingBlock: '$2'
+  paddingBlock: '$3',
+
+  transition: 'color 0.1s',
+
+  '&:hover': {
+    color: '$light'
+  }
 })
 
 export const Content = styled(Tabs.Content, {})
@@ -41,10 +41,5 @@ export const TabsTriggerActive = styled(motion.div, {
   inset: 0,
   zIndex: '$down',
 
-  backgroundColor: '$dark1',
-  borderRadius: '$2',
-
-  borderWidth: '$1',
-  borderStyle: '$solid',
-  borderColor: '$dark3'
+  backgroundColor: '$dark2'
 })

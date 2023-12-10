@@ -23,6 +23,7 @@ export const Content = styled(Popover.Content, {
 
   $$width: '280px',
   minWidth: '$$width',
+  overflow: 'hidden',
 
   variants: {
     dialog: {

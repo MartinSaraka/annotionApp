@@ -25,10 +25,11 @@ export { default as Tabs } from './Tabs'
 export { default as FileTab } from './FileTab'
 
 export { default as Handle } from './Handle'
-export { default as Toggle } from './Toggle'
+export { default as Tooltip } from './Tooltip'
 
 export { default as Toolbar } from './Toolbar'
-export { default as Tooltip } from './Tooltip'
+export { default as ToggleGroup } from './ToggleGroup'
+export { default as Toggle } from './Toggle'
 
 export { default as DropdownMenu } from './DropdownMenu'
 export { default as ContextMenu } from './ContextMenu'

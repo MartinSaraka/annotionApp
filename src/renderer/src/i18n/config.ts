@@ -13,6 +13,7 @@ export const resources = {
 
 i18next.use(initReactI18next).init({
   // debug: true
+  lng: window.localStorage.getItem('lang') || fallbackLng,
   fallbackLng,
   defaultNS,
   resources

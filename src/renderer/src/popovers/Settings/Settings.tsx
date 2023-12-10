@@ -1,7 +1,7 @@
 import { memo, useState } from 'react'
 
 import { Tabs, Text } from '@renderer/ui'
-import { SettingsLayout } from './sections'
+import { SettingsAnnotation, SettingsLayout } from './sections'
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState<string>('layout')
@@ -34,7 +34,9 @@ const Settings = () => {
         <SettingsLayout />
       </Tabs.Content>
 
-      <Tabs.Content value="annotation">Annotation content</Tabs.Content>
+      <Tabs.Content value="annotation">
+        <SettingsAnnotation />
+      </Tabs.Content>
     </Tabs.Root>
   )
 }
