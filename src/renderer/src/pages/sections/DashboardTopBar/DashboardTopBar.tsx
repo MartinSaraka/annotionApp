@@ -1,5 +1,6 @@
 import { memo } from 'react'
 import { type ComponentProps } from '@stitches/react'
+import { useTranslation } from 'react-i18next'
 
 import { Box, Button, Icon } from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
@@ -7,7 +8,6 @@ import { useImageStore } from '@renderer/store'
 import * as S from './styled'
 
 import logo from '../../../../../../resources/logo-dark.svg'
-import { useTranslation } from 'react-i18next'
 
 type TDashboardTopBarProps = ComponentProps<typeof S.Root>
 

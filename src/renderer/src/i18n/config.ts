@@ -12,7 +12,7 @@ export const resources = {
 } as const
 
 i18next.use(initReactI18next).init({
-  // debug: true
+  // ? debug: true
   lng: window.localStorage.getItem('lang') || fallbackLng,
   fallbackLng,
   defaultNS,

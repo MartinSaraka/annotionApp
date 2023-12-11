@@ -2,60 +2,60 @@ import { ETool } from '@common/constants/tools'
 
 export default {
   sections: {
-    parameters: 'parameters',
-    measurements: 'measurements',
-    class: 'class',
-    processes: 'processes'
+    parameters: 'parametre',
+    measurements: 'merania',
+    class: 'trieda',
+    processes: 'procesy'
   },
   popovers: {
-    selectClass: 'class list',
-    selectProcess: 'process list'
+    selectClass: 'zoznam tried',
+    selectProcess: 'zoznam procesov'
   },
   properties: {
     type: {
-      [ETool.POINT]: 'point',
-      [ETool.NUCLICK_POINT]: 'point',
-      [ETool.RECTANGLE]: 'rectangle',
-      [ETool.CIRCLE]: 'circle',
-      [ETool.ELLIPSE]: 'ellipse',
+      [ETool.POINT]: 'bod',
+      [ETool.NUCLICK_POINT]: 'bod',
+      [ETool.RECTANGLE]: 'obdĺžnik',
+      [ETool.CIRCLE]: 'kruh',
+      [ETool.ELLIPSE]: 'elipsa',
       [ETool.POLYGON]: 'polygon',
-      [ETool.FREEHAND]: 'freehand',
-      unknown: 'unknown'
+      [ETool.FREEHAND]: 'voľná ruka',
+      unknown: 'neznáme'
     },
     id: {
-      label: 'id'
+      label: 'ID'
     },
     parent: {
-      label: 'parent'
+      label: 'rodič'
     },
     name: {
-      label: 'name'
+      label: 'názov'
     },
     description: {
-      label: 'description'
+      label: 'popis'
     },
     class: {
-      label: 'class',
-      placeholder: 'default class',
-      empty: 'no class'
+      label: 'trieda',
+      placeholder: 'predvolená trieda',
+      empty: 'žiadna trieda'
     },
     color: {
-      label: 'color'
+      label: 'farba'
     },
     position: {
-      label: 'position'
+      label: 'poloha'
     },
     centroid: {
       label: 'centroid'
     },
     area: {
-      label: 'area'
+      label: 'plocha'
     },
     perimeter: {
-      label: 'perimeter'
+      label: 'obvod'
     },
     tag: {
-      confidence: 'with confidence'
+      confidence: 's istotou'
     }
   }
 } as const

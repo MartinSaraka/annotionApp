@@ -15,7 +15,7 @@ export default {
       description: 'Segment nuclei from ROI'
     },
     [ProcessType.SAM_EMBEDDINGS]: {
-      title: 'Segment anything',
+      title: 'Segment Anything',
       description: 'Segment anything from ROI'
     }
   }

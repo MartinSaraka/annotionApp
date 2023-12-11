@@ -1,9 +1,12 @@
 import { memo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { Tabs, Text } from '@renderer/ui'
 import { SettingsAnnotation, SettingsLayout } from './sections'
 
 const Settings = () => {
+  const { t } = useTranslation(['common', 'popovers'])
+
   const [activeTab, setActiveTab] = useState<string>('layout')
 
   return (
@@ -15,7 +18,7 @@ const Settings = () => {
           isActive={activeTab === 'layout'}
         >
           <Text variant="md" css={{ fontWeight: 600 }}>
-            Layout
+            {t('popovers:settings.layout.title')}
           </Text>
         </Tabs.Trigger>
 
@@ -25,7 +28,7 @@ const Settings = () => {
           isActive={activeTab === 'annotation'}
         >
           <Text variant="md" css={{ fontWeight: 600 }}>
-            Annotation
+            {t('popovers:settings.annotation.title')}
           </Text>
         </Tabs.Trigger>
       </Tabs.List>

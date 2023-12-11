@@ -1,5 +1,6 @@
 import { memo, useCallback, useMemo } from 'react'
 import { Form, Formik, FormikConfig } from 'formik'
+import { useTranslation } from 'react-i18next'
 
 import { Box, Button, Dialog, Icon, Text } from '@renderer/ui'
 
@@ -11,7 +12,11 @@ import { saveFile } from '@common/utils/file'
 
 type TFormValues = TExportOptions
 
+// TODO: options
+
 const ExportAnnotations = () => {
+  const { t } = useTranslation('dialogs')
+
   const image = useImageStore((state) => state.getSelected())
   const annotations = useImageStore((state) => state.getAnnotations())
 
@@ -46,7 +51,7 @@ const ExportAnnotations = () => {
       <Dialog.Header>
         <Dialog.Title asChild>
           <Text variant="lg" css={{ fontWeight: 500 }}>
-            Export annotations
+            {t('exportAnnotations.title')}
           </Text>
         </Dialog.Title>
       </Dialog.Header>
@@ -69,7 +74,7 @@ const ExportAnnotations = () => {
             >
               <Button type="submit">
                 <Icon name="DownloadIcon" width={14} height={14} />
-                Save and Export
+                {t('exportAnnotations.submit')}
               </Button>
             </Box>
           </Box>

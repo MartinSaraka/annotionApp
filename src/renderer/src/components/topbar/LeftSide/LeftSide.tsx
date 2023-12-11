@@ -1,11 +1,11 @@
 import { memo } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { type ComponentProps } from '@stitches/react'
+import { useTranslation } from 'react-i18next'
 
 import { Box, Chip, DropdownMenu, Icon, Text } from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
 
 import logo from '../../../../../../resources/logo-icon.svg'
-import { useTranslation } from 'react-i18next'
 
 type TTopBarLeftSideProps = ComponentProps<typeof Box>
 

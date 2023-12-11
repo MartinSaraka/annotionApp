@@ -6,6 +6,8 @@ import { FileOpener, Viewer } from '@renderer/components'
 import { useImageStore } from '@renderer/store'
 import { getSelectedOrFirst } from '@common/utils/global'
 
+// TODO: implement not found
+
 const Image = () => {
   const activeImage = useImageStore(({ opened, selected, getData }) => {
     if (!selected || !getData(selected)) return

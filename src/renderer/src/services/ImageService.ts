@@ -26,8 +26,7 @@ class ImageService {
 
       return data?.metadata
     } catch {
-      console.error(this.toString(), new Error('Unable to get metadata'))
-      return null
+      throw new Error('METADATA_ERROR')
     }
   }
 

@@ -97,7 +97,8 @@ export default {
       trafficLights: 'Window controls',
       notifications: 'Notifications',
       settings: 'Settings',
-      report: 'Report'
+      report: 'Report',
+      opener: 'File opener'
     },
     description: {
       toolbar: 'Tools',

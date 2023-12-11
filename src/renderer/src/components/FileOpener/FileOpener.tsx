@@ -1,18 +1,27 @@
-import { ChangeEvent, memo, useCallback, useRef } from 'react'
-import { ComponentProps } from '@stitches/react'
+import { ChangeEvent, memo, useCallback, useRef, useState } from 'react'
+import { type ComponentProps } from '@stitches/react'
+import { useTranslation } from 'react-i18next'
 
-import { Box, Button, Icon, Text } from '@renderer/ui'
+import { Box, Icon, Text } from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
+
 import { preventAllDefaults } from '@common/utils/global'
+import { SUPPORTED_FORMATS } from '@common/constants/global'
 
 import * as S from './styled'
+
+type TStatus = 'idle' | 'loading' | 'error'
 
 type TFileOpenerProps = ComponentProps<typeof Box>
 
 const FileOpener = ({ css, ...rest }: TFileOpenerProps) => {
+  const { t } = useTranslation(['common', 'editor'])
   const open = useImageStore((state) => state.open)
 
+  const areaRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
+
+  const [status, setStatus] = useState<TStatus>('idle')
 
   const handleFocus = useCallback(() => {
     inputRef.current?.click()
@@ -20,11 +29,15 @@ const FileOpener = ({ css, ...rest }: TFileOpenerProps) => {
 
   const handleOpen = useCallback(
     (files: File[]) => {
-      files.forEach((file) => {
-        open(file.path).then(console.info).catch(console.error)
-      })
+      setStatus('loading')
+
+      const filePromises = files.map((file) => open(file.path))
+
+      Promise.all(filePromises)
+        .then(() => setStatus('idle'))
+        .catch(() => setStatus('error'))
     },
-    [open]
+    [open, setStatus]
   )
 
   const handleChange = useCallback(
@@ -37,83 +50,121 @@ const FileOpener = ({ css, ...rest }: TFileOpenerProps) => {
   )
 
   const handleDragEnter = useCallback(
-    preventAllDefaults((event: React.DragEvent<HTMLLabelElement>) => {
-      console.log('dragenter', event)
+    preventAllDefaults(() => {
+      if (!areaRef.current) return
+      areaRef.current.classList.add('hover')
     }),
-    []
+    [areaRef]
   )
 
   const handleDragOver = useCallback(
-    preventAllDefaults((event: React.DragEvent<HTMLLabelElement>) => {
-      console.log('dragover', event)
+    preventAllDefaults(() => {
+      if (!areaRef.current) return
+      areaRef.current.classList.add('hover')
     }),
-    []
+    [areaRef]
   )
 
   const handleDragDrop = useCallback(
     preventAllDefaults((event: React.DragEvent<HTMLLabelElement>) => {
+      if (areaRef.current) areaRef.current.classList.remove('hover')
       const fileList = event.dataTransfer?.files
-      console.log('files', fileList)
       if (!fileList?.length) return
       handleOpen(Array.from(fileList))
     }),
-    []
+    [areaRef, handleOpen]
   )
 
   const handleDragLeave = useCallback(
-    preventAllDefaults((event: React.DragEvent<HTMLLabelElement>) => {
-      console.log('dragleave', event)
+    preventAllDefaults(() => {
+      if (!areaRef.current) return
+      areaRef.current.classList.remove('hover')
     }),
-    []
+    [areaRef]
   )
 
   return (
-    <Box
-      css={{
-        borderWidth: '$2',
-        borderStyle: '$dashed',
-        borderColor: '$dark4',
-        borderRadius: '$4',
-        ...css
-      }}
-      {...rest}
-    >
-      <S.Dropzone
-        htmlFor="file-opener"
-        onDragEnter={handleDragEnter}
-        onDragOver={handleDragOver}
-        onDrop={handleDragDrop}
-        onDragLeave={handleDragLeave}
+    <>
+      <Box
+        css={{
+          width: '100%',
+          maxWidth: 500,
+          gap: '$1',
+          ...css
+        }}
+        {...rest}
       >
-        <Box
-          multiple
-          hidden
-          as="input"
-          type="file"
-          id="file-opener"
-          ref={inputRef}
-          onChange={handleChange}
-          css={{ display: 'none' }}
-        />
+        <S.Wrapper
+          aria-label={t('aria.label.opener')}
+          ref={areaRef}
+          variant={status}
+        >
+          <S.Dropzone
+            htmlFor="file-opener"
+            onDragEnter={handleDragEnter}
+            onDragOver={handleDragOver}
+            onDrop={handleDragDrop}
+            onDragLeave={handleDragLeave}
+            aria-disabled={status === 'loading'}
+          >
+            <Box
+              multiple
+              hidden
+              as="input"
+              type="file"
+              id="file-opener"
+              name="files"
+              ref={inputRef}
+              onChange={handleChange}
+              css={{ display: 'none' }}
+              disabled={status === 'loading'}
+            />
 
-        <Icon
-          name="FileIcon"
-          width={50}
-          height={50}
-          css={{ color: '$light', marginBottom: '$2' }}
-        />
+            <Icon
+              name={status === 'error' ? 'CrumpledPaperIcon' : 'FilePlusIcon'}
+              width={40}
+              height={40}
+            />
 
-        <Text as="h1" variant="2xl" css={{ color: '$light', fontWeight: 700 }}>
-          Select a files or drag and drop here
-        </Text>
+            <Text as="h1" variant="lg" css={{ fontWeight: 500 }}>
+              {t('editor:opener.label')}{' '}
+              <Text
+                as="button"
+                variant="lg"
+                onClick={handleFocus}
+                css={{
+                  fontWeight: 600,
+                  textDecoration: 'underline',
+                  '&:hover': { color: '$blue2' }
+                }}
+              >
+                {t('editor:opener.button')}
+              </Text>
+            </Text>
+          </S.Dropzone>
+        </S.Wrapper>
 
-        <Text variant="lg" css={{ color: '$dark4', fontWeight: 500 }}>
-          Supported formats: VSI
-        </Text>
+        <Box css={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Text css={{ color: '$dark5', fontWeight: 500 }}>
+            {t('editor:opener.formats', {
+              formats: SUPPORTED_FORMATS.join(', ')
+            })}
+          </Text>
 
-        <Button onClick={handleFocus}>Select file</Button>
-      </S.Dropzone>
-    </Box>
+          {status === 'loading' && (
+            <Text css={{ color: '$dark5', fontWeight: 500 }}>
+              {t('editor:opener.loading')}
+            </Text>
+          )}
+
+          {status === 'error' && (
+            <Text css={{ color: '$crimson4', fontWeight: 500 }}>
+              {t('editor:opener.error')}
+            </Text>
+          )}
+        </Box>
+      </Box>
+    </>
   )
 }
 

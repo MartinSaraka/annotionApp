@@ -3,7 +3,7 @@ import { ETool } from '@common/constants/tools'
 export default {
   appName: {
     short: 'AnnotAid',
-    long: 'Histopathology image annotation tool'
+    long: 'Nástroj na anotáciu histopatologických snímkov'
   },
   unit: {
     pixel: 'px',
@@ -14,99 +14,100 @@ export default {
     y: 'y'
   },
   dimensions: {
-    width: 'W',
-    height: 'H'
+    width: 'Š',
+    height: 'V'
   },
   compression: {
-    uncompressed: 'Unc.',
-    compressed: 'Com.'
+    uncompressed: 'Nekompr.',
+    compressed: 'Kompr.'
   },
   actions: {
-    openNewImage: 'Open new image',
-    zoomToAnnotation: 'Zoom to annotation',
-    zoomIn: 'Zoom in',
-    zoomOut: 'Zoom out',
+    openNewImage: 'Otvoriť nový obrázok',
+    zoomToAnnotation: 'Priblížiť na anotáciu',
+    zoomIn: 'Priblížiť',
+    zoomOut: 'Oddialiť',
     editability: {
-      true: 'Lock annotation',
-      false: 'Unlock annotation'
+      true: 'Zamknúť anotáciu',
+      false: 'Odomknúť anotáciu'
     },
     visibility: {
-      true: 'Hide annotation',
-      false: 'Show annotation'
+      true: 'Skryť anotáciu',
+      false: 'Zobraziť anotáciu'
     },
     class: {
-      showSystem: 'Show system classes (+{{count}})'
+      showSystem: 'Zobraziť systémové triedy (+{{count}})'
     },
     update: {
-      avaiable: 'Update available'
+      avaiable: 'Dostupná aktualizácia'
     },
-    deleteAnnotation: 'Delete annotation',
-    share: 'Share',
-    export: 'Export'
+    deleteAnnotation: 'Odstrániť anotáciu',
+    share: 'Zdieľať',
+    export: 'Exportovať'
   },
   tooltips: {
-    resetToDefault: 'Reset to default',
-    fitToScreen: 'Fit to screen',
-    zoomToParentAnnotation: 'Zoom to parent annotation',
-    dblZoomToAnnotation: 'Double click to zoom to annotation',
-    dblEditAnnotationName: 'Double click to edit annotation name',
-    copyAnnotationId: 'Copy annotation id',
+    resetToDefault: 'Obnoviť predvolené',
+    fitToScreen: 'Prispôsobiť obrazovke',
+    zoomToParentAnnotation: 'Priblížiť na nadradenú anotáciu',
+    dblZoomToAnnotation: 'Dvojklik pre priblíženie na anotáciu',
+    dblEditAnnotationName: 'Dvojklik pre úpravu názvu anotácie',
+    copyAnnotationId: 'Kopírovať ID anotácie',
     tools: {
-      annotation: 'Click to pick tool',
-      [ETool.HAND]: 'Hand / Move',
-      [ETool.ZOOM_IN]: 'Zoom in / out',
-      [ETool.RECTANGLE]: 'Rectangle',
-      [ETool.CIRCLE]: 'Circle',
-      [ETool.ELLIPSE]: 'Ellipse',
+      annotation: 'Kliknutím vybrať nástroj',
+      [ETool.HAND]: 'Ruka / Pohyb',
+      [ETool.ZOOM_IN]: 'Priblížiť / Oddialiť',
+      [ETool.RECTANGLE]: 'Obdĺžnik',
+      [ETool.CIRCLE]: 'Kruh',
+      [ETool.ELLIPSE]: 'Elipsa',
       [ETool.POLYGON]: 'Polygon',
-      [ETool.POINT]: 'Point',
-      [ETool.FREEHAND]: 'Freehand',
-      [ETool.NUCLICK_POINT]: 'Segment nuclei',
-      [ETool.SAM_FOREGROUND]: 'Include area',
-      [ETool.SAM_BACKGROUND]: 'Exclude area',
-      [ETool.SAM_BBOX]: 'Segment area'
+      [ETool.POINT]: 'Bod',
+      [ETool.FREEHAND]: 'Voľná ruka',
+      [ETool.NUCLICK_POINT]: 'Segmentovať bunky',
+      [ETool.SAM_FOREGROUND]: 'Zahrnúť oblasť',
+      [ETool.SAM_BACKGROUND]: 'Vylúčiť oblasť',
+      [ETool.SAM_BBOX]: 'Segmentovať oblasť'
     },
     window: {
-      minimize: 'Minimize window',
-      maximize: 'Maximize window',
-      close: 'Close window'
+      minimize: 'Minimalizovať okno',
+      maximize: 'Maximalizovať okno',
+      close: 'Zatvoriť okno'
     },
     class: {
-      remove: 'Remove class',
-      select: 'Select class',
-      edit: 'Edit class',
-      delete: 'Delete class',
-      createNew: 'Create new class',
-      createFirst: 'Create first class'
+      remove: 'Odstrániť triedu',
+      select: 'Vybrať triedu',
+      edit: 'Upraviť triedu',
+      delete: 'Vymazať triedu',
+      createNew: 'Vytvoriť novú triedu',
+      createFirst: 'Vytvoriť prvú triedu'
     },
     page: {
-      colorPicker: 'Click to pick color'
+      colorPicker: 'Kliknutím vybrať farbu'
     },
     tag: {
-      remove: 'Remove tag'
+      remove: 'Odstrániť tag'
     },
     process: {
-      select: 'Select process'
+      select: 'Vybrať proces'
     },
     tabs: {
-      add: 'New tab'
+      add: 'Nová karta'
     }
   },
   aria: {
     label: {
-      trafficLights: 'Window controls',
-      notifications: 'Notifications',
-      settings: 'Settings',
-      report: 'Report'
+      trafficLights: 'Ovládacie prvky okna',
+      notifications: 'Oznámenia',
+      settings: 'Nastavenia',
+      report: 'Správa',
+      opener: 'Otvárač súborov'
     },
     description: {
-      toolbar: 'Tools',
-      annotationTools: 'Annotation tools',
-      segmentationTools: 'Segmentation tools',
-      annotationSearch: 'Annotation search',
-      annotationList: 'Annotation list',
-      imageInfo: 'Image info',
-      imageActions: 'Image actions'
+      toolbar: 'Nástroje',
+      annotationTools: 'Nástroje na anotáciu',
+      segmentationTools: 'Nástroje na segmentáciu',
+      annotationSearch: 'Hľadanie anotácií',
+      annotationList: 'Zoznam anotácií',
+      imageInfo: 'Informácie o obrázke',
+      imageActions: 'Akcie s obrázkom'
     }
   }
 } as const

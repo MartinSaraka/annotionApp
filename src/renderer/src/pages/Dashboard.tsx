@@ -3,6 +3,8 @@ import { memo } from 'react'
 import { Box, Text } from '@renderer/ui'
 import { DashboardTopBar } from './sections'
 
+// TODO: implement dashboard
+
 const Dashboard = () => (
   <Box
     css={{

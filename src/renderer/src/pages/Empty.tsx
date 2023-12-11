@@ -3,8 +3,6 @@ import { memo } from 'react'
 import { Box } from '@renderer/ui'
 import { FileOpener } from '@renderer/components'
 
-// TODO: Implement Empty
-
 const Empty = () => (
   <Box
     css={{

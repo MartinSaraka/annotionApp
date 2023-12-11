@@ -4,6 +4,8 @@ import annotation from './annotation'
 import image from './image'
 import process from './process'
 import hints from './hints'
+import dialogs from './dialogs'
+import popovers from './popovers'
 
 export default {
   common,
@@ -11,5 +13,7 @@ export default {
   annotation,
   process,
   hints,
-  image
+  image,
+  dialogs,
+  popovers
 }

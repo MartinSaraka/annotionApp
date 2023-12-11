@@ -1,44 +1,44 @@
 export default {
   sections: {
-    parameters: 'parameters',
-    classes: 'classes',
-    colors: 'colors'
+    parameters: 'parametre',
+    classes: 'triedy',
+    colors: 'farby'
   },
   properties: {
     page: {
-      label: 'page'
+      label: 'plátno'
     },
     name: {
-      label: 'name'
+      label: 'názov'
     },
     uri: {
       label: 'uri'
     },
     format: {
-      label: 'format'
+      label: 'formát'
     },
     disk: {
       label: 'disk'
     },
     size: {
-      label: 'size'
+      label: 'veľkosť'
     },
     zoom: {
-      label: 'zoom'
+      label: 'priblíženie'
     },
     dimensions: {
-      label: 'dim.'
+      label: 'rozmer'
     },
     pyramid: {
-      label: 'pyramid'
+      label: 'pyramída'
     },
     pixel: {
       label: 'pixel',
       size: {
-        label: 'size'
+        label: 'veľkosť'
       },
       type: {
-        label: 'type'
+        label: 'typ'
       }
     }
   }

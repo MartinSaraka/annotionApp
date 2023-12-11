@@ -8,7 +8,7 @@ export const OPEN_SEADRAGON_PREFIX_URL =
   'https://cdn.jsdelivr.net/npm/openseadragon@3.1.0/build/openseadragon/images/'
 
 export const OPEN_SEADRAGON_DEFAULT_OPTIONS: Partial<OpenSeadragon.Options> = {
-  // debugMode: true,
+  // ? debugMode: true,
 
   id: OPEN_SEADRAGON_ID,
   prefixUrl: OPEN_SEADRAGON_PREFIX_URL,

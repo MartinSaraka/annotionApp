@@ -1,5 +1,6 @@
 import { memo, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 
 import {
   Box,
@@ -22,9 +23,9 @@ import {
 
 import { theme } from '@renderer/styles'
 
-// TODO: translate
-
 const Layout = () => {
+  const { t } = useTranslation(['common', 'popovers'])
+
   const { current, available, setLanguage } = useLanguage()
 
   const settings = useSettingsStore((state) => state.getLayoutSettings())
@@ -170,7 +171,7 @@ const Layout = () => {
                   fontWeight: 500
                 }}
               >
-                image
+                {t('popovers:settings.layout.preview')}
               </Text>
 
               <AnimatePresence initial={false}>
@@ -229,7 +230,7 @@ const Layout = () => {
         <List.Box>
           <List.Item css={{ $$firstWidth: 'auto', minHeight: 'unset' }}>
             <Label htmlFor="language" css={{ textTransform: 'unset', flex: 1 }}>
-              Language
+              {t('popovers:settings.layout.fields.language.label')}
             </Label>
 
             <ToggleGroup.Root
@@ -244,10 +245,10 @@ const Layout = () => {
         </List.Box>
 
         <List.Box
-          title="Panels"
+          title={t('popovers:settings.layout.sections.panels')}
           actions={
             <Button input css={{ color: '$dark4' }} onClick={resetPanels}>
-              reset to default
+              {t('popovers:settings.actions.reset')}
             </Button>
           }
         >
@@ -260,7 +261,7 @@ const Layout = () => {
               htmlFor="left-bar-visible"
               css={{ textTransform: 'unset', flex: 1 }}
             >
-              Show left panel
+              {t('popovers:settings.layout.fields.leftBarVisible.label')}
             </Label>
 
             <Switch.Root
@@ -282,7 +283,7 @@ const Layout = () => {
               htmlFor="right-bar-visible"
               css={{ textTransform: 'unset', flex: 1 }}
             >
-              Show right panel
+              {t('popovers:settings.layout.fields.rightBarVisible.label')}
             </Label>
 
             <Switch.Root
@@ -297,10 +298,10 @@ const Layout = () => {
         </List.Box>
 
         <List.Box
-          title="Viewer"
+          title={t('popovers:settings.layout.sections.viewer')}
           actions={
             <Button input css={{ color: '$dark4' }} onClick={resetViewer}>
-              reset to default
+              {t('popovers:settings.actions.reset')}
             </Button>
           }
         >
@@ -313,7 +314,7 @@ const Layout = () => {
               htmlFor="minimap-visible"
               css={{ textTransform: 'unset', flex: 1 }}
             >
-              Show Minimap
+              {t('popovers:settings.layout.fields.minimapVisible.label')}
             </Label>
 
             <Switch.Root
@@ -335,7 +336,7 @@ const Layout = () => {
           }}
         >
           <Button input css={{ color: '$dark4' }} onClick={resetAll}>
-            reset layout settings
+            {t('popovers:settings.layout.reset')}
           </Button>
         </Box>
       </List>

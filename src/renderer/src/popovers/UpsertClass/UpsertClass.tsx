@@ -18,6 +18,7 @@ import { ClassHandler } from '@renderer/handlers'
 import { isDefaultClass } from '@common/utils/classes'
 import { DEFAULT_CLASSES } from '@common/constants/classes'
 import { theme } from '@renderer/styles'
+import { useTranslation } from 'react-i18next'
 
 type TUpsertClassProps = {
   data?: TAnnotationClass
@@ -26,10 +27,10 @@ type TUpsertClassProps = {
 
 type TFormValues = NonNullable<TUpsertClassProps['data']>
 
-// TODO: refactor
-
 const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
-  const operation = !data ? 'Create' : 'Update'
+  const { t } = useTranslation(['common', 'popovers'])
+
+  const isEdit = data ? 1 : 0
 
   const closeRef = useRef<HTMLButtonElement | null>(null)
 
@@ -66,7 +67,7 @@ const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
       {({ values, initialValues: init, setFieldValue }) => (
         <List
           as={Form}
-          title={`${operation} ${operation === 'Create' ? 'new ' : ''}class`}
+          title={t('popovers:upsertClass.title', { count: isEdit })}
           actions={
             <Popover.Close asChild ref={closeRef}>
               <Button ghost condensed css={{ margin: '-$1' }}>
@@ -93,13 +94,15 @@ const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
             }}
           >
             <Chip small auto css={{ $$color: values.color }}>
-              {values.name || 'Type your class name'}
+              {values.name || t('popovers:upsertClass.chip')}
             </Chip>
           </Box>
 
           <List.Box>
             <List.Item>
-              <Label htmlFor="class-name">Name</Label>
+              <Label htmlFor="class-name">
+                {t('popovers:upsertClass.fields.name.label')}
+              </Label>
 
               <Input>
                 <Field
@@ -128,7 +131,9 @@ const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
             </List.Item>
 
             <List.Item>
-              <Label htmlFor="class-color">Color</Label>
+              <Label htmlFor="class-color">
+                {t('popovers:upsertClass.fields.color.label')}
+              </Label>
 
               <Input square>
                 <Field
@@ -172,7 +177,7 @@ const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
                 css={{ flex: 1 }}
                 disabled={!values.name || !values.color}
               >
-                {operation} class
+                {t('popovers:upsertClass.submit', { count: isEdit })}
               </Button>
             </List.Item>
           </List.Box>
@@ -182,4 +187,4 @@ const UpsertClass = ({ data, onCreate }: TUpsertClassProps) => {
   )
 }
 
-export default memo(UpsertClass)
+export default memo(UpsertClass) as typeof UpsertClass

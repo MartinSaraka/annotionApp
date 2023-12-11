@@ -1,7 +1,8 @@
 import { memo, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 
-import { Box, Button, Label, List, Switch } from '@renderer/ui'
+import { Box, Button, Label, List, Switch, Text } from '@renderer/ui'
 
 import { useSettingsStore } from '@renderer/store'
 
@@ -9,9 +10,9 @@ import { DEFAULT_ANNOTATION_CLASS_VISIBILITY } from '@common/constants/settings'
 
 import { theme } from '@renderer/styles'
 
-// TODO: translate
-
 const Annotation = () => {
+  const { t } = useTranslation(['common', 'popovers'])
+
   const settings = useSettingsStore((state) => state.getAnnotationSettings())
 
   const setAnnotationsVisibility = useSettingsStore(
@@ -74,9 +75,22 @@ const Annotation = () => {
             maxWidth: '60%',
             width: '100%',
             overflow: 'hidden',
-            boxShadow: 'rgba(16, 16, 33, 0.4) 1px 1px 6px'
+            boxShadow: 'rgba(16, 16, 33, 0.4) 1px 1px 6px',
+            alignItems: 'center',
+            justifyContent: 'center'
           }}
         >
+          <Text
+            variant="sm"
+            css={{
+              textTransform: 'uppercase',
+              color: '$dark4',
+              fontWeight: 500
+            }}
+          >
+            {t('popovers:settings.annotation.preview')}
+          </Text>
+
           <AnimatePresence initial={false}>
             {settings.visibleAnnotationClass && (
               <Box
@@ -113,7 +127,9 @@ const Annotation = () => {
             onHoverEnd={handleHover('box', false)}
           >
             <Label htmlFor="hide" css={{ textTransform: 'unset', flex: 1 }}>
-              Show annotations
+              {t(
+                'popovers:settings.annotation.fields.annotationsVisible.label'
+              )}
             </Label>
 
             <Switch.Root
@@ -128,10 +144,10 @@ const Annotation = () => {
         </List.Box>
 
         <List.Box
-          title="Class"
+          title={t('popovers:settings.annotation.sections.class')}
           actions={
             <Button input css={{ color: '$dark4' }} onClick={resetClass}>
-              reset to default
+              {t('popovers:settings.actions.reset')}
             </Button>
           }
         >
@@ -141,14 +157,14 @@ const Annotation = () => {
             onHoverEnd={handleHover('box-class', false)}
           >
             <Label
-              htmlFor="left-bar-visible"
+              htmlFor="class-visible"
               css={{ textTransform: 'unset', flex: 1 }}
             >
-              Show annotation class
+              {t('popovers:settings.annotation.fields.classVisible.label')}
             </Label>
 
             <Switch.Root
-              id="left-bar-visible"
+              id="class-visible"
               checked={settings.visibleAnnotationClass}
               css={{ flex: 'unset !important' }}
               onCheckedChange={setAnnotationClassVisibility}
@@ -166,7 +182,7 @@ const Annotation = () => {
           }}
         >
           <Button input css={{ color: '$dark4' }} onClick={resetAll}>
-            reset layout settings
+            {t('popovers:settings.annotation.reset')}
           </Button>
         </Box>
       </List>
