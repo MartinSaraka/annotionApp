@@ -3,12 +3,27 @@ import { autoUpdater } from 'electron-updater'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { fixPathForAsarUnpack } from 'electron-util'
 import { join } from 'path'
+import Route from 'route-parser'
 
 import { ImageServer } from './core'
 import { IN_MILLISECONDS, MINUTE } from '@common/constants/time'
 import { ELECTRON_BROWSER_WINDOW_DEFAULT_OPTIONS } from '@common/constants/window'
+import { PROTOCOL_NAME } from '@common/constants/global'
 
 import { fromRenderer } from '@common/utils/event'
+
+const loginRoute = new Route<{ token: string }>(
+  `${PROTOCOL_NAME}://login/:token`
+)
+
+app.setAsDefaultProtocolClient(PROTOCOL_NAME)
+
+app.on('open-url', (event, url) => {
+  event.preventDefault()
+  const params = loginRoute.match(url)
+  if (!params) return
+  console.log(params)
+})
 
 // Hazel Updater
 const server = process.env.MAIN_VITE_HAZEL_SERVER_URL || 'localhost:3001'
