@@ -17,6 +17,7 @@ import {
 import { theme } from '@renderer/styles'
 
 export type TSettingsState = {
+  smartlookConsent: boolean
   pageColor: string
   visibleLeftSidebar: boolean
   visibleRightSidebar: boolean
@@ -32,6 +33,8 @@ export type TSettingsState = {
     TSettingsState,
     'visibleAnnotations' | 'visibleAnnotationClass'
   >
+
+  setSmartlookConsent: () => void
 
   setPageColor: (color: string) => void
   resetPageColor: () => void
@@ -49,6 +52,7 @@ export const DEFAULT_PAGE_COLOR = theme.palette.dark2.value
 const useSettingsStore = create<TSettingsState>()(
   persist(
     (set, get) => ({
+      smartlookConsent: false,
       pageColor: DEFAULT_PAGE_COLOR,
 
       visibleLeftSidebar: DEFAULT_LEFT_SIDEBAR_VISIBILITY,
@@ -58,6 +62,8 @@ const useSettingsStore = create<TSettingsState>()(
 
       visibleAnnotations: DEFAULT_ANNOTATIONS_VISIBILITY,
       visibleAnnotationClass: DEFAULT_ANNOTATION_CLASS_VISIBILITY,
+
+      setSmartlookConsent: () => set({ smartlookConsent: true }),
 
       getLayoutSettings: () => {
         const { visibleLeftSidebar, visibleRightSidebar, visibleMinimap } =

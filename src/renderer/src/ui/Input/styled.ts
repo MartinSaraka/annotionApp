@@ -37,6 +37,12 @@ export const InputRoot = styled(motion.div, {
         borderRadius: '$7',
         fontSize: '$5',
         paddingInline: '$2'
+      },
+      giant: {
+        borderRadius: '$6',
+        fontSize: '$6',
+        paddingInline: '$4',
+        paddingBlock: '$4'
       }
     },
     square: {

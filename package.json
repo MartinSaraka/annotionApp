@@ -56,6 +56,7 @@
     "@stitches/react": "^1.2.8",
     "apollo-link-rest": "^0.9.0",
     "classnames": "^2.3.2",
+    "electron-store": "^8.1.0",
     "electron-updater": "^5.3.0",
     "electron-util": "^0.17.2",
     "formik": "^2.4.4",
@@ -81,6 +82,8 @@
     "route-parser": "^0.0.5",
     "smartlook-client": "^8.2.0",
     "uuid": "^9.0.1",
+    "zod": "^3.22.4",
+    "zod-formik-adapter": "^1.2.0",
     "zustand": "^4.3.9"
   },
   "devDependencies": {

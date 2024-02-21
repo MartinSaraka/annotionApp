@@ -45,6 +45,12 @@ declare global {
     typeof flattenTree<TMetadata>
   >[0]
 
+  // Apollo
+  type TNetworkError = {
+    name: string
+    statusCode: number
+  }
+
   // Common
 
   type TEntries<T> = {

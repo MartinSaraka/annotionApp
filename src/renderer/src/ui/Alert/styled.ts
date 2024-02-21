@@ -9,7 +9,8 @@ export const Root = styled(AlertDialog.Root, {
 export const Trigger = styled(AlertDialog.Trigger, {})
 
 export const Overlay = styled(AlertDialog.Overlay, {
-  _bgAlpha: ['$dark1', '50'],
+  _bgAlpha: ['$dark1', '80'],
+  backdropFilter: 'blur(8px)',
   position: 'fixed',
   inset: 0
 })

@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import SVG from 'react-inlinesvg'
 
 import { Box } from '@renderer/ui'
-import { toMain } from '@common/utils/event'
 
 import trafficLightRed from '../../../../../../resources/icons/traffic-lights/red.svg'
 import trafficLightOrange from '../../../../../../resources/icons/traffic-lights/orange.svg'
@@ -28,7 +27,7 @@ const TrafficLights = ({ css, ...rest }: TAppBarTrafficLightsProps) => {
 
   const handleAction = useCallback(
     (action: 'close' | 'minimize' | 'maximize') => () => {
-      window.electron.ipcRenderer.send(...toMain('WINDOW_ACTION', { action }))
+      window.api.mainWindowAction({ action })
     },
     []
   )
@@ -42,6 +41,7 @@ const TrafficLights = ({ css, ...rest }: TAppBarTrafficLightsProps) => {
         justifyContent: 'space-between',
         flexDirection: 'row',
         _appRegion: 'no-drag',
+        zIndex: '$trafficLights',
 
         '#icon': {
           visibility: 'hidden'

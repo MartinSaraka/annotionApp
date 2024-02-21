@@ -1,29 +1,38 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import { fixPathForAsarUnpack } from 'electron-util'
 import { join } from 'path'
 import Route from 'route-parser'
 
-import { ImageServer } from './core'
+import { ImageServer, Storage } from './core'
 import { IN_MILLISECONDS, MINUTE } from '@common/constants/time'
 import { ELECTRON_BROWSER_WINDOW_DEFAULT_OPTIONS } from '@common/constants/window'
 import { PROTOCOL_NAME } from '@common/constants/global'
 
-import { fromRenderer } from '@common/utils/event'
-
-const loginRoute = new Route<{ token: string }>(
-  `${PROTOCOL_NAME}://login/:token`
-)
+import {
+  mainToRenderer,
+  rendererToMain,
+  rendererToMainAndBack
+} from '@common/utils/event'
 
 app.setAsDefaultProtocolClient(PROTOCOL_NAME)
 
-app.on('open-url', (event, url) => {
-  event.preventDefault()
-  const params = loginRoute.match(url)
-  if (!params) return
-  console.log(params)
-})
+// Auth Storage
+type TAuthStorage = {
+  accessToken: string
+  csrfToken: string
+}
+
+const authStorage = new Storage<TAuthStorage>(
+  process.env.MAIN_VITE_AUTH_STORAGE_NAME || 'auth',
+  process.env.MAIN_VITE_AUTH_STORAGE_ENCRYPTION_KEY || ''
+)
+
+// Auth Route
+const loginRoute = new Route<{ identityToken: string }>(
+  `${PROTOCOL_NAME}://login/:identityToken`
+)
 
 // Hazel Updater
 const server = process.env.MAIN_VITE_HAZEL_SERVER_URL || 'localhost:3001'
@@ -49,22 +58,31 @@ const createWindow = (): void => {
     }
   })
 
-  ipcMain.on(
-    ...fromRenderer('WINDOW_ACTION', (_, { action }) => {
-      switch (action) {
-        case 'close':
-          mainWindow?.close()
-          break
-        case 'minimize':
-          mainWindow?.minimize()
-          break
-        case 'maximize':
-          if (mainWindow?.isMaximized()) mainWindow?.unmaximize()
-          else mainWindow?.maximize()
-          break
-      }
+  // TODO: core
+  app.on('open-url', (event, url) => {
+    event.preventDefault()
+
+    // Parse the URL and extract the access token
+    const params = loginRoute.match(url)
+    if (!params) return
+
+    const identityToken = params.identityToken
+    if (!identityToken) return
+
+    const csrfToken = authStorage.get('csrfToken')
+    if (!csrfToken) return
+
+    if (!mainWindow) return
+    // Send access and csrf token to the renderer process
+    mainToRenderer('AUTH_TOKENS').main(mainWindow, {
+      identityToken,
+      csrfToken
     })
-  )
+
+    setTimeout(() => {
+      mainWindow?.focus()
+    }, 200)
+  })
 
   const updaterInterval = setInterval(() => {
     autoUpdater.checkForUpdates()
@@ -78,6 +96,12 @@ const createWindow = (): void => {
   mainWindow.on('ready-to-show', () => {
     mainWindow?.maximize()
     mainWindow?.show()
+  })
+
+  mainWindow.on('focus', () => {
+    if (!mainWindow) return
+
+    mainToRenderer('WINDOW_IS_FOCUSED').main(mainWindow)
   })
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -117,6 +141,36 @@ app.whenReady().then(() => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+
+  /* FROM RENDERER HANDLERS */
+  rendererToMain('WINDOW_ACTION').main((_event, { action }) => {
+    if (!mainWindow) return
+    if (action === 'close') return mainWindow.close()
+    if (action === 'minimize') return mainWindow.minimize()
+    if (action === 'maximize') {
+      if (mainWindow.isMaximized()) return mainWindow.unmaximize()
+      return mainWindow?.maximize()
+    }
+  })
+
+  rendererToMain('SET_CSRF_TOKEN').main((_event, { csrfToken }) => {
+    authStorage.set('csrfToken', csrfToken)
+  })
+
+  rendererToMain('SET_ACCESS_TOKEN').main((_event, { accessToken }) => {
+    authStorage.set('accessToken', accessToken)
+    setTimeout(() => {
+      mainWindow?.focus()
+    }, 200)
+  })
+
+  rendererToMainAndBack('GET_ACCESS_TOKEN').main(() => {
+    return { accessToken: authStorage.get('accessToken') }
+  })
+
+  rendererToMain('DELETE_ACCESS_TOKEN').main(() => {
+    authStorage.delete('accessToken')
   })
 })
 

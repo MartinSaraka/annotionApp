@@ -3,4 +3,4 @@ export {
   type TServiceHealth
 } from './getServiceHealth'
 
-export { default as GET_API_HEALTH, type TApiHealth } from './getApiHealth'
+export { default as GET_ME, type TGetMeData } from './getMe'

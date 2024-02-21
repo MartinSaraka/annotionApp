@@ -182,7 +182,9 @@ export const {
       header: 1000,
       popover: 1500,
       modal: 2000,
-      toast: 2500
+      toast: 2500,
+      loading: 3000,
+      trafficLights: 4000
     }
   },
 

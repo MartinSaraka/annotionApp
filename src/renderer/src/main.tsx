@@ -7,6 +7,7 @@ import client from './apollo'
 
 import { Default } from './layouts'
 import { Toasts } from '@renderer/components'
+import { Smartlook } from '@renderer/components/recording'
 
 import '@renderer/i18n/config'
 
@@ -18,6 +19,8 @@ window.OpenSeadragon = OpenSeadragon
 
 root.render(
   <ApolloProvider client={client}>
+    <Smartlook />
+
     <TooltipProvider delayDuration={400}>
       <Default>
         <App />

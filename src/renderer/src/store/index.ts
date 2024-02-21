@@ -1,3 +1,5 @@
+export { default as useAuthStore } from './auth'
+
 export { default as useImageStore } from './images'
 
 export { default as useOpenSeadragonStore } from './openseadragon'

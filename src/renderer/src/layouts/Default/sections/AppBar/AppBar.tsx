@@ -6,6 +6,8 @@ import { Box, Button, Icon } from '@renderer/ui'
 import { TabList } from '@renderer/components'
 import { TrafficLights } from '@renderer/components/appbar'
 
+import { useAuthStore } from '@renderer/store'
+
 import * as S from './styled'
 
 type TAppBarProps = ComponentProps<typeof Box>
@@ -13,12 +15,14 @@ type TAppBarProps = ComponentProps<typeof Box>
 const AppBar = (props: TAppBarProps) => {
   const { t } = useTranslation('common')
 
+  const isAuthenticated = useAuthStore((state) => !!state.user)
+
   return (
     <S.Root {...props}>
       <TrafficLights />
 
       <S.Content>
-        <TabList css={{ _appRegion: 'no-drag' }} />
+        {isAuthenticated && <TabList css={{ _appRegion: 'no-drag' }} />}
       </S.Content>
 
       <S.Aside>
