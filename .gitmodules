@@ -1,0 +1,3 @@
+[submodule "src/java"]
+	path = src/java
+	url = https://github.com/histopathology-image-annotation-tool/annotaid-reader.git

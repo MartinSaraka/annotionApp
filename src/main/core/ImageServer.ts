@@ -5,7 +5,7 @@ import { SERVER_EXECUTABLE_PATHS } from '@common/constants/core'
 
 class ImageServer {
   #DEFAULT_EXECUTABLE_PATH =
-    'src/java/build/mac-arm/Contents/MacOS/Server' as const
+    'src/java/build/mac-arm/Contents/MacOS/AnnotAidReader' as const
 
   #child: ChildProcessWithoutNullStreams | null = null
   #command: string | null = null

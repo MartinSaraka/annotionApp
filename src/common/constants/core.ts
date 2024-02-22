@@ -24,11 +24,11 @@ export const SERVER_EXECUTABLE_PATHS: Record<
   Partial<Record<TSupportedArchitectures, string>>
 > = {
   darwin: {
-    arm: 'Contents/MacOS/Server',
-    arm64: 'Contents/MacOS/Server',
-    x64: 'Contents/MacOS/Server'
+    arm: 'Contents/MacOS/AnnotAidReader',
+    arm64: 'Contents/MacOS/AnnotAidReader',
+    x64: 'Contents/MacOS/AnnotAidReader'
   },
   win32: {
-    x64: 'win/Server.exe'
+    x64: 'win/AnnotAidReader.exe'
   }
 }

@@ -21,8 +21,11 @@
     "build:mac-arm": "PLATFORM=darwin ARCH=arm64 electron-vite build && electron-builder --mac --config",
     "build:mac-intel": "PLATFORM=darwin ARCH=x64 electron-vite build && electron-builder --mac --config",
     "build:linux": "electron-vite build && electron-builder --linux --config",
+    "build:all": "yarn build:mac-arm && yarn build:mac-intel && yarn build:win",
     "patch:stitches": "npx patch-package @stitches/react",
     "patch:annotorious": "npx patch-package @recogito/annotorious-openseadragon",
+    "git:submodule:recurse": "git config --global submodule.recurse true",
+    "git:submodule:update": "git submodule update --remote",
     "postinstall": "electron-builder install-app-deps && patch-package",
     "prepare": "husky install"
   },
