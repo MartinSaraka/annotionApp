@@ -107,8 +107,8 @@ const formatter = (data: {
       props['data-status'] === 'generating'
         ? pointObject
         : props['data-class-id'] || props['data-subtagging']
-        ? foreignObject
-        : undefined,
+          ? foreignObject
+          : undefined,
     ...props
   }
 }

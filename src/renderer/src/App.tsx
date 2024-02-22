@@ -44,7 +44,10 @@ const App = () => {
 
   useDidMount(() => {
     if (!smartlookConsent) return
-    initializeSmartlook()
+    initializeSmartlook(
+      import.meta.env.PROD,
+      import.meta.env.RENDERER_VITE_SMARTLOOK_KEY
+    )
   })
 
   // Show loading screen while fetching authenticated user

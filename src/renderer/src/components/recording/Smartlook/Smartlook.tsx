@@ -19,7 +19,10 @@ const Smartlook = (props: TSmartlookProps) => {
 
   const handleAllow = useCallback(() => {
     setConsent()
-    initializeSmartlook()
+    initializeSmartlook(
+      import.meta.env.PROD,
+      import.meta.env.RENDERER_VITE_SMARTLOOK_KEY
+    )
   }, [setConsent])
 
   return (

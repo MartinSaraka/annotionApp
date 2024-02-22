@@ -46,7 +46,12 @@ const config = {
         '@typescript-eslint/explicit-function-return-type': 'off'
       }
     }
-  ]
+  ],
+  settings: {
+    react: {
+      version: 'detect'
+    }
+  }
 }
 
 module.exports = config

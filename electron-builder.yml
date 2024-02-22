@@ -38,7 +38,7 @@ mac:
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
 
 dmg:
-  artifactName: ${productName}-${version}.${ext}
+  artifactName: ${productName}-${version}-setup.${ext}
   icon: ./resources/app-icons/mac/icon.icns
 
 linux:

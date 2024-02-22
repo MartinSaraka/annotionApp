@@ -82,8 +82,8 @@ const ProcessItem = ({
               status === 'SUCCESS'
                 ? '$green9'
                 : status === 'FAILURE'
-                ? '$crimson4'
-                : '$dark4'
+                  ? '$crimson4'
+                  : '$dark4'
           }}
         >
           {description}

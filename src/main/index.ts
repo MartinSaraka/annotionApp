@@ -84,9 +84,12 @@ const createWindow = (): void => {
     }, 200)
   })
 
-  const updaterInterval = setInterval(() => {
-    autoUpdater.checkForUpdates()
-  }, 15 * MINUTE * IN_MILLISECONDS)
+  const updaterInterval = setInterval(
+    () => {
+      autoUpdater.checkForUpdates()
+    },
+    15 * MINUTE * IN_MILLISECONDS
+  )
 
   mainWindow.on('closed', () => {
     mainWindow = null

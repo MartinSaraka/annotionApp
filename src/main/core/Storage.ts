@@ -25,10 +25,10 @@ class Storage<TStore extends Record<string, unknown>> {
     })
   }
 
-  #addToCache = <TKey extends keyof TStore>(
+  private addToCache<TKey extends keyof TStore>(
     key: TKey,
     value: TStore[typeof key]
-  ) => {
+  ) {
     this.#cache.set(key, value)
 
     if (this.#cache.size > this.#CACHE_SIZE) {
@@ -36,9 +36,9 @@ class Storage<TStore extends Record<string, unknown>> {
     }
   }
 
-  #getFromCache = <TKey extends keyof TStore>(
+  private getFromCache<TKey extends keyof TStore>(
     key: TKey
-  ): TStore[typeof key] | null => {
+  ): TStore[typeof key] | null {
     if (!this.#cache.has(key)) return null
 
     const valueFromCache = this.#cache.get(key)
@@ -47,7 +47,7 @@ class Storage<TStore extends Record<string, unknown>> {
     return valueFromCache as TStore[typeof key]
   }
 
-  set = <TKey extends keyof TStore>(key: TKey, value: TStore[typeof key]) => {
+  set<TKey extends keyof TStore>(key: TKey, value: TStore[typeof key]) {
     if (!this.#store) return
 
     const strValue = JSON.stringify(value)
@@ -55,13 +55,13 @@ class Storage<TStore extends Record<string, unknown>> {
     const strBuffer = valueBuffer.toString(this.#ENCODING)
 
     this.#store.set(key.toString(), strBuffer)
-    this.#addToCache(key, value)
+    this.addToCache(key, value)
   }
 
-  get = <TKey extends keyof TStore>(key: TKey): TStore[typeof key] | null => {
+  get<TKey extends keyof TStore>(key: TKey): TStore[typeof key] | null {
     if (!this.#store) return null
 
-    const valueFromCache = this.#getFromCache(key)
+    const valueFromCache = this.getFromCache(key)
     if (valueFromCache) return valueFromCache
 
     if (!this.#store.has(key)) return null
@@ -73,7 +73,7 @@ class Storage<TStore extends Record<string, unknown>> {
     return JSON.parse(decryptedBuffer)
   }
 
-  delete = <TKey extends keyof TStore>(key: TKey) => {
+  delete<TKey extends keyof TStore>(key: TKey) {
     if (!this.#store) return
 
     if (this.#cache.has(key)) this.#cache.delete(key)
