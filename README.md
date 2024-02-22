@@ -2,7 +2,9 @@
 
 AnnotAid is an Electron application for annotating histopathology images. It is designed to be simple and intuitive, while providing advanced AI precision. The application is built using [React](https://reactjs.org/), [Electron Vite](https://electron-vite.org/), and [OpenSeadragon](https://openseadragon.github.io/) with [Annotorious](https://annotorious.github.io/).
 
-## Project Structure
+![ogimage](https://github.com/histopathology-image-annotation-tool/hiat-app/assets/28087485/69cb6410-5273-40d7-a4cf-2fa3474c6121)
+
+## 📁 Project Structure
 
 ```md
 .
@@ -48,7 +50,7 @@ AnnotAid is an Electron application for annotating histopathology images. It is 
 ├── .env                              # Development environment variables
 ├── .env.example                      # Example template of environment variables
 ├── .env.production                   # Production environment variables
-├── electron.vite.config.ts            # Vite configuration for Electron
+├── electron.vite.config.ts           # Vite configuration for Electron
 ├── electron-builder.yml              # Electron Builder configuration
 ├── package.json                      # Project manifest
 └── ...
