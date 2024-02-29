@@ -23,7 +23,7 @@ win:
     - portable
 
 nsis:
-  artifactName: ${productName}-${version}-setup.${ext}
+  artifactName: ${productName}-win-setup.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
@@ -38,7 +38,7 @@ mac:
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
 
 dmg:
-  artifactName: ${productName}-${version}-setup.${ext}
+  artifactName: ${productName}-mac-${env.ARCH}-setup.${ext}
   icon: ./resources/app-icons/mac/icon.icns
 
 linux:
@@ -50,7 +50,7 @@ linux:
   category: Utility
 
 appImage:
-  artifactName: ${productName}-${version}.${ext}
+  artifactName: ${productName}-linux-setup.${ext}
 
 npmRebuild: false
 publish:
