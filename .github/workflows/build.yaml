@@ -49,9 +49,6 @@ jobs:
           path: src/java/build
           repo: histopathology-image-annotation-tool/annotaid-reader
 
-      - name: Show artifacts
-        run: ls -la src/java/build
-
       - name: Build platform
         run: yarn build:${{ inputs.platform }}
 
