@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/histopathology-image-annotation-tool/hiat-app/compare/v1.1.0...v1.1.1) (2024-02-29)
+
+
+### Bug Fixes
+
+* **release:** config and workflows ([2461b28](https://github.com/histopathology-image-annotation-tool/hiat-app/commit/2461b287453c4fbe8bbb096d528c6faa54817b38))
+
 # [1.1.0](https://github.com/histopathology-image-annotation-tool/hiat-app/compare/v1.0.0...v1.1.0) (2024-02-29)
 
 
