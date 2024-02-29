@@ -49,6 +49,9 @@ jobs:
           path: src/java/build
           repo: histopathology-image-annotation-tool/annotaid-reader
 
+      - name: Show artifacts
+        run: ls -la src/java/build
+
       - name: Build platform
         run: yarn build:${{ inputs.platform }}
 
@@ -56,4 +59,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: AnnotAid-${{ inputs.platform }}
-          path: dist/AnnotAid-${{ inputs.platform }}-setup.{dmg|exe}
+          path: dist/AnnotAid-${{ inputs.platform }}-setup.{dmg,exe}
