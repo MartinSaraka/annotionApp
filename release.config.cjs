@@ -8,7 +8,7 @@ module.exports = {
     '@semantic-release/release-notes-generator',
     '@semantic-release/npm',
     [
-      ('@semantic-release/github',
+      '@semantic-release/github',
       {
         assets: [
           {
@@ -27,7 +27,7 @@ module.exports = {
             label: 'AnnotAid Windows (${nextRelease.gitTag})'
           }
         ]
-      })
+      }
     ],
     [
       '@semantic-release/changelog',

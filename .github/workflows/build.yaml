@@ -15,18 +15,18 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Check out the repo
+      - name: 📁 Check out the repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 🛠️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
 
-      - name: Install dependencies
+      - name: 📦 Install Dependencies
         run: yarn
 
-      - name: 📁 Create env file
+      - name: 📄 Create env file
         run: |
           touch .env
           echo MAIN_VITE_HAZEL_SERVER_URL=${{ secrets.HAZEL_SERVER_URL }} >> .env
@@ -38,7 +38,7 @@ jobs:
           echo RENDERER_VITE_SMARTLOOK_KEY=${{ secrets.SMARTLOOK_KEY }} >> .env
           echo RENDERER_VITE_GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }} >> .env
 
-      - name: Download artifacts
+      - name: 📥 Download artifacts
         uses: dawidd6/action-download-artifact@v3
         with:
           github_token: ${{ secrets.ANNOTAID_READER_GH_TOKEN }}
@@ -49,13 +49,13 @@ jobs:
           path: src/java/build/${{ inputs.platform }}
           repo: histopathology-image-annotation-tool/annotaid-reader
 
-      - name: Show artifacts
+      - name: 🔎 Show artifacts
         run: ls -la src/java/build
 
-      - name: Build platform
+      - name: 🏗️ Build platform
         run: yarn build:${{ inputs.platform }}
 
-      - name: Archive artifacts
+      - name: 📤 Archive artifacts
         uses: actions/upload-artifact@v4
         with:
           name: AnnotAid-${{ inputs.platform }}
