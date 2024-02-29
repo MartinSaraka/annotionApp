@@ -12,18 +12,18 @@ module.exports = {
       {
         assets: [
           {
-            path: 'release/AnnotAid-mac-arm-setup.dmg',
-            name: 'AnnotAid-MacOS-ARM-${nextRelease.gitTag}-setup.zip',
+            path: 'release/AnnotAid-mac-arm/AnnotAid-mac-arm-setup.dmg',
+            name: 'AnnotAid-MacOS-ARM-${nextRelease.gitTag}-setup.dmg',
             label: 'AnnotAid MacOS ARM (${nextRelease.gitTag})'
           },
           {
-            path: 'release/AnnotAid-mac-intel-setup.dmg',
-            name: 'AnnotAid-MacOS-Intel-${nextRelease.gitTag}-setup.zip',
+            path: 'release/AnnotAid-mac-intel/AnnotAid-mac-intel-setup.dmg',
+            name: 'AnnotAid-MacOS-Intel-${nextRelease.gitTag}-setup.dmg',
             label: 'AnnotAid MacOS Intel (${nextRelease.gitTag})'
           },
           {
-            path: 'release/AnnotAid-win-setup.dmg',
-            name: 'AnnotAid-Windows-${nextRelease.gitTag}-setup.zip',
+            path: 'release/AnnotAid-win/AnnotAid-win-setup.exe',
+            name: 'AnnotAid-Windows-${nextRelease.gitTag}-setup.exe',
             label: 'AnnotAid Windows (${nextRelease.gitTag})'
           }
         ]
