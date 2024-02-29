@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/histopathology-image-annotation-tool/hiat-app/compare/v1.1.1...v1.1.2) (2024-02-29)
+
+
+### Bug Fixes
+
+* **release:** artifact paths in config ([273634d](https://github.com/histopathology-image-annotation-tool/hiat-app/commit/273634d0027e61b35d906e18859128ed11a5b416))
+
 ## [1.1.1](https://github.com/histopathology-image-annotation-tool/hiat-app/compare/v1.1.0...v1.1.1) (2024-02-29)
 
 
