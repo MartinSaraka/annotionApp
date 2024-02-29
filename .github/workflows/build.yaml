@@ -46,7 +46,7 @@ jobs:
           workflow_conclusion: success
           branch: main
           name: AnnotAid-${{ inputs.platform }}
-          path: src/java/build
+          path: src/java/build/${{ inputs.platform }}
           repo: histopathology-image-annotation-tool/annotaid-reader
 
       - name: Show artifacts
