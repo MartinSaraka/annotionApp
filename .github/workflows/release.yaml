@@ -18,7 +18,7 @@ jobs:
     name: Build Mac ARM
     uses: ./.github/workflows/build.yaml
     with:
-      os: macos-latest
+      ext: dmg
       platform: mac-arm
     secrets: inherit
 
@@ -27,7 +27,7 @@ jobs:
     name: Build Mac Intel
     uses: ./.github/workflows/build.yaml
     with:
-      os: macos-latest
+      ext: dmg
       platform: mac-intel
     secrets: inherit
 
@@ -36,7 +36,7 @@ jobs:
     name: Build Windows
     uses: ./.github/workflows/build.yaml
     with:
-      os: ubuntu-latest
+      ext: exe
       platform: win
     secrets: inherit
 
