@@ -1,3 +1,21 @@
+# [2.0.0](https://github.com/histopathology-image-annotation-tool/hiat-app/compare/v1.1.2...v2.0.0) (2024-03-01)
+
+
+### Features
+
+* **smartlook:** change smartlook settings ([391b228](https://github.com/histopathology-image-annotation-tool/hiat-app/commit/391b22827bf58cdfb4da0ebe4f35db756f7f61da))
+* **sync:** add image sync ([c3dbcb9](https://github.com/histopathology-image-annotation-tool/hiat-app/commit/c3dbcb9b8256dbb464d506440162cd037ecc762c))
+
+
+### Performance Improvements
+
+* **java:** edit java paths ([4a0685b](https://github.com/histopathology-image-annotation-tool/hiat-app/commit/4a0685beffd69c552847ab57f0db9525acc78354))
+
+
+### BREAKING CHANGES
+
+* **java:** The paths for java backend has been modified.
+
 ## [1.1.2](https://github.com/histopathology-image-annotation-tool/hiat-app/compare/v1.1.1...v1.1.2) (2024-02-29)
 
 
