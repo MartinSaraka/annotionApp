@@ -5,7 +5,7 @@ import { Editor } from '@renderer/layouts'
 import { Dashboard, Empty, Image, Login } from '@renderer/pages'
 import { FullScreenLoading } from '@renderer/ui/loading'
 
-import { initializeSmartlook } from '@common/utils/recording'
+import { identitySmartlook, initializeSmartlook } from '@common/utils/recording'
 import { useAuthStore, useImageStore, useSettingsStore } from '@renderer/store'
 import { useDidMount } from '@renderer/hooks'
 
@@ -30,7 +30,10 @@ const App = () => {
 
   const handleUserRefetch = useCallback(() => {
     refetch()
-      .then(({ data }) => authenticate(data.me))
+      .then(({ data }) => {
+        identitySmartlook(import.meta.env.PROD, data.me)
+        authenticate(data.me)
+      })
       .catch(() => {
         // TODO: show toast
         deauthenticate()
@@ -51,7 +54,7 @@ const App = () => {
   })
 
   // Show loading screen while fetching authenticated user
-  if (isAuthenticated && loading) return <FullScreenLoading />
+  if (loading) return <FullScreenLoading />
 
   // If user is not authenticated, show login page
   if (!isAuthenticated) return <Login />
