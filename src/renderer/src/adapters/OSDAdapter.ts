@@ -8,7 +8,7 @@ class OSDAdapter {
     )
 
     const path = `${uri}${metadata.directory}/${metadata.filename}`
-    const tileSize = `${metadata.tile.optimal.width}-${metadata.tile.optimal.height}`
+    const tileSize = `&w=${metadata.tile.optimal.width}&h=${metadata.tile.optimal.height}`
 
     const options: TOSDTileSourceOptions = {
       width: metadata.size.width.pixel,
@@ -18,7 +18,7 @@ class OSDAdapter {
       minLevel: 2,
       maxLevel: metadata.levels,
       getTileUrl: (l, x, y) =>
-        `${path}-${l}-${x}-${y}-${tileSize}${metadata.extension}`
+        `${path}${metadata.extension}?z=${l}&x=${x}&y=${y}${tileSize}`
     }
 
     return options
@@ -37,9 +37,9 @@ class OSDAdapter {
     console.log('IMPLEMENT magnification: ', magnification)
 
     const path = `${metadata.directory}/${metadata.filename}`
-    const props = `${pointX}-${pointY}-${sizeWidth}-${sizeHeight}-${origin}`
+    const props = `?x=${pointX}&y=${pointY}&w=${sizeWidth}&h=${sizeHeight}&t=${origin}`
 
-    return `${path}-${props}${metadata.extension}`
+    return `${path}${metadata.extension}${props}`
   }
 }
 
