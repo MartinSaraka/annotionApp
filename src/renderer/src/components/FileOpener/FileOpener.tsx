@@ -1,12 +1,21 @@
 import { ChangeEvent, memo, useCallback, useRef, useState } from 'react'
 import { type ComponentProps } from '@stitches/react'
 import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/client'
 
 import { Box, Icon, Text } from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
 
 import { preventAllDefaults } from '@common/utils/global'
 import { SUPPORTED_FORMATS } from '@common/constants/global'
+
+import validationSchema, {
+  TCreateImageInput
+} from '@renderer/schemas/image/createImage'
+import {
+  CREATE_IMAGE,
+  TCreateImageData
+} from '@renderer/apollo/mutations/image'
 
 import * as S from './styled'
 
@@ -16,28 +25,45 @@ type TFileOpenerProps = ComponentProps<typeof Box>
 
 const FileOpener = ({ css, ...rest }: TFileOpenerProps) => {
   const { t } = useTranslation(['common', 'editor'])
+
   const open = useImageStore((state) => state.open)
+
+  const [status, setStatus] = useState<TStatus>('idle')
+  const [createImage] = useMutation<TCreateImageData, TCreateImageInput>(
+    CREATE_IMAGE
+  )
 
   const areaRef = useRef<HTMLDivElement | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
-
-  const [status, setStatus] = useState<TStatus>('idle')
 
   const handleFocus = useCallback(() => {
     inputRef.current?.click()
   }, [inputRef])
 
+  const handleCreateImage = useCallback(
+    (variables: TCreateImageInput['data']) => {
+      const data = validationSchema.parse(variables)
+      return createImage({ variables: { data } })
+    },
+    [createImage]
+  )
+
   const handleOpen = useCallback(
     (files: File[]) => {
       setStatus('loading')
 
-      const filePromises = files.map((file) => open(file.path))
+      const filePromises = files.map((file) =>
+        open(file.path, handleCreateImage)
+      )
 
       Promise.all(filePromises)
         .then(() => setStatus('idle'))
-        .catch(() => setStatus('error'))
+        .catch((err) => {
+          console.log(err)
+          setStatus('error')
+        })
     },
-    [open, setStatus]
+    [open, setStatus, handleCreateImage]
   )
 
   const handleChange = useCallback(

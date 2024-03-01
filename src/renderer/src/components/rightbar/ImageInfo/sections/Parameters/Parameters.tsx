@@ -1,11 +1,20 @@
 import { memo, useCallback, useMemo } from 'react'
 import { Field, Form, Formik, FormikConfig } from 'formik'
+import { useTranslation } from 'react-i18next'
+import { useMutation } from '@apollo/client'
 
 import { Button, Input, Label, List } from '@renderer/ui'
 import { useImageStore } from '@renderer/store'
 
 import { convertBytes, roundNumber } from '@common/utils/numbers'
-import { useTranslation } from 'react-i18next'
+
+import {
+  TUpdateImageData,
+  UPDATE_IMAGE
+} from '@renderer/apollo/mutations/image'
+import validationSchema, {
+  TUpdateImageInput
+} from '@renderer/schemas/image/updateImage'
 
 type TFormValues = {
   filename: string
@@ -27,40 +36,59 @@ type TFormValues = {
 const Parameters = () => {
   const { t } = useTranslation(['common', 'image'])
 
-  const data = useImageStore((state) => state.getData())
+  const imageId = useImageStore((state) => state.getId())
+  const imageData = useImageStore((state) => state.getData())
   const setData = useImageStore((state) => state.setData)
+
+  const [updateImage] = useMutation<TUpdateImageData, TUpdateImageInput>(
+    UPDATE_IMAGE
+  )
 
   const initialValues: FormikConfig<TFormValues>['initialValues'] = useMemo(
     () => ({
-      filename: data?.filename || '',
-      uri: data?.path || '',
-      format: data?.format || '',
+      filename: imageData?.filename || '',
+      uri: imageData?.path || '',
+      format: imageData?.format || '',
       diskUncompressed: roundNumber(
-        convertBytes(data?.fileSize.uncompressed || 0, 'GiB'),
+        convertBytes(imageData?.fileSize.uncompressed || 0, 'GiB'),
         1
       ),
       diskCompressed: roundNumber(
-        convertBytes(data?.fileSize.compressed || 0, 'GiB'),
+        convertBytes(imageData?.fileSize.compressed || 0, 'GiB'),
         1
       ),
-      sizeWidth: roundNumber(data?.size.width.micro || 0, 2),
-      sizeHeight: roundNumber(data?.size.height.micro || 0, 2),
-      zoom: data?.magnification || 0,
-      dimensionsC: data?.size.c || 0,
-      dimensionsZ: data?.size.z || 0,
-      dimensionsT: data?.size.t || 0,
-      pixelSizeW: roundNumber(data?.pixel.width.micro || 0, 4),
-      pixelSizeH: roundNumber(data?.pixel.height.micro || 0, 4),
-      pixelType: data?.pixel.type || ''
+      sizeWidth: roundNumber(imageData?.size.width.micro || 0, 2),
+      sizeHeight: roundNumber(imageData?.size.height.micro || 0, 2),
+      zoom: imageData?.magnification || 0,
+      dimensionsC: imageData?.size.c || 0,
+      dimensionsZ: imageData?.size.z || 0,
+      dimensionsT: imageData?.size.t || 0,
+      pixelSizeW: roundNumber(imageData?.pixel.width.micro || 0, 4),
+      pixelSizeH: roundNumber(imageData?.pixel.height.micro || 0, 4),
+      pixelType: imageData?.pixel.type || ''
     }),
-    [data]
+    [imageData]
+  )
+
+  const handleUpdateImage = useCallback(
+    async (data: TUpdateImageInput['data']) => {
+      const variables = validationSchema.parse({ id: imageId, data })
+      return updateImage({ variables })
+    },
+    [imageId]
   )
 
   const onSubmit: FormikConfig<TFormValues>['onSubmit'] = useCallback(
     (values) => {
+      const oldName = imageData?.filename || ''
       setData(values)
+
+      handleUpdateImage({ name: values.filename }).catch(() => {
+        // TODO: handle error
+        setData({ filename: oldName })
+      })
     },
-    []
+    [setData, handleUpdateImage, imageData?.filename]
   )
 
   return (
@@ -88,7 +116,7 @@ const Parameters = () => {
               <Input>
                 <Field
                   required
-                  title={data?.filename}
+                  title={imageData?.filename}
                   id="parameters-filename"
                   name="filename"
                   as={Input.Field}
@@ -107,7 +135,7 @@ const Parameters = () => {
                   required
                   disabled
                   id="parameters-uri"
-                  title={data?.path}
+                  title={imageData?.path}
                   name="uri"
                   as={Input.Field}
                   onBlur={handleSubmit}
@@ -125,7 +153,7 @@ const Parameters = () => {
                   required
                   disabled
                   id="parameters-format"
-                  title={data?.format}
+                  title={imageData?.format}
                   name="format"
                   as={Input.Field}
                   onBlur={handleSubmit}
@@ -148,7 +176,7 @@ const Parameters = () => {
                 <Field
                   required
                   disabled
-                  title={`${data?.fileSize.uncompressed} B`}
+                  title={`${imageData?.fileSize.uncompressed} B`}
                   id="parameters-disk-uncompressed"
                   name="diskUncompressed"
                   as={Input.Field}
@@ -172,7 +200,7 @@ const Parameters = () => {
                 <Field
                   required
                   disabled
-                  title={`${data?.fileSize.compressed} B`}
+                  title={`${imageData?.fileSize.compressed} B`}
                   id="parameters-disk-compressed"
                   name="diskCompressed"
                   as={Input.Field}
@@ -204,7 +232,7 @@ const Parameters = () => {
                 <Field
                   required
                   disabled
-                  title={data?.size.width.micro}
+                  title={imageData?.size.width.micro}
                   id="parameters-size-width"
                   name="sizeWidth"
                   as={Input.Field}
@@ -228,7 +256,7 @@ const Parameters = () => {
                 <Field
                   required
                   disabled
-                  title={data?.size.height.micro}
+                  title={imageData?.size.height.micro}
                   id="parameters-size-height"
                   name="sizeHeight"
                   as={Input.Field}
@@ -357,7 +385,7 @@ const Parameters = () => {
                 <Field
                   required
                   disabled
-                  title={data?.pixel.width.micro.toString()}
+                  title={imageData?.pixel.width.micro.toString()}
                   id="parameters-pixel-size-2"
                   name="pixelSizeW"
                   as={Input.Field}
@@ -381,7 +409,7 @@ const Parameters = () => {
                 <Field
                   required
                   disabled
-                  title={data?.pixel.height.micro.toString()}
+                  title={imageData?.pixel.height.micro.toString()}
                   id="parameters-pixel-size-h"
                   name="pixelSizeH"
                   as={Input.Field}

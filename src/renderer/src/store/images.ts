@@ -22,8 +22,12 @@ import {
 import { ImageService } from '@renderer/services'
 import { AnnotationHandler } from '@renderer/handlers'
 import { DEFAULT_CLASSES } from '@common/constants/classes'
+import { TCreateImageInput } from '@renderer/schemas/image/createImage'
+import { FetchResult } from '@apollo/client'
+import { TCreateImageData } from '@renderer/apollo/mutations/image'
 
 export type TOpenedImageState = {
+  id: TID
   image: TImageInfo
   data: Partial<TImageInfo>
   activeTool: TTool
@@ -39,7 +43,13 @@ export type TImageState = {
   selected: TPath | string | null
   opened: Record<TPath, TOpenedImageState>
 
-  open: (path: TPath, replace?: boolean) => Promise<TImageInfo | undefined>
+  open: (
+    path: TPath,
+    sync: (
+      data: TCreateImageInput['data']
+    ) => Promise<FetchResult<TCreateImageData>>
+  ) => Promise<TImageInfo | undefined>
+  getId: () => TID | null
   select: (path: TPath | string) => void
   close: (path: TPath | string) => void
 
@@ -133,7 +143,7 @@ const useImageStore = create<TImageState>()(
       selected: 'dashboard',
       tabs: ['dashboard'],
 
-      open: async (path, replace = true) => {
+      open: async (path, sync) => {
         if (path in get().opened) {
           set({ selected: path })
           return get().opened[path].image
@@ -145,6 +155,20 @@ const useImageStore = create<TImageState>()(
 
         const parsedPath = parse(metadata.path)
 
+        const syncData = await sync({
+          name: parsedPath.name,
+          metadata: {
+            directory: parsedPath.dir,
+            filename: parsedPath.name,
+            extension: parsedPath.ext,
+            format: metadata.format,
+            hash: metadata.hash,
+            path: metadata.path
+          }
+        })
+
+        if (!syncData.data?.image) return undefined
+
         const info: TImageInfo = {
           directory: parsedPath.dir,
           filename: parsedPath.name,
@@ -155,7 +179,7 @@ const useImageStore = create<TImageState>()(
         const selected = get().selected
         const tabs = get().tabs
 
-        if (replace && selected && tabs.includes(selected)) {
+        if (selected && tabs.includes(selected)) {
           const selectedIdx = tabs.indexOf(selected)
 
           if (selectedIdx !== -1) {
@@ -171,6 +195,7 @@ const useImageStore = create<TImageState>()(
           opened: {
             ...get().opened,
             [info.path]: {
+              id: syncData.data.image.id,
               image: info,
               data: {},
               activeTool: DEFAULT_ACTIVE_TOOL,
@@ -185,6 +210,19 @@ const useImageStore = create<TImageState>()(
         })
 
         return get().opened[info.path].image
+      },
+
+      getId: () => {
+        const opened = get().opened
+        const selected = get().selected
+
+        if (!selected) return null
+
+        if (selected in opened) {
+          return opened[selected].id
+        }
+
+        return null
       },
 
       close: (path) => {
