@@ -7,21 +7,21 @@ on:
   workflow_call:
 
 jobs:
-  test:
-    name: Check code quality
+  lint:
+    name: 🧪 Lint
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the repo
+      - name: 📁 Check out the repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 🛠️ Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18.x
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: yarn
 
-      - name: Lint
+      - name: 🚀 Run lint
         run: yarn lint

@@ -9,6 +9,9 @@ on:
       platform:
         required: true
         type: string
+      asset:
+        required: true
+        type: string
 
 jobs:
   build:
@@ -38,16 +41,15 @@ jobs:
           echo RENDERER_VITE_SMARTLOOK_KEY=${{ secrets.SMARTLOOK_KEY }} >> .env
           echo RENDERER_VITE_GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }} >> .env
 
-      - name: 📥 Download artifacts
-        uses: dawidd6/action-download-artifact@v3
+      - name: 📥 Download release asset
+        uses: robinraju/release-downloader@v1.9
         with:
-          github_token: ${{ secrets.ANNOTAID_READER_GH_TOKEN }}
-          workflow: release.yaml
-          workflow_conclusion: success
-          branch: main
-          name: AnnotAid-${{ inputs.platform }}
-          path: src/java/build/${{ inputs.platform }}
-          repo: histopathology-image-annotation-tool/annotaid-reader
+          latest: true
+          extract: true
+          token: ${{ secrets.ANNOTAID_READER_GH_TOKEN }}
+          repository: histopathology-image-annotation-tool/annotaid-reader
+          fileName: AnnotAid-${{ inputs.asset }}-*
+          out-file-path: src/java/build/${{ inputs.platform }}
 
       - name: 🔎 Show artifacts
         run: ls -la src/java/build

@@ -12,7 +12,7 @@ env:
 
 jobs:
   check:
-    name: 🧪 Run Linter
+    name: 🧪 Code Quality Check
     uses: ./.github/workflows/check.yaml
     secrets: inherit
 
@@ -23,6 +23,7 @@ jobs:
     with:
       ext: dmg
       platform: mac-arm
+      asset: Mac-ARM
     secrets: inherit
 
   build-mac-intel:
@@ -32,6 +33,7 @@ jobs:
     with:
       ext: dmg
       platform: mac-intel
+      asset: Mac-Intel
     secrets: inherit
 
   build-win:
@@ -41,6 +43,7 @@ jobs:
     with:
       ext: exe
       platform: win
+      asset: Windows
     secrets: inherit
 
   release:
@@ -76,3 +79,27 @@ jobs:
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  delete-mac-arm-artifact:
+    needs: release
+    name: 🗑️ Delete Mac ARM Artifact
+    uses: ./.github/workflows/cleanup.yaml
+    with:
+      platform: mac-arm
+    secrets: inherit
+
+  delete-mac-intel-artifact:
+    needs: release
+    name: 🗑️ Delete Mac Intel Artifact
+    uses: ./.github/workflows/cleanup.yaml
+    with:
+      platform: mac-intel
+    secrets: inherit
+
+  delete-win-artifact:
+    needs: release
+    name: 🗑️ Delete Windows Artifact
+    uses: ./.github/workflows/cleanup.yaml
+    with:
+      platform: win
+    secrets: inherit

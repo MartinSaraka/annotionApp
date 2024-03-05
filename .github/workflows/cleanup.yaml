@@ -1,0 +1,21 @@
+name: 🧹 Cleanup artifacts
+
+on:
+  workflow_call:
+    inputs:
+      platform:
+        required: true
+        type: string
+
+jobs:
+  delete:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📁 Check out the repo
+        uses: actions/checkout@v4
+
+      - name: 🧹 Delete artifacts
+        uses: geekyeggo/delete-artifact@v4
+        with:
+          name: AnnotAid-${{ inputs.platform }}
