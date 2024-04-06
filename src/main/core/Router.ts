@@ -19,8 +19,8 @@ class Router {
       storage: Storage<TStorage>,
       mainWindow: BrowserWindow
     ) =>
-    (event: Electron.Event, url: string) => {
-      event.preventDefault()
+    (url: string) => {
+      //event.preventDefault()
 
       // Parse the URL and extract the access token
       const params = this.LOGIN_ROUTE.match(url)
@@ -39,9 +39,9 @@ class Router {
         csrfToken
       })
 
-      setTimeout(() => {
+      /*setTimeout(() => {
         mainWindow?.focus()
-      }, 200)
+      }, 200)*/
     }
 }
 

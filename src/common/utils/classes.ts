@@ -1,7 +1,9 @@
-import { TAnnotationClass } from '@common/types/annotation'
+import type { Class } from '@common/types/datamodel'
 
-import { DEFAULT_CLASSES } from '@common/constants/classes'
+export const isDefaultClass = (item?: Class) => {
+  return !!item?.Default?.id
+}
 
-export const isDefaultClass = (item: TAnnotationClass) => {
-  return !!DEFAULT_CLASSES?.[item.id]
+export const getDefaultClass = (item?: Class) => {
+  return item?.Default || null
 }

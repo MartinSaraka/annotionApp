@@ -17,7 +17,7 @@ class Storage<TStore extends Record<string, unknown>> {
   #cache: Map<keyof TStore, TStore[keyof TStore]> = new Map()
   #keysIter = this.#cache.keys()
 
-  constructor(name: string, encryptionKey: string) {
+  constructor(name: string = 'auth', encryptionKey: string = '') {
     this.#store = new Store<TStore>({
       name,
       watch: true,

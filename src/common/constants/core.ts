@@ -32,3 +32,17 @@ export const SERVER_EXECUTABLE_PATHS: Record<
     x64: 'win/AnnotAidReader.exe'
   }
 }
+
+export const DEVELOPMENT_EXECUTABLE_PATHS: Record<
+  TSupportedPlatforms,
+  Partial<Record<TSupportedArchitectures, string>>
+> = {
+  darwin: {
+    arm: 'mac-arm/Contents/MacOS/AnnotAidReader',
+    arm64: 'mac-arm/Contents/MacOS/AnnotAidReader',
+    x64: 'mac-intel/Contents/MacOS/AnnotAidReader'
+  },
+  win32: {
+    x64: 'win/AnnotAidReader.exe'
+  }
+}

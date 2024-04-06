@@ -23,7 +23,7 @@ const Dashboard = () => (
           textTransform: 'uppercase'
         }}
       >
-        this page is under construction
+        Welcome - Select your medical images that u want to annotate
       </Text>
     </Box>
   </Box>

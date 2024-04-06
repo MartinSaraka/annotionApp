@@ -52,4 +52,5 @@ export type TImageInfo = TFileInfo & {
     type: string
   }
   levels: number
+  updatedAt: string
 }

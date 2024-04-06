@@ -1,5 +1,7 @@
 import { TTool } from '@common/types/tool'
 
+export enum EAnnotationType {}
+
 export enum ETool {
   /**
    * Openseadragon built-in
