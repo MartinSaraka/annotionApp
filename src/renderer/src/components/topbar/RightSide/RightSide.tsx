@@ -17,8 +17,6 @@ const RightSide = ({ css, ...rest }: TTopBarRightSideProps) => {
       css={{ flexDirection: 'row', alignItems: 'center', gap: '$4', ...css }}
       {...rest}
     >
-
-
       <Dialog.Root>
         <Dialog.Trigger asChild>
           <Button>
@@ -31,7 +29,6 @@ const RightSide = ({ css, ...rest }: TTopBarRightSideProps) => {
           <ExportAnnotationsDialog />
         </Dialog.Content>
       </Dialog.Root>
-
 
       <Popover.Root>
         <Popover.Anchor>

@@ -32,6 +32,10 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
   const toggleAnnotationTool = useImageStore(
     (state) => state.toggleAnnotationTool
   )
+  const handleAIAnnotationClick = () => {
+    console.log('AI Annotation button clicked')
+    // Logic to handle AI Annotation goes here
+  }
 
   const setAnnotoriousTool = useAnnotoriousStore((state) => state.setTool)
   const resetAnnotoriousTool = useAnnotoriousStore((state) => state.resetTool)
@@ -246,6 +250,25 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
             </Tooltip.Content>
           </Tooltip.Root>
         </Toolbar.Group>
+        <Toolbar.Separator orientation="vertical" />
+        {/* Your new AI Annotation button */}
+        <Tooltip.Root>
+          <Tooltip.Trigger asChild>
+            <Toolbar.Button onClick={handleAIAnnotationClick}>
+              <Icon name="AiIcon" width={24} height={24} />{' '}
+              {/* Replace AiIcon with the actual icon name if you have one */}
+              <Text>AI Annotation</Text>{' '}
+              {/* Use the actual i18n key for "AI Annotation" if it exists */}
+            </Toolbar.Button>
+          </Tooltip.Trigger>
+
+          <Tooltip.Content side="bottom" align="center">
+            <Text>Annotation made by our best AI</Text>{' '}
+            {/* Use the actual i18n key for the tooltip text if it exists */}
+            {/* <Kbd keys="A" css={{ color: '$dark4' }} /> Optionally show a keyboard shortcut if there's one */}
+            <Tooltip.Arrow />
+          </Tooltip.Content>
+        </Tooltip.Root>
       </Toolbar.Root>
     </Box>
   )
