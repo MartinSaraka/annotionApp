@@ -17,10 +17,7 @@ const RightSide = ({ css, ...rest }: TTopBarRightSideProps) => {
       css={{ flexDirection: 'row', alignItems: 'center', gap: '$4', ...css }}
       {...rest}
     >
-      <Button outlined>
-        <Icon name="Share2Icon" width={14} height={14} />
-        {t('actions.share')}
-      </Button>
+
 
       <Dialog.Root>
         <Dialog.Trigger asChild>
@@ -35,9 +32,6 @@ const RightSide = ({ css, ...rest }: TTopBarRightSideProps) => {
         </Dialog.Content>
       </Dialog.Root>
 
-      <Button ghost aria-label={t('aria.label.notifications')}>
-        <Icon name="BellIcon" width={18} height={18} />
-      </Button>
 
       <Popover.Root>
         <Popover.Anchor>
