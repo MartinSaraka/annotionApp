@@ -157,7 +157,7 @@ const useImageStore = create<TImageState>()(
 
         const syncData = await sync({
           name: parsedPath.name,
-          metadata: {
+          Metadata: {
             directory: parsedPath.dir,
             filename: parsedPath.name,
             extension: parsedPath.ext,

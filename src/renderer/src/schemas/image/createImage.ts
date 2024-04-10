@@ -4,7 +4,7 @@ const CreateImageSchema = z
   .object({
     name: z.string({ required_error: 'name.required' }).trim(),
     description: z.string().trim().optional(),
-    metadata: z.object({
+    Metadata: z.object({
       path: z.string({ required_error: 'metadata.path.required' }),
       hash: z.string({ required_error: 'metadata.hash.required' }),
       directory: z.string({ required_error: 'metadata.directory.required' }),
