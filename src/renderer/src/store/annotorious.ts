@@ -46,6 +46,7 @@ const useAnotoriousStore = create<TAnnotoriousState>()((set, get) => ({
   getAnnotoriousPreview: () => get().preview,
 
   saveAndUpdateAnnotation: async (annotation) => {
+    console.log('pff annotorius.tsx')
     const annotorious = get().anno
     if (!annotorious) return null
 

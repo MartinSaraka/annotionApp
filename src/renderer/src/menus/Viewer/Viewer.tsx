@@ -90,7 +90,7 @@ const Viewer = ({ annotationId }: TViewerProps) => {
     if (!annotation || body === false) return
     const pressed = isAnnotationVisible(body?.visibility)
     const data = AnnotationHandler.setVisibility(annotation, !pressed)
-
+    console.log('hm tu som')
     saveAnnotation(data, false)
     await update(data)
 

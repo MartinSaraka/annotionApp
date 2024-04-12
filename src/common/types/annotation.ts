@@ -28,7 +28,7 @@ export type TAnnotation = {
 
 export type TAnnotationBody = {
   type: string
-  purpose?: TAnnotationPurpose
+  purpose?: string
   value: string
 }
 

@@ -9,7 +9,7 @@ export default class NuClickTool extends Tool {
   startDrawing = (x, y, _, evt) => {
     // The top-most existing annotation at this position (if any)
     const annotation = evt.target.closest('.a9s-annotation')?.annotation
-
+    console.log('fck off')
     // The point drawing tool will ALWAYS create a point annotation,
     // regardless of whether there's already an annotation underneath.
     // UNLESS the annotation underneath is itself a point!

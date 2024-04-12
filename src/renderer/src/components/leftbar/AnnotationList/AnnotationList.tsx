@@ -74,20 +74,21 @@ const AnnotationList = ({ css, ...rest }: TLeftBarAnnotationListProps) => {
   const handleSelectNode = useCallback(
     (node: NodeModel<TNodeData>) => {
       const id = node.id as TID
-
+      console.log('hello')
       if (
         isAnnotationEditable(node.data?.editability) &&
         isAnnotationVisible(node.data?.visibility) &&
         !isAnnotationGenerating(node.data?.status)
       ) {
         selectAnnotoriousAnnotation(id)
+        console.log('hm')
       } else {
+        console.log('bruh')
         cancelAllSelected()
       }
 
       const annotation = saveSelectedAnnotation(id)
       if (!annotation) return
-
       AnnotoriousHandler.instance(preview).showPreview(annotation)
     },
     [preview, selectAnnotoriousAnnotation, saveSelectedAnnotation]

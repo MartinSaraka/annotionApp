@@ -28,6 +28,7 @@ class ProcessHandler {
     process: TProcess,
     data: TProcessTypeMap[keyof TProcessTypeMap]['response']
   ) => {
+    console.log('som v type')
     switch (process.type) {
       case ProcessType.MITOSIS_DETECTION:
         return ProcessHandler.#handleMC(
@@ -59,6 +60,7 @@ class ProcessHandler {
     annotation: TAnnotation,
     data: TInstantTypeMap[keyof TInstantTypeMap]['response']
   ) => {
+    console.log('som v type2')
     switch (type) {
       case InstantType.NUCLICK:
         return ProcessHandler.#handleNC(
@@ -93,7 +95,7 @@ class ProcessHandler {
     embedding.previews = []
 
     const objects = data.segmented_objects
-
+    console.log('som tuuu123456')
     for (const points of objects) {
       const newAnnotation = AnnotationUtils.createAnnotation(points, [
         AnnotationUtils.createBody('TextualBody', 'status', 'generated'),
@@ -137,7 +139,7 @@ class ProcessHandler {
     const points = data.segmented_nuclei[0]
 
     const activeClass = useImageStore.getState().getActiveClass()
-
+    console.log('som tuu')
     let newAnnotation = AnnotationUtils.createAnnotation(points, [
       AnnotationUtils.createBody('TextualBody', 'status', 'generated'),
       ...(activeClass
@@ -166,7 +168,7 @@ class ProcessHandler {
     }
 
     console.log(newAnnotation)
-
+    console.log('som tuuu123456')
     anno.addAnnotation(newAnnotation)
     useImageStore.getState().saveAnnotation(newAnnotation)
     AnnotoriousHandler.instance(preview).showPreview(newAnnotation)
@@ -196,7 +198,7 @@ class ProcessHandler {
         AnnotationUtils.createBody('TextualBody', 'parent', annotation.id),
         AnnotationUtils.createBody('TextualBody', 'subtagging', subtag)
       ])
-
+      console.log('som tuuu123456')
       const intersections: TAnnotationIntersection[] =
         anno.getAnnotationsIntersecting(newAnnotation)
       if (!intersections.length) continue
@@ -236,7 +238,7 @@ class ProcessHandler {
       annotation,
       data.label
     )
-
+    console.log('som tuuu123456')
     useImageStore.getState().saveAnnotation(editedAnnotation)
 
     await useAnnotoriousStore
@@ -253,6 +255,7 @@ class ProcessHandler {
   ) => {
     const anno = useAnnotoriousStore.getState().anno
     const preview = useAnnotoriousStore.getState().preview
+    console.log('som tu123456a')
     if (!anno || !preview) throw new Error('Annotorious not available')
 
     const annotationId = process.annotationId

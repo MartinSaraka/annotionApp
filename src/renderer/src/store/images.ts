@@ -468,7 +468,9 @@ const useImageStore = create<TImageState>()(
       // Annotations
 
       selectAnnotation: (id) => {
+        console.log('som tuuu')
         const selectedImage = get().getSelected()
+        console.log(selectedImage)
         if (!selectedImage) return null
 
         if (!(id in selectedImage.annotations)) return null
@@ -583,7 +585,6 @@ const useImageStore = create<TImageState>()(
 
         const info = opened[selected]
         const isExisting = annotation.id in info.annotations
-
         const newAnnotation = isExisting
           ? annotation
           : AnnotationHandler.formatDefault(

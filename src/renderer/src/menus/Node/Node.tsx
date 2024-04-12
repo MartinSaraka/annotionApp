@@ -55,7 +55,7 @@ const Node = ({ node }: TNodeProps) => {
     if (!annotation || !node.data) return
     const pressed = isAnnotationEditable(node.data?.editability)
     const data = AnnotationHandler.setEditability(annotation, !pressed)
-
+    console.log('som v node.tsx')
     saveAnnotation(data, false)
     await update(data)
 

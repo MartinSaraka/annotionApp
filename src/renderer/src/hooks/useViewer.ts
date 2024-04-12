@@ -254,13 +254,12 @@ const useViewer = (source: TImageInfo): TUseViewer => {
     (anno: TAnno, preview: TAnno) => {
       anno.setDrawingEnabled(false)
       anno.setAnnotations(Object.values(annotations))
-
+      console.log('NEBODAJ SOM TU')
       anno.on('createSelection', (selection: TAnnotation) => {
         console.log('createSelection')
-
+        console.log(selection)
         let annotation = selection
 
-        // Active Class
         const activeClass = getActiveClass()
         if (activeClass?.id) {
           annotation = AnnotationHandler.upsertBody(
@@ -282,7 +281,7 @@ const useViewer = (source: TImageInfo): TUseViewer => {
         'clickAnnotation',
         (annotation: TAnnotation, element: HTMLElement) => {
           console.log('clickAnnotation', annotation)
-
+          console.log('som tu')
           const status = element.getAttribute('data-status')
           const editability = element.getAttribute('data-editability')
 
@@ -300,7 +299,7 @@ const useViewer = (source: TImageInfo): TUseViewer => {
 
       anno.on('createAnnotation', (annotationData: TAnnotation) => {
         console.log('createAnnotation')
-
+        console.log(annotationData)
         let annotation = annotationData
 
         // Active Tool
@@ -338,6 +337,8 @@ const useViewer = (source: TImageInfo): TUseViewer => {
             parent.underlying.id
           )
         }
+        console.log('ideeem savovat')
+        console.log(annotation)
 
         saveAnnotation(annotation)
         AnnotoriousHandler.instance(preview).showPreview(annotation)
