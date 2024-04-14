@@ -28,8 +28,13 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
   const annotorious = useAnnotoriousStore((state) => state.anno)
 
   const activeTool = useImageStore((state) => state.activeTool())
-  const toggleActiveTool = useImageStore((state) => state.toggleActiveTool)
 
+  const { toggleActiveTool } = useImageStore((state) => ({
+    toggleActiveTool: state.toggleActiveTool
+  }))
+  useEffect(() => {
+    console.log('Current active tool:', activeTool)
+  }, [activeTool])
   const annotationTool = useImageStore((state) => state.annotationTool())
   const toggleAnnotationTool = useImageStore(
     (state) => state.toggleAnnotationTool
@@ -601,6 +606,26 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
           </Tooltip.Root>
         </Toolbar.Group>
         <Toolbar.Separator orientation="vertical" />
+
+        <button
+          aria-label="Point Tool"
+          onClick={() => toggleActiveTool(ETool.POINT)} // Using toggleActiveTool to update the tool
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <Icon
+            name={TOOL_ICON_MAP[ETool.POINT] as 'PointIcon'} // Replace 'PointIcon' with the actual icon name if different
+            width={18}
+            height={18}
+          />
+          <Text>AI annotation by point</Text>
+        </button>
+
         {/* Your new AI Annotation button */}
         <Tooltip.Root>
           <Tooltip.Trigger asChild>
@@ -610,7 +635,7 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
             >
               <Icon name="AiIcon" width={24} height={24} />{' '}
               {/* Replace AiIcon with the actual icon name if you have one */}
-              <Text>AI Annotation</Text>{' '}
+              <Text>Overall AI Annotation</Text>{' '}
               {/* Use the actual i18n key for "AI Annotation" if it exists */}
             </Toolbar.Button>
           </Tooltip.Trigger>
