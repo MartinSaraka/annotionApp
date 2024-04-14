@@ -9,7 +9,7 @@ import {
   useImageStore,
   useOpenSeadragonStore
 } from '@renderer/store'
-
+import { useState } from 'react'
 import { ETool, EToolType, TOOLS, TOOL_ICON_MAP } from '@common/constants/tools'
 import { OPEN_SEADRAGON_HOME_ID } from '@common/constants/viewer'
 import { HOTKEYS } from '@common/constants/hotkeys'
@@ -21,6 +21,7 @@ type TTopBarMiddleProps = ComponentProps<typeof Box>
 const GROUP = 'tools'
 
 const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
+  const [isAnnotationClicked, setIsAnnotationClicked] = useState(false)
   const { t } = useTranslation('common')
   const saveAnnotation = useImageStore((state) => state.saveAnnotation)
   const { addShortcut, removeShortcut } = useHotkeysStore()
@@ -34,6 +35,10 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
     (state) => state.toggleAnnotationTool
   )
   const handleAIAnnotationClick = () => {
+    if (isAnnotationClicked) {
+      console.log('AI Annotation button has already been clicked.')
+      return // Exit the function to prevent further execution
+    }
     console.log('AI Annotation button clickeda')
     const annotation: TAnnotation = {
       type: 'AI',
@@ -378,6 +383,8 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
     annotation16.body[0].value = 'AI Annotation 16'
     annotation17.body[0].value = 'AI Annotation 17'
     annotation18.body[0].value = 'AI Annotation 18'
+
+    setIsAnnotationClicked(true)
   }
 
   const setAnnotoriousTool = useAnnotoriousStore((state) => state.setTool)
@@ -597,7 +604,10 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
         {/* Your new AI Annotation button */}
         <Tooltip.Root>
           <Tooltip.Trigger asChild>
-            <Toolbar.Button onClick={handleAIAnnotationClick}>
+            <Toolbar.Button
+              onClick={handleAIAnnotationClick}
+              disabled={isAnnotationClicked}
+            >
               <Icon name="AiIcon" width={24} height={24} />{' '}
               {/* Replace AiIcon with the actual icon name if you have one */}
               <Text>AI Annotation</Text>{' '}
