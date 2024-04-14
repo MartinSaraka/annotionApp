@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import { ComponentProps } from '@stitches/react'
-
+import { useImageStore } from '@renderer/store'
 import { Box } from '@renderer/ui'
 import {
   AnnotationInfoClass,
@@ -8,20 +8,33 @@ import {
   AnnotationInfoMeasurements,
   AnnotationInfoParameters,
   AnnotationInfoPreview,
-  AnnotationInfoProcess
+  AnnotationInfoProcess,
+  AnnotationInfoFeatures, // Newly added
+  AnnotationInfoRules // Newly added
 } from './sections'
 
 type TLeftBarAnnotationInfoProps = ComponentProps<typeof Box>
 
-const AnnotationInfo = (props: TLeftBarAnnotationInfoProps) => (
-  <Box {...props}>
-    <AnnotationInfoPreview />
-    <AnnotationInfoProcess />
-    <AnnotationInfoDefault />
-    <AnnotationInfoParameters />
-    <AnnotationInfoClass />
-    <AnnotationInfoMeasurements />
-  </Box>
-)
+const AnnotationInfo = (props: TLeftBarAnnotationInfoProps) => {
+  const annotation = useImageStore((state) => state.getSelectedAnnotation())
+
+  return (
+    <Box {...props}>
+      {annotation && annotation.type === 'AI' && (
+        <>
+          <AnnotationInfoFeatures />
+          <AnnotationInfoRules />
+        </>
+      )}
+
+      <AnnotationInfoPreview />
+      <AnnotationInfoProcess />
+      <AnnotationInfoDefault />
+      <AnnotationInfoParameters />
+      <AnnotationInfoClass />
+      <AnnotationInfoMeasurements />
+    </Box>
+  )
+}
 
 export default memo(AnnotationInfo) as typeof AnnotationInfo

@@ -93,8 +93,6 @@ const AppBar = (props: TAppBarProps) => {
               >
                 Click to provide feedback
               </span>
-
-
             </Button>
           </Dialog.Trigger>
 
