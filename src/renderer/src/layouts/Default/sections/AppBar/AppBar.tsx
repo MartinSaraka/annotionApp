@@ -2,13 +2,12 @@
 import { memo, useState, useEffect } from 'react'
 import { type ComponentProps } from '@stitches/react'
 import { useTranslation } from 'react-i18next'
-import Dialog from '@renderer/ui/Dialog' // Adjust the import path as necessary
+import Dialog from '@renderer/ui/Dialog' // Ensure the import path is correct
 
 import { Box, Button, Icon } from '@renderer/ui'
 import { TabList } from '@renderer/components'
 import { TrafficLights } from '@renderer/components/appbar'
 
-import { useAuthStore } from '@renderer/store'
 
 import * as S from './styled'
 
@@ -17,9 +16,8 @@ type TAppBarProps = ComponentProps<typeof Box>
 const AppBar = (props: TAppBarProps) => {
   const { t } = useTranslation('common')
   const [isReportDialogOpen, setReportDialogOpen] = useState(false)
+  const [isNewFeaturesDialogOpen, setNewFeaturesDialogOpen] = useState(false)
   const [showAlert, setShowAlert] = useState(false)
-
-  const isAuthenticated = useAuthStore((state) => !!state.user)
 
   const handleSubmit = () => {
     setShowAlert(true)
@@ -58,11 +56,70 @@ const AppBar = (props: TAppBarProps) => {
         </Box>
       )}
 
-      <S.Content>
-        {isAuthenticated && <TabList css={{ _appRegion: 'no-drag' }} />}
+      <S.Content
+        css={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <TabList
+          css={{ _appRegion: 'no-drag', position: 'absolute', left: 0 }}
+        />
+
+        <Dialog.Root
+          open={isNewFeaturesDialogOpen}
+          onOpenChange={setNewFeaturesDialogOpen}
+        >
+          <Dialog.Trigger asChild>
+            <Button
+              aria-label={t('aria.label.whatsNew')}
+              css={{ _appRegion: 'no-drag' }}
+            >
+              <Icon name="InfoIcon" width={15} height={15} />
+              What's New
+            </Button>
+          </Dialog.Trigger>
+          <Dialog.Content
+            css={{
+              maxWidth: '600px',
+              padding: '20px',
+              backgroundColor: '#202020',
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              color: '#fff'
+            }}
+          >
+            <Dialog.Header css={{ borderBottom: '1px solid #ccc' }}>
+              <Dialog.Title css={{ color: '#fff', fontSize: '24px' }}>
+                What's New
+              </Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Description css={{ margin: '20px 0', color: '#aaa' }}>
+              Explore new features and updates to improve your experience:
+              <ul>
+                <li>Enhanced annotation features for greater precision.</li>
+                <li>Improved performance for faster processing times.</li>
+                <li>Automatic AI annotation implemented.</li>
+              </ul>
+            </Dialog.Description>
+            <Box
+              css={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                marginTop: '20px'
+              }}
+            >
+              <Button onClick={() => setNewFeaturesDialogOpen(false)}>
+                Close
+              </Button>
+            </Box>
+          </Dialog.Content>
+        </Dialog.Root>
+        {/* If you have other elements to place on the right, position them absolutely similar to TabList */}
       </S.Content>
 
-      <S.Aside>
+      <S.Aside css={{ position: 'absolute', right: 0 }}>
         <Dialog.Root
           open={isReportDialogOpen}
           onOpenChange={setReportDialogOpen}
