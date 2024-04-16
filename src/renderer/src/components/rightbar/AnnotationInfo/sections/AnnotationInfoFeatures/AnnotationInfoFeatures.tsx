@@ -1,5 +1,5 @@
 import { Box, Text, Button, Dialog } from '@renderer/ui'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 const AnnotationInfoFeatures = () => {
   const [isFeedbackOpen, setFeedbackOpen] = useState(false)
@@ -11,7 +11,7 @@ const AnnotationInfoFeatures = () => {
     setFeedbackOpen(false)
     setFeedback('') // Clear feedback text on dialog close
   }
-  const handleFeedbackChange = (event) => setFeedback(event.target.value)
+
   const handleSubmitFeedback = () => {
     console.log(feedback) // Process or send the feedback
     setShowAlert(true) // Show the success alert

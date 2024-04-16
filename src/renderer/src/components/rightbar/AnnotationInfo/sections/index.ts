@@ -5,4 +5,3 @@ export { default as AnnotationInfoMeasurements } from './Measurements'
 export { default as AnnotationInfoClass } from './Class'
 export { default as AnnotationInfoProcess } from './Process'
 export { default as AnnotationInfoFeatures } from './AnnotationInfoFeatures'
-
