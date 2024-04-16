@@ -117,10 +117,35 @@ const AnnotationInfoFeatures = () => {
   return (
     <>
       <Box
-        css={{ padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}
+        css={{
+          padding: '20px',
+          border: '1px solid #ccc',
+          borderRadius: '8px',
+          overflowWrap: 'break-word',
+          overflow: 'hidden',
+          wordWrap: 'break-word'
+        }}
       >
         <Text
-          css={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '10px' }}
+          css={{
+            fontSize: '14px',
+            fontWeight: 'bold',
+            marginBottom: '10px',
+            overflowWrap: 'break-word',
+            overflow: 'hidden',
+            wordWrap: 'break-word'
+          }}
+        >
+          AI detection blood vessel perfomance:
+        </Text>
+        <Text>Accuracy: 99%</Text>
+        <Text
+          css={{
+            fontSize: '20px',
+            fontWeight: 'bold',
+            marginBottom: '5px',
+            marginTop: '5px'
+          }}
         >
           Features
         </Text>

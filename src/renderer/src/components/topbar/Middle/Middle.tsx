@@ -370,7 +370,6 @@ const Middle = ({ css, ...rest }: TTopBarMiddleProps) => {
     anno.addAnnotation(annotation18)
     saveAnnotation(annotation18)
 
-
     const annotation19: TAnnotation = {
       type: 'AI',
       body: [],
