@@ -9,8 +9,7 @@ import {
   AnnotationInfoParameters,
   AnnotationInfoPreview,
   AnnotationInfoProcess,
-  AnnotationInfoFeatures, // Newly added
-  AnnotationInfoRules // Newly added
+  AnnotationInfoFeatures // Newly added
 } from './sections'
 
 type TLeftBarAnnotationInfoProps = ComponentProps<typeof Box>
@@ -23,7 +22,6 @@ const AnnotationInfo = (props: TLeftBarAnnotationInfoProps) => {
       {annotation && annotation.type === 'AI' && (
         <>
           <AnnotationInfoFeatures />
-          <AnnotationInfoRules />
         </>
       )}
 
