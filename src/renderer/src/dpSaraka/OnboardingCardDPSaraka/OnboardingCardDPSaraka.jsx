@@ -1,26 +1,41 @@
-import { useState, memo } from 'react'
-import { Box, Text, Button } from '@renderer/ui' // Adjust these imports as needed
-import HistopathologyIcon from '../Images/histopathology.png' // Correct relative path to your PNG image
+import { useState, memo } from 'react';
+import { Box, Text, Button } from '@renderer/ui'; // Adjust these imports as needed
+import HistopathologyIcon from '../Images/histopathology.png'; // Correct relative path to your PNG image
+import { useImageStore } from '@renderer/store'
 
 const OnboardingCardDPSaraka = () => {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [userName, setUserName] = useState('')
-  const [difficulty, setDifficulty] = useState('Layman')
-  const totalPages = 3
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 3;
+
+  // Access the store methods and state
+  const { addSelectionTab, setUserName, setDifficulty } = useImageStore();
+
+  // Local state for user input
+  const [localUserName, setLocalUserName] = useState('');
+  const [localDifficulty, setLocalDifficulty] = useState('Layman');
 
   const goToNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1)
-  }
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   const goToPrevPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1)
-  }
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleFinish = () => {
+    // Update the global state with user input
+    setUserName(localUserName);
+    setDifficulty(localDifficulty);
+
+    // Add and select the "Task Selection" tab
+    addSelectionTab();
+  };
 
   return (
     <Box
       css={{
         width: '360px',
-        height: '280px',
+        height: '300px',
         backgroundColor: '#28284A',
         padding: '20px',
         borderRadius: '16px',
@@ -30,13 +45,11 @@ const OnboardingCardDPSaraka = () => {
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center',
-        position: 'relative'
+        position: 'relative',
       }}
     >
       {/* Page Content */}
-      <Box
-        css={{ flex: 1, width: '100%', textAlign: 'center', padding: '10px' }}
-      >
+      <Box css={{ flex: 1, width: '100%', textAlign: 'center', padding: '10px' }}>
         {currentPage === 1 && (
           <>
             <Text
@@ -44,7 +57,7 @@ const OnboardingCardDPSaraka = () => {
                 fontSize: '20px',
                 fontWeight: 'bold',
                 marginBottom: '8px',
-                color: '#FFFFFF'
+                color: '#FFFFFF',
               }}
             >
               Welcome to AnnotAid
@@ -53,7 +66,7 @@ const OnboardingCardDPSaraka = () => {
               css={{
                 fontSize: '14px',
                 color: '#B0B0B0',
-                marginBottom: '16px'
+                marginBottom: '16px',
               }}
             >
               Innovative image annotation tool for histopathology education.
@@ -64,7 +77,7 @@ const OnboardingCardDPSaraka = () => {
               style={{
                 width: '80px',
                 height: '80px',
-                margin: '0 auto'
+                margin: '0 auto',
               }}
             />
           </>
@@ -76,14 +89,14 @@ const OnboardingCardDPSaraka = () => {
                 fontSize: '20px',
                 fontWeight: 'bold',
                 marginBottom: '8px',
-                color: '#FFFFFF'
+                color: '#FFFFFF',
               }}
             >
               Enter Your Name
             </Text>
             <input
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              value={localUserName}
+              onChange={(e) => setLocalUserName(e.target.value)}
               placeholder="Your name"
               style={{
                 marginTop: '8px',
@@ -93,7 +106,7 @@ const OnboardingCardDPSaraka = () => {
                 color: '#000',
                 backgroundColor: '#FFF',
                 width: '100%',
-                fontSize: '14px'
+                fontSize: '14px',
               }}
             />
           </>
@@ -105,7 +118,7 @@ const OnboardingCardDPSaraka = () => {
                 fontSize: '18px',
                 fontWeight: 'bold',
                 marginBottom: '6px',
-                color: '#FFFFFF'
+                color: '#FFFFFF',
               }}
             >
               Difficulty Setting
@@ -114,7 +127,7 @@ const OnboardingCardDPSaraka = () => {
               css={{
                 fontSize: '12px',
                 color: '#FF6F61',
-                marginBottom: '40px'
+                marginBottom: '10px',
               }}
             >
               Based on level of histopathology knowledge
@@ -124,43 +137,40 @@ const OnboardingCardDPSaraka = () => {
             <Box
               css={{
                 display: 'flex',
-                flexDirection: 'row', // Ensure options are in a row
+                flexDirection: 'row',
                 justifyContent: 'space-around',
                 width: '100%',
-                marginBottom: '16px'
+                marginBottom: '16px',
               }}
             >
-              {[
-                'Layman',
-                'Student (Beginner)',
-                'Student (Semi-Expert)',
-                'Expert'
-              ].map((level) => (
-                <Box
-                  key={level}
-                  onClick={() => setDifficulty(level)}
-                  css={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    color: difficulty === level ? '#FFF' : '#B0B0B0',
-                    transition: 'color 0.3s ease'
-                  }}
-                >
+              {['Layman', 'Student (Beginner)', 'Student (Semi-Expert)', 'Expert'].map(
+                (level) => (
                   <Box
+                    key={level}
+                    onClick={() => setLocalDifficulty(level)}
                     css={{
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      backgroundColor: difficulty === level ? '#FFF' : '#666',
-                      marginBottom: '4px'
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      color: localDifficulty === level ? '#FFF' : '#B0B0B0',
+                      transition: 'color 0.3s ease',
                     }}
-                  />
-                  <Text>{level}</Text>
-                </Box>
-              ))}
+                  >
+                    <Box
+                      css={{
+                        width: '12px',
+                        height: '12px',
+                        borderRadius: '50%',
+                        backgroundColor: localDifficulty === level ? '#FFF' : '#666',
+                        marginBottom: '4px',
+                      }}
+                    />
+                    <Text>{level}</Text>
+                  </Box>
+                )
+              )}
             </Box>
 
             {/* Description Below Levels */}
@@ -168,30 +178,31 @@ const OnboardingCardDPSaraka = () => {
               css={{
                 fontSize: '10px',
                 color: '#B0B0B0',
-                textAlign: 'center'
+                textAlign: 'center',
               }}
             >
-              {difficulty === 'Layman' &&
+              {localDifficulty === 'Layman' &&
                 'Layman is for complete beginners with no medical knowledge.'}
-              {difficulty === 'Student (Beginner)' &&
+              {localDifficulty === 'Student (Beginner)' &&
                 'Student (Beginner) is for those starting to learn.'}
-              {difficulty === 'Student (Semi-Expert)' &&
+              {localDifficulty === 'Student (Semi-Expert)' &&
                 'Semi-expert students with some knowledge.'}
-              {difficulty === 'Expert' &&
+              {localDifficulty === 'Expert' &&
                 'Expert is for those with advanced knowledge.'}
             </Text>
           </>
         )}
       </Box>
 
-      {/* Navigation Buttons */}
+      {/* Navigation Buttons with Page Indicators */}
       <Box
         css={{
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: currentPage > 1 ? 'space-between' : 'flex-end',
+          justifyContent: currentPage === 1 ? 'center' : 'space-between',
+          alignItems: 'center',
           width: '100%',
-          marginTop: '16px'
+          marginTop: '16px',
         }}
       >
         {currentPage > 1 && (
@@ -209,37 +220,85 @@ const OnboardingCardDPSaraka = () => {
               cursor: 'pointer',
               transition: 'background-color 0.3s ease',
               '&:hover': {
-                backgroundColor: '#5A67D8'
-              }
+                backgroundColor: '#5A67D8',
+              },
             }}
           >
             &lt;
           </Button>
         )}
-        <Button
-          onClick={goToNextPage}
-          disabled={currentPage === totalPages}
-          css={{
-            backgroundColor: '#3F51B5',
-            color: '#FFFFFF',
-            borderRadius: '50%',
-            width: '40px',
-            height: '40px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease',
-            '&:hover': {
-              backgroundColor: '#5A67D8'
-            }
-          }}
-        >
-          &gt;
-        </Button>
+
+        {/* Centered Page Indicators */}
+        {currentPage > 1 && (
+          <Box
+            css={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: '8px',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {Array.from({ length: totalPages }, (_, index) => (
+              <Box
+                key={index}
+                css={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  backgroundColor: currentPage === index + 1 ? '#FFF' : '#666',
+                }}
+              />
+            ))}
+          </Box>
+        )}
+
+        {currentPage === totalPages ? (
+          <Button
+            onClick={handleFinish}
+            css={{
+              backgroundColor: '#5A67D8',
+              color: '#FFFFFF',
+              borderRadius: '50%',
+              width: '80px',
+              height: '40px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s ease',
+              '&:hover': {
+                backgroundColor: '#FF856E',
+              },
+            }}
+          >
+            Finish
+          </Button>
+        ) : (
+          <Button
+            onClick={goToNextPage}
+            css={{
+              backgroundColor: '#3F51B5',
+              color: '#FFFFFF',
+              borderRadius: '50%',
+              width: '40px',
+              height: '40px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s ease',
+              '&:hover': {
+                backgroundColor: '#5A67D8',
+              },
+            }}
+          >
+            &gt;
+          </Button>
+        )}
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default memo(OnboardingCardDPSaraka)
+export default memo(OnboardingCardDPSaraka);

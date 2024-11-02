@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/client'
 
 import { Editor } from '@renderer/layouts'
 import { Dashboard, Empty, Image, Login } from '@renderer/pages'
+import { TaskSelection } from '@renderer/dpSaraka/Pages'
 import { FullScreenLoading } from '@renderer/ui/loading'
 
 import { identitySmartlook, initializeSmartlook } from '@common/utils/recording'
@@ -66,6 +67,10 @@ const App = () => {
 
   if (activePage === 'empty') {
     return <Empty />
+  }
+
+  if (activePage === 'selection') {
+    return <TaskSelection />
   }
 
   return (

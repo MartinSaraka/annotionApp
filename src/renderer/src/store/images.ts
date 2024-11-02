@@ -42,7 +42,8 @@ export type TOpenedImageState = {
 export type TImageState = {
   selected: TPath | string | null
   opened: Record<TPath, TOpenedImageState>
-
+  userName: string | null
+  difficulty: string | null
   open: (
     path: TPath,
     sync: (
@@ -89,6 +90,12 @@ export type TImageState = {
    * @returns id of the added empty tab
    */
   addEmptyTab: () => TPath | string
+
+   /**
+   * Add selection tab to the list of tabs
+   * @returns id of the added selection tab
+   */
+   addSelectionTab: () => TPath | string
 
   // Annotations
 
@@ -143,6 +150,17 @@ const useImageStore = create<TImageState>()(
       selected: 'dashboard',
       tabs: ['dashboard'],
 
+      userName: '',
+      difficulty: 'Layman',
+
+      // New methods to update user data
+      setUserName: (name) => {
+        set({ userName: name });
+      },
+
+      setDifficulty: (level) => {
+        set({ difficulty: level });
+      },
       open: async (path, sync) => {
         if (path in get().opened) {
           set({ selected: path })
@@ -463,6 +481,21 @@ const useImageStore = create<TImageState>()(
         })
 
         return 'empty'
+      },
+
+      addSelectionTab: () => {
+        const tabs = get().tabs
+
+        if (tabs.includes('selection')) {
+          return 'selection'
+        }
+
+        set({
+          selected: 'selection',
+          tabs: [...tabs, 'selection']
+        })
+
+        return 'selection'
       },
 
       // Annotations

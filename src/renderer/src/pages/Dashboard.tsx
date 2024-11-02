@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { memo } from 'react'
 
-import { Box} from '@renderer/ui' // Assuming Button component is imported from your UI library
+import { Box } from '@renderer/ui' // Assuming Button component is imported from your UI library
 import { DashboardTopBar } from './sections'
 import { OnboardingCardDPSaraka } from '@renderer/dpSaraka'
 
