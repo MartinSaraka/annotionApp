@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import Dialog from '@renderer/ui/Dialog' // Ensure the import path is correct
 
 import { Box, Button, Icon } from '@renderer/ui'
+import { TabList } from '@renderer/components'
 import { TrafficLights } from '@renderer/components/appbar'
 
 import * as S from './styled'
@@ -52,6 +53,20 @@ const AppBar = (props: TAppBarProps) => {
           Report submitted successfully!
         </Box>
       )}
+
+      <S.Content
+        css={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
+        <TabList
+          css={{ _appRegion: 'no-drag', position: 'absolute', left: 0 }}
+        />
+
+        {/* If you have other elements to place on the right, position them absolutely similar to TabList */}
+      </S.Content>
 
       <S.Aside css={{ position: 'absolute', right: 0 }}>
         <Dialog.Root

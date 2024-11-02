@@ -7,3 +7,5 @@ export { default as AnnotationItem } from './AnnotationItem'
 export { default as ProcessItem } from './ProcessItem'
 
 export { default as Toasts } from './Toasts'
+
+export { default as OnboardingCardDPSaraka } from './OnboardingCardDPSaraka'
