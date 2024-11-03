@@ -1,28 +1,34 @@
-import { useState } from 'react';
-import { Box, Text } from '@renderer/ui';
+import { useState } from 'react'
+import { Box, Text } from '@renderer/ui'
 
 const DifficultyModal = ({ isOpen, onClose, onSelectDifficulty }) => {
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   const difficulties = [
-    { level: 'Layman', description: 'Complete beginners with no medical knowledge.' },
+    {
+      level: 'Layman',
+      description: 'Complete beginners with no medical knowledge.'
+    },
     { level: 'Student (Beginner)', description: 'Those starting to learn.' },
-    { level: 'Student (Semi-Expert)', description: 'Students with some knowledge.' },
-    { level: 'Expert', description: 'Those with advanced knowledge.' },
-  ];
+    {
+      level: 'Student (Semi-Expert)',
+      description: 'Students with some knowledge.'
+    },
+    { level: 'Expert', description: 'Those with advanced knowledge.' }
+  ]
 
-  const [selectedDifficulty, setSelectedDifficulty] = useState('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('')
 
   const handleSelection = (level) => {
-    setSelectedDifficulty(level);
-  };
+    setSelectedDifficulty(level)
+  }
 
   const handleConfirm = () => {
     if (selectedDifficulty) {
-      onSelectDifficulty(selectedDifficulty);
-      onClose();
+      onSelectDifficulty(selectedDifficulty)
+      onClose()
     }
-  };
+  }
 
   return (
     <Box
@@ -36,7 +42,7 @@ const DifficultyModal = ({ isOpen, onClose, onSelectDifficulty }) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        zIndex: 1000,
+        zIndex: 1000
       }}
     >
       <Box
@@ -46,13 +52,22 @@ const DifficultyModal = ({ isOpen, onClose, onSelectDifficulty }) => {
           borderRadius: '12px',
           textAlign: 'center',
           zIndex: 1001,
-          width: '300px',
+          width: '300px'
         }}
       >
-        <Text css={{ fontSize: '20px', marginBottom: '20px', color: '#FFFFFF' }}>
+        <Text
+          css={{ fontSize: '20px', marginBottom: '20px', color: '#FFFFFF' }}
+        >
           Select Difficulty
         </Text>
-        <Box css={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+        <Box
+          css={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            marginBottom: '20px'
+          }}
+        >
           {difficulties.map(({ level, description }) => (
             <Box
               key={level}
@@ -60,7 +75,7 @@ const DifficultyModal = ({ isOpen, onClose, onSelectDifficulty }) => {
               css={{
                 display: 'flex',
                 alignItems: 'center',
-                cursor: 'pointer',
+                cursor: 'pointer'
               }}
             >
               <input
@@ -76,9 +91,12 @@ const DifficultyModal = ({ isOpen, onClose, onSelectDifficulty }) => {
           ))}
         </Box>
         {selectedDifficulty && (
-          <Text css={{ fontSize: '12px', color: '#B0B0B0', marginBottom: '20px' }}>
+          <Text
+            css={{ fontSize: '12px', color: '#B0B0B0', marginBottom: '20px' }}
+          >
             {
-              difficulties.find(({ level }) => level === selectedDifficulty)?.description
+              difficulties.find(({ level }) => level === selectedDifficulty)
+                ?.description
             }
           </Text>
         )}
@@ -87,11 +105,12 @@ const DifficultyModal = ({ isOpen, onClose, onSelectDifficulty }) => {
             onClick={handleConfirm}
             style={{
               padding: '5px 10px',
+              marginBottom: '10px',
               backgroundColor: '#3F51B5',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: '8px',
-              cursor: 'pointer',
+              cursor: 'pointer'
             }}
           >
             Confirm
@@ -104,7 +123,7 @@ const DifficultyModal = ({ isOpen, onClose, onSelectDifficulty }) => {
               color: '#FFFFFF',
               border: 'none',
               borderRadius: '8px',
-              cursor: 'pointer',
+              cursor: 'pointer'
             }}
           >
             Cancel
@@ -112,7 +131,7 @@ const DifficultyModal = ({ isOpen, onClose, onSelectDifficulty }) => {
         </Box>
       </Box>
     </Box>
-  );
-};
+  )
+}
 
-export default DifficultyModal;
+export default DifficultyModal

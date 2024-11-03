@@ -1,5 +1,5 @@
-import { Box } from '@renderer/ui';
-import TaskCard from './TaskCard';
+import { Box } from '@renderer/ui'
+import TaskCard from './TaskCard'
 
 const TaskList = ({ tasks }) => {
   return (
@@ -11,14 +11,14 @@ const TaskList = ({ tasks }) => {
         width: '100%',
         maxWidth: '1200px',
         gap: '20px',
-        flexWrap: 'wrap',
+        flexWrap: 'wrap'
       }}
     >
       {tasks.map((task) => (
         <TaskCard key={task.id} task={task} />
       ))}
     </Box>
-  );
-};
+  )
+}
 
-export default TaskList;
+export default TaskList

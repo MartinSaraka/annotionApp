@@ -91,11 +91,11 @@ export type TImageState = {
    */
   addEmptyTab: () => TPath | string
 
-   /**
+  /**
    * Add selection tab to the list of tabs
    * @returns id of the added selection tab
    */
-   addSelectionTab: () => TPath | string
+  addSelectionTab: () => TPath | string
 
   // Annotations
 
@@ -155,11 +155,11 @@ const useImageStore = create<TImageState>()(
 
       // New methods to update user data
       setUserName: (name) => {
-        set({ userName: name });
+        set({ userName: name })
       },
 
       setDifficulty: (level) => {
-        set({ difficulty: level });
+        set({ difficulty: level })
       },
       open: async (path, sync) => {
         if (path in get().opened) {
